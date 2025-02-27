@@ -63,7 +63,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5001/api/signup', { email, password });
+      const response = await axios.post('http://203.161.50.28:5001/api/signup', { email, password });
       if (response.data.success) {
         
         localStorage.setItem('user', JSON.stringify(response.data.user));

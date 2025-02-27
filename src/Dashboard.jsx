@@ -18,7 +18,7 @@ import debounce from 'lodash/debounce';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://203.161.50.28:5001/api';
 
 const createDebouncedUpdate = (updateFn) => {
   return debounce(updateFn, 5000, { maxWait: 5000 });
@@ -620,20 +620,17 @@ const renderSidebarContent = () => {
           );
     }
   };
-// Add this function to move APIs from temp to real collections
 const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
   try {
-    // Find the API in the source folder
     const sourceFolder = collections.find(folder => folder.id === sourceFolderId);
     if (!sourceFolder) return;
     
     const apiToMove = sourceFolder.apis.find(api => api.id === apiId);
     if (!apiToMove) return;
     
-    // If moving from temporary collection, create on server
-    if (sourceFolderId === 'temp-99999') {
-      // Create the API on the server in the target collection
-      const response = await fetch('http://localhost:5001/api/apis', {
+    if (sourceFolderId === 'temp-99999')
+      {
+      const response = await fetch('http://203.161.50.28:5001/api/apis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -648,14 +645,11 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
       
       const data = await response.json();
       if (data.success) {
-        // Create a new API object with server ID but preserve other data
         const newServerApi = {
           ...apiToMove,
           id: data.api._id,
           isTemporary: false
         };
-        
-        // Update collections state - remove from temp and add to target
         setCollections(prevCollections => {
           return prevCollections.map(folder => {
             // Remove from temporary collection
@@ -684,8 +678,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
         }
       }
     } else {
-      // Moving between regular collections - update on server
-      const response = await fetch(`http://localhost:5001/api/apis/${apiId}/move`, {
+      const response = await fetch(`http://203.161.50.28:5001/api/apis/${apiId}/move`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -803,7 +796,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
     useEffect(() => {
       const fetchCollections = async () => {
         try {
-          const response = await fetch(`http://localhost:5001/api/collections/${userId}`);
+          const response = await fetch(`http://203.161.50.28:5001/api/collections/${userId}`);
           const data = await response.json();
           if (data.success) {
             setCollections(data.collections);
@@ -845,7 +838,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
       }
     
       try {
-        const response = await fetch('http://localhost:5001/api/collections', {
+        const response = await fetch('http://203.161.50.28:5001/api/collections', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -966,16 +959,14 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
             return folder;
           });
         });
-        
-        // Set the new API as active
+
         setActiveApiId(tempApiId);
         
         return;
       }
       
-      // Regular collection - Create API on server
       try {
-        const response = await fetch('http://localhost:5001/api/apis', {
+        const response = await fetch('http://203.161.50.28:5001/api/apis', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -1038,7 +1029,7 @@ const loadLocalCollections = () => {
   }
 };
 
-// Function to handle updating API details in offline mode
+
 const updateApiOffline = (apiId, updatedFields) => {
   if (isElectronOffline()) {
     const updatedCollections = collections.map(folder => {
@@ -1067,7 +1058,7 @@ const saveApiResponseOffline = (apiId, responseData) => {
   }
 };
 
-// Function to delete API in offline mode
+
 const deleteApiOffline = (apiId) => {
   if (isElectronOffline()) {
     const updatedCollections = collections.map(folder => ({
@@ -1078,7 +1069,6 @@ const deleteApiOffline = (apiId) => {
     setCollections(updatedCollections);
     saveLocalCollections(updatedCollections);
     
-    // If the deleted API was active, set activeApiId to null
     if (activeApiId === apiId) {
       setActiveApiId(null);
     }
@@ -1160,7 +1150,7 @@ const getApiById = (apiId) => {
       try {
         if (apiId) {
           // Delete API
-          const response = await fetch(`http://localhost:5001/api/apis/${apiId}`, {
+          const response = await fetch(`http://203.161.50.28:5001/api/apis/${apiId}`, {
             method: 'DELETE',
           });
           
@@ -1182,7 +1172,7 @@ const getApiById = (apiId) => {
           }
         } else {
           // Delete Collection
-          const response = await fetch(`http://localhost:5001/api/collections/${folderId}`, {
+          const response = await fetch(`http://203.161.50.28:5001/api/collections/${folderId}`, {
             method: 'DELETE',
           });
           
@@ -1202,7 +1192,7 @@ const getApiById = (apiId) => {
     const debouncedUpdateApi = useCallback(
       createDebouncedUpdate(async (folderId, apiId, updatedData) => {
         try {
-          const response = await fetch(`http://localhost:5001/api/apis/${apiId}`, {
+          const response = await fetch(`http://203.161.50.28:5001/api/apis/${apiId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -1320,7 +1310,7 @@ const getApiById = (apiId) => {
             // Ensure the request body is properly stringified
             const stringifiedBody = JSON.stringify(proxyRequest);
             
-            const response = await fetch('http://localhost:5000/api/proxy', {
+            const response = await fetch('http://203.161.50.28:5000/api/proxy', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -1395,7 +1385,7 @@ const getApiById = (apiId) => {
             } else {
               // Save request history to server (existing code)
               try {
-                await fetch('http://localhost:5001/api/request-history', {
+                await fetch('http://203.161.50.28:5001/api/request-history', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -1456,7 +1446,7 @@ const getApiById = (apiId) => {
               saveRequestHistoryOffline(errorMetrics);
             } else {
               try {
-                await fetch('http://localhost:5001/api/request-history', {
+                await fetch('http://203.161.50.28:5001/api/request-history', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
