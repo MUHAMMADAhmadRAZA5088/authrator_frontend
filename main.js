@@ -1,17 +1,69 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, session } = require('electron');
+const path = require('path');
+const url = require('url');
 
-function createWindow () {
+function createWindow() {
+  // Create the browser window
   const win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      contextIsolation: false,
+      webSecurity: true, // Keep security enabled
     },
-    icon: 'icon.png'
-  })
+    roundedCorners: true,
+    icon: path.join(__dirname, 'icon.png')
+  });
 
-  win.loadURL('http://localhost:3000')
-  mainWindow.webContents.openDevTools();
+  // Load the index.html file
+  win.loadFile(path.join(__dirname, 'build', 'index.html'));
+  
+  // Configure the session to allow access to localhost even when offline
+  configureLocalNetworkAccess(win);
+  
+  // Log any errors
+  win.webContents.on('did-fail-load', (e, code, desc) => {
+    console.error('Failed to load:', code, desc);
+  });
 }
 
-app.whenReady().then(createWindow)
+// Configure session to handle network requests properly
+function configureLocalNetworkAccess(win) {
+  // Handle permissions for local network access
+  session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
+    // Always allow local network access
+    if (permission === 'media' || 
+        permission === 'geolocation' || 
+        permission === 'notifications' || 
+        permission === 'midi' || 
+        permission === 'midiSysex') {
+      return callback(false);
+    }
+    
+    return callback(true);
+  });
+  
+  // Configure custom protocol handling if needed for your application
+  // This is helpful for custom schemes or handling specific local requests
+  session.defaultSession.webRequest.onBeforeRequest({ urls: ['*://*/*'] }, 
+    (details, callback) => {
+      // You can modify requests here if needed
+      callback({ cancel: false });
+    }
+  );
+}
+
+app.whenReady().then(createWindow);
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0) {
+    createWindow();
+  }
+});

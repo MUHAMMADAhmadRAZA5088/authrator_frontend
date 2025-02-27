@@ -60,9 +60,7 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
     openNewTab(api.folderId, api);
   };
 
-  // Function to create a new API in the temporary collection
   const handleCreateNewApi = () => {
-    // Use temp collection with ID 'temp-99999' instead of activeFolderId
     const tempFolderId = 'temp-99999';
     createNewApi(tempFolderId);
   };

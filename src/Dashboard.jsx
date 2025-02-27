@@ -620,16 +620,19 @@ const renderSidebarContent = () => {
           );
     }
   };
+// Add this function to move APIs from temp to real collections
 const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
   try {
+    // Find the API in the source folder
     const sourceFolder = collections.find(folder => folder.id === sourceFolderId);
     if (!sourceFolder) return;
     
     const apiToMove = sourceFolder.apis.find(api => api.id === apiId);
     if (!apiToMove) return;
     
-    if (sourceFolderId === 'temp-99999')
-      {
+    // If moving from temporary collection, create on server
+    if (sourceFolderId === 'temp-99999') {
+      // Create the API on the server in the target collection
       const response = await fetch('http://203.161.50.28:5001/api/apis', {
         method: 'POST',
         headers: {
@@ -645,11 +648,14 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
       
       const data = await response.json();
       if (data.success) {
+        // Create a new API object with server ID but preserve other data
         const newServerApi = {
           ...apiToMove,
           id: data.api._id,
           isTemporary: false
         };
+        
+        // Update collections state - remove from temp and add to target
         setCollections(prevCollections => {
           return prevCollections.map(folder => {
             // Remove from temporary collection
@@ -678,6 +684,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
         }
       }
     } else {
+      // Moving between regular collections - update on server
       const response = await fetch(`http://203.161.50.28:5001/api/apis/${apiId}/move`, {
         method: 'PUT',
         headers: {
@@ -867,8 +874,58 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
     
 
     const createNewApi = async (folderId) => {
-      // Check if we're in Electron and offline
+
       if (isElectronOffline()) {
+
+        if (folderId === 'temp-99999') {
+          const tempCollection = await ensureTempCollectionExists();
+          
+          const tempApiId = `temp-${Date.now()}`;
+          const newApi = {
+            id: tempApiId,
+            name: 'New Request',
+            method: 'GET',
+            url: "",
+            headers: [],
+            queryParams: [],
+            body: {
+              type: "none",
+              content: "",
+              formData: [],
+              urlencoded: [],
+            },
+            scripts: {
+              preRequest: "",
+              tests: "",
+            },
+            auth: {
+              type: "none",
+              jwt: { key: "", value: "", pairs: [] },
+              avqJwt: { value: "" },
+            },
+            responseData: null,
+            activeResponseTab: "response-body",
+            isTemporary: true // Flag to identify this API is not yet saved to server
+          };
+          
+          // Update collections state
+          setCollections(prevCollections => {
+            return prevCollections.map(folder => {
+              if (folder.id === 'temp-99999') {
+                return {
+                  ...folder,
+                  apis: [...folder.apis, newApi]
+                };
+              }
+              return folder;
+            });
+          });
+          
+          // Set the new API as active
+          setActiveApiId(tempApiId);
+          
+          return;
+        }
         // Generate local ID
         const newApiId = getNextLocalId('local-api');
         
@@ -959,12 +1016,14 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
             return folder;
           });
         });
-
+        
+        // Set the new API as active
         setActiveApiId(tempApiId);
         
         return;
       }
       
+      // Regular collection - Create API on server
       try {
         const response = await fetch('http://203.161.50.28:5001/api/apis', {
           method: 'POST',
@@ -1029,7 +1088,7 @@ const loadLocalCollections = () => {
   }
 };
 
-
+// Function to handle updating API details in offline mode
 const updateApiOffline = (apiId, updatedFields) => {
   if (isElectronOffline()) {
     const updatedCollections = collections.map(folder => {
@@ -1058,7 +1117,7 @@ const saveApiResponseOffline = (apiId, responseData) => {
   }
 };
 
-
+// Function to delete API in offline mode
 const deleteApiOffline = (apiId) => {
   if (isElectronOffline()) {
     const updatedCollections = collections.map(folder => ({
@@ -1069,6 +1128,7 @@ const deleteApiOffline = (apiId) => {
     setCollections(updatedCollections);
     saveLocalCollections(updatedCollections);
     
+    // If the deleted API was active, set activeApiId to null
     if (activeApiId === apiId) {
       setActiveApiId(null);
     }
@@ -1306,18 +1366,37 @@ const getApiById = (apiId) => {
             });
           }
       
+          // Check if we're in Electron offline mode but targeting a local address
+          const isLocalRequest = isLocalAddress(api.url);
+          const isOfflineMode = isElectronOffline();
+          const shouldUseDirectRequest = isOfflineMode && isLocalRequest;
+          
+          // Determine the appropriate endpoint based on online status and URL
+          let endpoint = 'http://203.161.50.28:5000/api/proxy';
+          let requestOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify(proxyRequest)
+          };
+          
+          // If we're offline but targeting 203.161.50.28, make the request directly instead of through proxy
+          if (shouldUseDirectRequest) {
+            endpoint = api.url;
+            requestOptions = {
+              method: api.method,
+              headers: Object.fromEntries(api.headers.map(h => [h.key, h.value])),
+              // Only add body for methods that support it
+              ...((['POST', 'PUT', 'PATCH'].includes(api.method)) && {
+                body: getRequestBody(api.body)
+              })
+            };
+          }
+      
           try {
-            // Ensure the request body is properly stringified
-            const stringifiedBody = JSON.stringify(proxyRequest);
-            
-            const response = await fetch('http://203.161.50.28:5000/api/proxy', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-              },
-              body: stringifiedBody
-            });
+            const response = await fetch(endpoint, requestOptions);
       
             const endTime = performance.now();
             const responseText = await response.text();
@@ -1365,9 +1444,11 @@ const getApiById = (apiId) => {
               scripts: {
                 preRequest: api.scripts?.preRequest,
                 tests: api.scripts?.tests,
-                testResults: [] // Add test results if you implement test running
+                testResults: []
               },
-              environmentVariables: [] // Add environment variables if you use them
+              environmentVariables: [],
+              isOfflineMode: isOfflineMode,
+              isLocalRequest: isLocalRequest
             };
       
             if (!response.ok) {
@@ -1378,7 +1459,6 @@ const getApiById = (apiId) => {
               };
             }
       
-           
             if (isElectronOffline()) {
               // Save request history offline
               saveRequestHistoryOffline(requestMetrics);
@@ -1401,7 +1481,11 @@ const getApiById = (apiId) => {
               isLoading: false,
               activeResponseTab: 'response-body',
               responseData: {
-                ...responseData,
+                
+                ...(shouldUseDirectRequest 
+                  ? { data: responseData } 
+                  : responseData),        
+                status: response.status,
                 status: response.status,
                 responseTime: requestMetrics.responseTime,
                 size: requestMetrics.responseSize,
@@ -1424,7 +1508,7 @@ const getApiById = (apiId) => {
               url: api.url,
               timestamp: new Date().toISOString(),
               responseTime: Math.round(endTime - startTime),
-              status: 0, // Network error
+              status: 0,
               responseSize: 0,
               success: false,
               apiName: api.name || 'Unnamed API',
@@ -1439,7 +1523,9 @@ const getApiById = (apiId) => {
                 type: 'Network Error',
                 message: networkError.message,
                 details: networkError
-              }
+              },
+              isOfflineMode: isOfflineMode,
+              isLocalRequest: isLocalRequest
             };
       
             if (isElectronOffline()) {
@@ -1490,6 +1576,55 @@ const getApiById = (apiId) => {
             }
           });
         }
+      };
+      
+      // Helper function to check if a URL is a local address
+      const isLocalAddress = (url) => {
+        try {
+          const parsedUrl = new URL(url);
+          const hostname = parsedUrl.hostname;
+          
+          return hostname === '203.161.50.28' || 
+                 hostname === '127.0.0.1' ||
+                 hostname.startsWith('192.168.') ||
+                 hostname.startsWith('10.') ||
+                 hostname.endsWith('.local') ||
+                 hostname.endsWith('.203.161.50.28');
+        } catch (error) {
+          console.error('Error parsing URL:', error);
+          return false;
+        }
+      };
+      
+      // Helper function to get the request body in the appropriate format
+      const getRequestBody = (bodyConfig) => {
+        if (!bodyConfig) return undefined;
+        
+        if (bodyConfig.type === 'raw') {
+          return bodyConfig.content;
+        } else if (bodyConfig.type === 'formData') {
+          const formData = new FormData();
+          if (Array.isArray(bodyConfig.formData)) {
+            bodyConfig.formData.forEach(item => {
+              if (item.enabled !== false) {
+                formData.append(item.key, item.value);
+              }
+            });
+          }
+          return formData;
+        } else if (bodyConfig.type === 'urlencoded') {
+          const params = new URLSearchParams();
+          if (Array.isArray(bodyConfig.urlencoded)) {
+            bodyConfig.urlencoded.forEach(item => {
+              if (item.enabled !== false) {
+                params.append(item.key, item.value);
+              }
+            });
+          }
+          return params;
+        }
+        
+        return undefined;
       };
 
 const getStatusText = (status) => {
@@ -1953,25 +2088,36 @@ const ResponsePanel = ({ api }) => {
       );
     }
   
-    // Only proceed with data rendering if we have data
-    if (!api.responseData.data) {
-      return null;
+    // Check if we have direct response content (for offline requests)
+    // This handles cases where the response doesn't follow the standard structure
+    // that includes a 'data' property
+    const responseContent = api.responseData.data || api.responseData;
+    
+    // Don't render if we have no content to display
+    if (!responseContent || 
+        (typeof responseContent === 'object' && Object.keys(responseContent).length === 0)) {
+      return (
+        <div className="text-gray-500 dark:text-gray-400 italic">
+          No response data available
+        </div>
+      );
     }
   
+    // Handle different response formats
     switch (viewFormat) {
       case 'highlighted':
-        return <JsonHighlighter data={api.responseData.data} />;
+        return <JsonHighlighter data={responseContent} />;
       case 'pretty':
-        return <PrettyJson data={api.responseData.data} />;
+        return <PrettyJson data={responseContent} />;
       case 'raw':
-        return <RawView data={api.responseData.data} />;
+        // For raw view, handle different data types appropriately
+        return <RawView data={typeof responseContent === 'string' ? responseContent : JSON.stringify(responseContent, null, 2)} />;
       case 'xml':
-        return <XMLView data={api.responseData.data} />;
+        return <XMLView data={responseContent} />;
       default:
-        return <JsonHighlighter data={api.responseData.data} />;
+        return <JsonHighlighter data={responseContent} />;
     }
   };
-
   if (!api) return null;
 
   return (
