@@ -2322,14 +2322,25 @@ const methodColors = {
         const hasAuth = () => {
           if (!api.auth) return false;
           
-          return api.auth.type !== 'none' && (
-            api.auth.bearer || 
-            safeGet(api.auth, 'basic.username') || 
-            safeGet(api.auth, 'basic.password') ||
-            api.auth.apiKey
-          );
+          switch (api.auth.type) {
+            case 'none':
+              return false;
+            case 'config-jwt':
+              return api.auth.jwt && (
+                (api.auth.jwt.pairs && api.auth.jwt.pairs.length > 0 && 
+                 api.auth.jwt.pairs.some(pair => pair.key && pair.value)) ||
+                (api.auth.jwt.key && api.auth.jwt.value)
+              );
+            case 'avq-jwt':
+              return api.auth.avqJwt && api.auth.avqJwt.token;
+            default:
+              return api.auth.bearer || 
+                safeGet(api.auth, 'basic.username') || 
+                safeGet(api.auth, 'basic.password') ||
+                api.auth.apiKey;
+          }
         };
-      
+
         const hasHeaders = () => {
           return Array.isArray(api.headers) && 
             api.headers.some(header => header?.key || header?.value);
@@ -2485,7 +2496,39 @@ const methodColors = {
           const value = e.target.value;
           let updatedAuth;
           
-          if (value.startsWith('template_')) {
+          if (value === 'none') {
+            updatedAuth = {
+              type: value
+            };
+          } else if (value === 'config-jwt') {
+            // Simple JWT similar to Postman
+            updatedAuth = {
+              type: value,
+              jwt: {
+                pairs: [
+                  { key: '', value: '' }
+                ]
+              }
+            };
+          } else if (value === 'avq-jwt') {
+            // Predefined key-value pairs for AVQ JWT
+            updatedAuth = {
+              type: value,
+              avqJwt: {
+                token: '',
+                pairs: [
+                  { key: "sub", value: "sfdf" },
+                  { key: "aud", value: "dfdf" },
+                  { key: "avq_roles", value: "dffdsf" },
+                  { key: "iss", value: "dfdsf" },
+                  { key: "avaloq_bu_id", value: "12" },
+                  { key: "avq_bu", value: "dfdf" },
+                  { key: "exp", value: "3600" }
+                ]
+              }
+            };
+          } else if (value.startsWith('template_')) {
+            // Template-based JWT
             const templateId = value.replace('template_', '');
             const selectedTemplate = dbTemplates.find(t => t._id === templateId);
             
@@ -2497,32 +2540,28 @@ const methodColors = {
                 }
               };
             }
-          } else if (value === 'custom-jwt') {
-            updatedAuth = {
-              type: value,
-              customJwt: {
-                selected: '',
-                token: '',
-                pairs: []
-              }
-            };
           } else {
+            // Default fallback
             updatedAuth = {
               ...api.auth,
               type: value
             };
           }
           
-          // Update auth and headers simultaneously
-          const updatedApi = {
-            auth: updatedAuth
-          };
-          
-          // Update headers based on new auth
-          updatedApi.headers = updateHeadersWithAuth({...api, auth: updatedAuth});
-          
-          updateApiState(activeFolderId, activeApiId, updatedApi);
+          // Update auth without updating headers initially for avq-jwt
+          if (value === 'avq-jwt') {
+            updateApiState(activeFolderId, activeApiId, {
+              auth: updatedAuth
+            });
+          } else {
+            // For other auth types, update both auth and headers
+            updateApiState(activeFolderId, activeApiId, {
+              auth: updatedAuth,
+              headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+            });
+          }
         };
+       
 
         const buildUrlWithParams = (baseUrl, params) => {
           // Don't return early if there are empty params - process them anyway
@@ -2664,30 +2703,34 @@ const methodColors = {
           if (api.auth) {
             switch(api.auth.type) {
               case 'config-jwt':
-                if (api.auth.jwt?.pairs) {
-                  // For template-based JWT
+                if (api.auth.jwt?.pairs && api.auth.jwt.pairs.length > 0) {
+                  // For template-based JWT or multiple pairs
                   const jwtPayload = {};
                   api.auth.jwt.pairs.forEach(pair => {
                     if (pair.key) jwtPayload[pair.key] = pair.value || '';
                   });
-                  const token = generateJWT(jwtPayload);
-                  filteredHeaders.push({ key: 'Authorization', value: `Bearer ${token}` });
+                  
+                  // Only generate token if there's at least one valid pair
+                  if (Object.keys(jwtPayload).length > 0) {
+                    const token = generateJWT(jwtPayload);
+                    filteredHeaders.push({ key: 'Authorization', value: `Bearer ${token}` });
+                  }
                 } else if (api.auth.jwt?.key && api.auth.jwt?.value) {
                   // For single key-value JWT
-                  filteredHeaders.push({ key: 'Authorization', value: `Bearer ${api.auth.jwt.value}` });
+                  const jwtPayload = { [api.auth.jwt.key]: api.auth.jwt.value };
+                  const token = generateJWT(jwtPayload);
+                  filteredHeaders.push({ key: 'Authorization', value: `Bearer ${token}` });
                 }
                 break;
+                
               case 'avq-jwt':
-                if (api.auth.avqJwt?.value) {
-                  filteredHeaders.push({ key: 'Authorization', value: `Bearer ${api.auth.avqJwt.value}` });
+                // For AVQ JWT, only add header if token is explicitly generated
+                if (api.auth.avqJwt?.token) {
+                  filteredHeaders.push({ key: 'Authorization', value: `Bearer ${api.auth.avqJwt.token}` });
                 }
                 break;
-              case 'custom-jwt':
-                if (api.auth.customJwt?.token) {
-                  filteredHeaders.push({ key: 'Authorization', value: `Bearer ${api.auth.customJwt.token}` });
-                }
-                break;
-              // Add other auth types as needed
+                
+              // Other auth types can be added here as needed
             }
           }
           
@@ -2807,174 +2850,225 @@ const methodColors = {
           </button>
         </div>
       )}
-      {activeTab === 'authorization' && (
-        <div className="space-y-3">
-        <select
-  value={api.auth.type}
-  onChange={handleAuthTypeChange}
-  className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
->
-  <option value="none">No Auth</option>
-  <option value="config-jwt">Config JWT</option>
-  <option value="custom-jwt">Avq JWT</option>
-  {dbTemplates.length > 0 && (
-    <optgroup label="Saved Templates">
-      {dbTemplates.map(template => (
-        <option key={template._id} value={`template_${template._id}`}>
-          Template: {template.name}
-        </option>
-      ))}
-    </optgroup>
-  )}
-</select>
-
-      {api.auth.type === 'config-jwt' && (
-        <div className="space-y-3">
-          <div className="flex space-x-2">
-            {api.auth.jwt?.pairs ? (
-              // Display template pairs if they exist
-              <div className="w-full space-y-2">
-                {api.auth.jwt.pairs.map((pair, index) => (
-                  <div key={index} className="flex space-x-2">
-                    <input
-                      type="text"
-                      placeholder="Key"
-                      value={pair.key || ''}
-                      onChange={(e) => {
-                        const newPairs = [...api.auth.jwt.pairs];
-                        newPairs[index] = { ...pair, key: e.target.value };
-                        updateApiState(activeFolderId, activeApiId, {
-                          auth: { 
-                            ...api.auth, 
-                            jwt: { ...api.auth.jwt, pairs: newPairs }
-                          }
-                        });
-                      }}
-                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Value"
-                      value={pair.value || ''}
-                      onChange={(e) => {
-                        const newPairs = [...api.auth.jwt.pairs];
-                        newPairs[index] = { ...pair, value: e.target.value };
-                        updateApiState(activeFolderId, activeApiId, {
-                          auth: { 
-                            ...api.auth, 
-                            jwt: { ...api.auth.jwt, pairs: newPairs }
-                          }
-                        });
-                      }}
-                      className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              // Display single key-value pair if no template is selected
-              <>
-                <input
-                  type="text"
-                  placeholder="Key"
-                  value={api.auth.jwt?.key || ''}
-                  onChange={(e) => updateApiState(activeFolderId, activeApiId, {
-                    auth: { 
-                      ...api.auth, 
-                      jwt: { ...api.auth.jwt, key: e.target.value }
-                    }
-                  })}
-                  className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-                />
-                <input
-                  type="text"
-                  placeholder="Value"
-                  value={api.auth.jwt?.value || ''}
-                  onChange={(e) => updateApiState(activeFolderId, activeApiId, {
-                    auth: { 
-                      ...api.auth, 
-                      jwt: { ...api.auth.jwt, value: e.target.value }
-                    }
-                  })}
-                  className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-                />
-              </>
-            )}
-          </div>
-        </div>
-      )}
-      {api.auth.type === 'custom-jwt' && (
+    {activeTab === 'authorization' && (
   <div className="space-y-3">
     <select
-      value={api.auth.customJwt?.selected || ''}
-      onChange={(e) => {
-        const selectedJwt = customJwtConfigs.find(c => c.id === e.target.value);
-        if (selectedJwt) {
-          const updatedAuth = {
-            ...api.auth,
-            customJwt: {
-              selected: selectedJwt.id,
-              token: api.auth.customJwt?.token || '',
-              pairs: selectedJwt.pairs || []
-            }
-          };
-          const updatedApi = {
-            auth: updatedAuth,
-            headers: updateHeadersWithAuth({...api, auth: updatedAuth})
-          };
-          updateApiState(activeFolderId, activeApiId, updatedApi);
-        }
-      }}
+      value={api.auth.type}
+      onChange={handleAuthTypeChange}
       className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
     >
-      <option value="">Select JWT Configuration</option>
-      {customJwtConfigs.map(config => (
-        <option key={config.id} value={config.id}>
-          {config.name}
-        </option>
-      ))}
+      <option value="none">No Auth</option>
+      <option value="config-jwt">Config JWT</option>
+      <option value="avq-jwt">Avq JWT</option>
+      {dbTemplates.length > 0 && (
+        <optgroup label="Saved Templates">
+          {dbTemplates.map(template => (
+            <option key={template._id} value={`template_${template._id}`}>
+              Template: {template.name}
+            </option>
+          ))}
+        </optgroup>
+      )}
     </select>
-    
-    <div className="w-full">
-      <input
-        type="text"
-        placeholder="Enter JWT Token"
-        value={api.auth.customJwt?.token || ''}
-        onChange={(e) => {
-          const updatedAuth = {
-            ...api.auth,
-            customJwt: {
-              ...api.auth.customJwt,
-              token: e.target.value
-            }
-          };
-          const updatedApi = {
-            auth: updatedAuth,
-            headers: updateHeadersWithAuth({...api, auth: updatedAuth})
-          };
-          updateApiState(activeFolderId, activeApiId, updatedApi);
-        }}
-        className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-      />
-    </div>
-    
-    {api.auth.customJwt?.pairs && api.auth.customJwt.pairs.length > 0 && (
-      <div className="p-3 bg-gray-100 dark:bg-gray-700 rounded-md">
-        <h3 className="font-medium mb-2">Predefined Claims:</h3>
-        <div className="space-y-1">
-          {api.auth.customJwt.pairs.map((pair, index) => (
-            <div key={index} className="flex justify-between">
-              <span className="font-medium">{pair.key}:</span>
-              <span>{pair.value}</span>
+
+    {/* Config JWT UI */}
+    {api.auth.type === 'config-jwt' && (
+      <div className="space-y-3">
+        <div className="w-full space-y-2">
+          {api.auth.jwt?.pairs && api.auth.jwt.pairs.map((pair, index) => (
+            <div key={index} className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="Key"
+                value={pair.key || ''}
+                onChange={(e) => {
+                  const newPairs = [...api.auth.jwt.pairs];
+                  newPairs[index] = { ...pair, key: e.target.value };
+                  const updatedAuth = {
+                    ...api.auth, 
+                    jwt: { ...api.auth.jwt, pairs: newPairs }
+                  };
+                  updateApiState(activeFolderId, activeApiId, {
+                    auth: updatedAuth,
+                    headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+                  });
+                }}
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              />
+              <input
+                type="text"
+                placeholder="Value"
+                value={pair.value || ''}
+                onChange={(e) => {
+                  const newPairs = [...api.auth.jwt.pairs];
+                  newPairs[index] = { ...pair, value: e.target.value };
+                  const updatedAuth = {
+                    ...api.auth, 
+                    jwt: { ...api.auth.jwt, pairs: newPairs }
+                  };
+                  updateApiState(activeFolderId, activeApiId, {
+                    auth: updatedAuth,
+                    headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+                  });
+                }}
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              />
             </div>
           ))}
+          
+          {/* Add field button */}
+          <button
+            onClick={() => {
+              const newPairs = [...(api.auth.jwt?.pairs || []), { key: '', value: '' }];
+              const updatedAuth = {
+                ...api.auth,
+                jwt: { ...api.auth.jwt, pairs: newPairs }
+              };
+              updateApiState(activeFolderId, activeApiId, {
+                auth: updatedAuth,
+                headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+              });
+            }}
+            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
+          >
+            Add Field
+          </button>
         </div>
       </div>
     )}
+
+    {/* AVQ JWT UI */}
+    {api.auth.type === 'avq-jwt' && (
+      <div className="space-y-3">
+        {/* Predefined key-value pairs for AVQ JWT */}
+        <div className="w-full space-y-2">
+          {api.auth.avqJwt?.pairs && api.auth.avqJwt.pairs.map((pair, index) => (
+            <div key={index} className="flex space-x-2">
+              <input
+                type="text"
+                placeholder="Key"
+                value={pair.key || ''}
+                onChange={(e) => {
+                  const newPairs = [...api.auth.avqJwt.pairs];
+                  newPairs[index] = { ...pair, key: e.target.value };
+                  const updatedAuth = {
+                    ...api.auth,
+                    avqJwt: { ...api.auth.avqJwt, pairs: newPairs }
+                  };
+                  updateApiState(activeFolderId, activeApiId, {
+                    auth: updatedAuth
+                  });
+                }}
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              />
+              <input
+                type="text"
+                placeholder="Value"
+                value={pair.value || ''}
+                onChange={(e) => {
+                  const newPairs = [...api.auth.avqJwt.pairs];
+                  newPairs[index] = { ...pair, value: e.target.value };
+                  const updatedAuth = {
+                    ...api.auth,
+                    avqJwt: { ...api.auth.avqJwt, pairs: newPairs }
+                  };
+                  updateApiState(activeFolderId, activeApiId, {
+                    auth: updatedAuth
+                  });
+                }}
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              />
+            </div>
+          ))}
+          
+          {/* Button to add new key-value pair */}
+          <button
+            onClick={() => {
+              const newPairs = [...(api.auth.avqJwt?.pairs || []), { key: '', value: '' }];
+              const updatedAuth = {
+                ...api.auth,
+                avqJwt: { ...api.auth.avqJwt, pairs: newPairs }
+              };
+              updateApiState(activeFolderId, activeApiId, {
+                auth: updatedAuth
+              });
+            }}
+            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
+          >
+            Add Field
+          </button>
+        </div>
+        
+        {/* Token input field */}
+        <div className="w-full">
+          <input
+            type="text"
+            placeholder="Enter JWT Token"
+            value={api.auth.avqJwt?.token || ''}
+            onChange={(e) => {
+              const updatedAuth = {
+                ...api.auth,
+                avqJwt: {
+                  ...api.auth.avqJwt,
+                  token: e.target.value
+                }
+              };
+              
+              // Only update headers when a token is manually entered
+              const updatedApi = {
+                auth: updatedAuth
+              };
+              
+              if (e.target.value) {
+                updatedApi.headers = updateHeadersWithAuth({
+                  ...api, 
+                  auth: updatedAuth
+                });
+              } else {
+                // Remove auth header if token is cleared
+                updatedApi.headers = api.headers.filter(h => 
+                  h.key !== 'Authorization');
+              }
+              
+              updateApiState(activeFolderId, activeApiId, updatedApi);
+            }}
+            className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+          />
+        </div>
+        
+        {/* Generate token button */}
+        <button
+          onClick={() => {
+            // Create payload from key-value pairs
+            const payload = {};
+            api.auth.avqJwt.pairs.forEach(pair => {
+              if (pair.key) payload[pair.key] = pair.value || '';
+            });
+            
+            // Generate token
+            const token = generateJWT(payload);
+            
+            // Update state with generated token and add to headers
+            const updatedAuth = {
+              ...api.auth,
+              avqJwt: {
+                ...api.auth.avqJwt,
+                token
+              }
+            };
+            
+            updateApiState(activeFolderId, activeApiId, {
+              auth: updatedAuth,
+              headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+            });
+          }}
+          className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md text-sm"
+        >
+          Generate Token
+        </button>
+      </div>
+    )}
   </div>
-)}
-      
-    </div>
 )}
 
 {activeTab === 'headers' && (

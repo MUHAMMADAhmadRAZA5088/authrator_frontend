@@ -24,14 +24,14 @@
     "recharts": "^2.15.0",
     "xml-js": "^1.6.11"
   },
- "scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build && copy public\\electron.js build\\",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject",
-  "electron": "electron .",
-  "dist": "npm run build && electron-builder --win nsis"
-},
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && copy public\\electron.js build\\",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "dist": "npm run build && electron-builder --win portable"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -55,24 +55,22 @@
     "electron-builder": "^24.13.3",
     "tailwindcss": "^3.4.17"
   },
- "build": {
-  "appId": "com.yourapp.id",
-  "productName": "Authrator",
-  "win": {
-    "target": "nsis",
-    "icon": "icon.png",
-    "signAndEditExecutable": false
-  },
-  "nsis": {
-    "oneClick": false,
-    "perMachine": true,
-    "allowToChangeInstallationDirectory": true
-  },
-  "files": [
-    "build/**/*"
-  ],
-  "directories": {
-    "buildResources": "assets"
-  }
+  "build": {
+    "appId": "com.yourapp.id",
+    "productName": "Authrator",
+    "win": {
+      "target": ["portable"],
+      "icon": "icon.png",
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}.exe"
+    },
+    "files": [
+      "build/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
   }
 }
