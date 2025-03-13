@@ -281,6 +281,7 @@ const FooterButton = ({ icon: Icon, label, onClick }) => (
 
 
   const handleApiClick = (folderId, api) => {
+    setActiveSection('collections');
     openNewTab(folderId, api);
     setIsSidebarOpen(false);
     setIsPerformanceTesting(false);
@@ -3788,6 +3789,8 @@ return (
         openNewTab={openNewTab}
         closeTab={closeTab}
         openTabs={openTabs}
+        setActiveSection={setActiveSection}
+        setIsPerformanceTesting={setIsPerformanceTesting}
       />
   
   
@@ -3930,7 +3933,7 @@ return (
 </main>
 
         
-        {!isMobile && (
+        {/* {!isMobile && (
           <div className=" bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700 flex">
         
             <div className="w-14 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
@@ -3951,7 +3954,7 @@ return (
 
           
           </div>
-        )}
+        )} */}
       </div>
 
    

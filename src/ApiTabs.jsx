@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, X, MoreVertical, Trash2, Pencil } from 'lucide-react';
 
-const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openNewTab, closeTab, openTabs }) => {
+const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openNewTab, closeTab, openTabs, setActiveSection, setIsPerformanceTesting }) => {
   // State to track hidden tabs
   const [hiddenTabs, setHiddenTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(activeApiId);
@@ -34,6 +34,8 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
   // Function to handle tab selection
   const handleTabSelect = (api) => {
     setActiveTab(api.id);
+    setActiveSection('collections');
+    setIsPerformanceTesting(false);
     // If the tab was hidden, unhide it
     if (hiddenTabs.includes(api.id)) {
       setHiddenTabs(hiddenTabs.filter(id => id !== api.id));
