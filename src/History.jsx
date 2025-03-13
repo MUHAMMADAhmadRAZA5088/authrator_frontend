@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Search, Calendar, MoreVertical, Weight, Link2, X, Wifi, WifiOff } from 'lucide-react';
+import { Clock, Search, Calendar, MoreVertical, Weight, Link2, X, Wifi, WifiOff, Copy, Info } from 'lucide-react';
+import CustomDropdown from './CustomDropdown';
+import Toast from './Toast';
 
 const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -8,6 +10,21 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+
+  // Add function to clean up old records
+  const cleanupOldRecords = (records) => {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    return records.filter(record => new Date(record.timestamp) >= thirtyDaysAgo);
+  };
+
+  // Add function to save cleaned history
+  const saveCleanHistory = (history) => {
+    const cleanedHistory = cleanupOldRecords(history);
+    localStorage.setItem('requestHistory', JSON.stringify(cleanedHistory));
+    return cleanedHistory;
+  };
 
   const isElectron = () => {
     return navigator.userAgent.indexOf('Electron') !== -1 || 
@@ -55,13 +72,16 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
     // Check if offline in Electron
     if (isElectronOffline()) {
       try {
-        // Load history from local storage
+        // Load history from local storage and clean up old records
         const localHistory = localStorage.getItem('requestHistory')
           ? JSON.parse(localStorage.getItem('requestHistory'))
           : [];
           
+        // Clean up old records and save back to localStorage
+        const cleanedHistory = saveCleanHistory(localHistory);
+          
         // Filter by current user if needed
-        const userHistory = localHistory.filter(item => item.userId === userId);
+        const userHistory = cleanedHistory.filter(item => item.userId === userId);
         setRequestHistories(userHistory);
       } catch (error) {
         console.error('Failed to load local request history:', error);
@@ -266,15 +286,34 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
                     <span className="truncate max-w-md">{request?.url}</span>
                   </div>
                 </div>
-                <button 
-                  className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleShowDetails(request);
-                  }}
-                >
-                  <MoreVertical className="w-4 h-4 text-gray-500" />
-                </button>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <CustomDropdown trigger={<MoreVertical className="w-4 h-4 text-gray-500 z-50" />}>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(request.url);
+                        setToast({
+                          show: true,
+                          message: 'URL copied to clipboard',
+                          type: 'success'
+                        });
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                    >
+                      <Copy className="w-4 h-4" />
+                      <span>Copy URL</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedRequest(request);
+                        setShowDetailsModal(true);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                    >
+                      <Info className="w-4 h-4" />
+                      <span>View Details</span>
+                    </button>
+                  </CustomDropdown>
+                </div>
               </div>
               
               <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
@@ -325,6 +364,13 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             setShowDetailsModal(false);
             setSelectedRequest(null);
           }} 
+        />
+      )}
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, show: false })}
         />
       )}
     </div>

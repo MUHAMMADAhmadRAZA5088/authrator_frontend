@@ -3,7 +3,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, BarChart, Bar
 } from 'recharts';
-import { Play, StopCircle, X, Settings, FolderOpen, ChevronDown } from 'lucide-react';
+import { Play, StopCircle, X, Settings, FolderOpen, ChevronDown, Download } from 'lucide-react';
 
 const PerformanceTestingPanel = ({ 
   collections,
@@ -192,16 +192,73 @@ const PerformanceTestingPanel = ({
     }
   };
 
+  const generateReport = () => {
+    const apiSummaries = selectedApis.map(api => {
+      const apiData = results.responseTimeData.filter(d => d.api === api.name);
+      const avgTime = apiData.reduce((acc, curr) => acc + curr.responseTime, 0) / apiData.length || 0;
+      const successRate = ((apiData.length / (testConfig.iterations / selectedApis.length)) * 100);
+      
+      return {
+        name: api.name,
+        method: api.method,
+        url: api.url,
+        averageResponseTime: avgTime,
+        successRate: successRate,
+        totalRequests: apiData.length
+      };
+    });
+
+    const report = {
+      timestamp: new Date().toISOString(),
+      testConfiguration: {
+        ...testConfig,
+        totalApis: selectedApis.length,
+      },
+      overallSummary: results.summary,
+      apiDetails: apiSummaries,
+      rawData: {
+        responseTimeData: results.responseTimeData,
+        throughputData: results.throughputData
+      }
+    };
+
+    return report;
+  };
+
+  const downloadReport = () => {
+    const report = generateReport();
+    const reportBlob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(reportBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `performance-test-report-${new Date().toISOString().split('.')[0].replace(/:/g, '-')}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex flex-col h-full bg-white dark:bg-gray-900 dark:text-gray-300">
       <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Performance Testing</h2>
-        <button
-          onClick={onClose}
-          className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        <div className="flex items-center gap-2">
+          {results.responseTimeData.length > 0 && (
+            <button
+              onClick={downloadReport}
+              className="flex items-center px-3 py-1.5 text-sm rounded-md text-white bg-green-500 hover:bg-green-600"
+            >
+              <Download className="w-4 h-4 mr-1" />
+              Download Report
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
       </div>
 
 
@@ -221,7 +278,9 @@ const PerformanceTestingPanel = ({
             </button>
             {showCollectionSelect && (
               <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
-                {collections.map(collection => (
+                {collections
+                  .filter(collection => collection.id !== 'temp-99999' && collection.name !== 'Unsaved Requests' && collection.name !== 'History Requests 9999999')
+                  .map(collection => (
                   <button
                     key={collection.id}
                     onClick={() => handleSelectCollection(collection)}

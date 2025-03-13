@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Settings, Check, Trash, Plus, Search, Edit2, X, 
-  Database, Lock, Save, RefreshCw
+  Database, Lock, Save, RefreshCw, Copy, Eye, EyeOff
 } from 'lucide-react';
 
 const LOCAL_STORAGE_KEY = 'app_environments';
@@ -14,6 +14,7 @@ const EnvironmentManagementPanel = ({ onClose }) => {
   const [editMode, setEditMode] = useState(null);
   const [envVariableInputs, setEnvVariableInputs] = useState({});
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showValues, setShowValues] = useState({});
 
   // Load environments from localStorage on component mount
   useEffect(() => {
@@ -44,7 +45,6 @@ const EnvironmentManagementPanel = ({ onClose }) => {
 
   // Save environments to localStorage whenever they change
   useEffect(() => {
-    // Only save after initial load to prevent overwriting with empty data
     if (isInitialized) {
       try {
         const dataToStore = {
@@ -52,7 +52,6 @@ const EnvironmentManagementPanel = ({ onClose }) => {
           activeEnvironmentId: activeEnvironment?.id || null
         };
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToStore));
-        console.log("Saved to localStorage:", dataToStore);
       } catch (error) {
         console.error("Error saving environments to localStorage:", error);
       }
@@ -71,18 +70,12 @@ const EnvironmentManagementPanel = ({ onClose }) => {
       variables: {} 
     };
     
-    const updatedEnvironments = [...environments, newEnvironment];
-    setEnvironments(updatedEnvironments);
+    setEnvironments([...environments, newEnvironment]);
     setNewEnvName('');
-    
-    // Debug log
-    console.log("Added new environment:", newEnvironment);
-    console.log("Updated environments list:", updatedEnvironments);
   };
 
   const handleEnvChange = (env) => {
     setActiveEnvironment(env);
-    console.log("Set active environment:", env);
   };
 
   const handleDeleteEnv = (envId) => {
@@ -92,9 +85,6 @@ const EnvironmentManagementPanel = ({ onClose }) => {
     if (activeEnvironment?.id === envId) {
       setActiveEnvironment(null);
     }
-    
-    console.log("Deleted environment ID:", envId);
-    console.log("Updated environments list:", updatedEnvironments);
   };
 
   const handleUpdateEnv = (updatedEnv) => {
@@ -107,8 +97,6 @@ const EnvironmentManagementPanel = ({ onClose }) => {
     if (activeEnvironment?.id === updatedEnv.id) {
       setActiveEnvironment(updatedEnv);
     }
-    
-    console.log("Updated environment:", updatedEnv);
   };
 
   const handleVariableChange = (envId, field, value) => {
@@ -127,39 +115,30 @@ const EnvironmentManagementPanel = ({ onClose }) => {
     const initialValue = inputs.initialValue || '';
     const currentValue = inputs.currentValue || initialValue || '';
     
-    // Create a deep copy of the environment to update
     const updatedEnv = JSON.parse(JSON.stringify(env));
-    
-    // Add the new variable
     updatedEnv.variables[name] = {
       initialValue: initialValue,
-      currentValue: currentValue
+      currentValue: currentValue,
+      type: 'text'
     };
     
-    // Update the environments array
     const updatedEnvironments = environments.map(e => 
       e.id === env.id ? updatedEnv : e
     );
     
     setEnvironments(updatedEnvironments);
     
-    // Update active environment if needed
     if (activeEnvironment?.id === env.id) {
       setActiveEnvironment(updatedEnv);
     }
     
-    // Clear input fields after adding
     setEnvVariableInputs(prev => ({ 
       ...prev, 
       [env.id]: { name: '', initialValue: '', currentValue: '' } 
     }));
-    
-    console.log("Added variable to environment:", name, updatedEnv);
-    console.log("Updated environments list:", updatedEnvironments);
   };
 
   const handleEditVariable = (env, variableName, field, value) => {
-    // Create deep copies to ensure state updates properly
     const updatedEnv = JSON.parse(JSON.stringify(env));
     updatedEnv.variables[variableName][field] = value;
     
@@ -172,12 +151,9 @@ const EnvironmentManagementPanel = ({ onClose }) => {
     if (activeEnvironment?.id === env.id) {
       setActiveEnvironment(updatedEnv);
     }
-    
-    console.log(`Updated ${field} for variable ${variableName}:`, updatedEnv);
   };
 
   const handleRemoveVariable = (env, variableName) => {
-    // Create deep copy of environment
     const updatedEnv = JSON.parse(JSON.stringify(env));
     delete updatedEnv.variables[variableName];
     
@@ -190,13 +166,26 @@ const EnvironmentManagementPanel = ({ onClose }) => {
     if (activeEnvironment?.id === env.id) {
       setActiveEnvironment(updatedEnv);
     }
-    
-    console.log(`Removed variable ${variableName} from:`, updatedEnv);
   };
 
   const resetToInitialValue = (env, variableName) => {
     const initialValue = env.variables[variableName].initialValue;
     handleEditVariable(env, variableName, 'currentValue', initialValue);
+  };
+
+  const toggleValueVisibility = (envId, variableName) => {
+    setShowValues(prev => ({
+      ...prev,
+      [`${envId}_${variableName}`]: !prev[`${envId}_${variableName}`]
+    }));
+  };
+
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
   };
 
   return (
@@ -263,85 +252,95 @@ const EnvironmentManagementPanel = ({ onClose }) => {
                   </div>
                 </div>
 
-                {/* Postman-like Variables Table */}
                 <div className="mb-4">
                   <div className="bg-gray-100 dark:bg-gray-750 rounded-t-md p-2 border border-gray-200 dark:border-gray-600 flex items-center">
-                    <div className="w-1/3 text-sm font-medium text-gray-700 dark:text-gray-300">VARIABLE</div>
-                    <div className="w-1/3 text-sm font-medium text-gray-700 dark:text-gray-300">INITIAL VALUE</div>
-                    <div className="w-1/3 text-sm font-medium text-gray-700 dark:text-gray-300">CURRENT VALUE</div>
+                    <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-gray-300">VARIABLE</div>
+                    <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-gray-300">INITIAL VALUE</div>
+                    <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-gray-300">CURRENT VALUE</div>
+                    <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-gray-300">TYPE</div>
                     <div className="w-16"></div>
                   </div>
                   
                   {Object.keys(env.variables || {}).length > 0 ? (
                     <div className="bg-white dark:bg-gray-800 rounded-b-md border-x border-b border-gray-200 dark:border-gray-600 divide-y divide-gray-100 dark:divide-gray-700">
-                      {Object.entries(env.variables || {}).map(([key, variable]) => (
+                      {Object.entries(env.variables).map(([key, variable]) => (
                         <div key={key} className="flex items-center p-2">
-                          <div className="w-1/3 px-2">
-                            {editMode === `${env.id}_${key}` ? (
-                              <input
-                                className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
-                                value={key}
-                                disabled={true}
-                              />
-                            ) : (
-                              <div className="flex items-center">
-                                <Lock className="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2" />
-                                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{key}</span>
-                              </div>
-                            )}
+                          <div className="w-1/4 px-2">
+                            <div className="flex items-center">
+                              <Lock className="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2" />
+                              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{key}</span>
+                            </div>
                           </div>
-                          <div className="w-1/3 px-2">
-                            {editMode === `${env.id}_${key}` ? (
+                          <div className="w-1/4 px-2">
+                            <div className="relative">
                               <input
-                                className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
+                                type={showValues[`${env.id}_${key}_initial`] ? "text" : "password"}
+                                className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-transparent"
                                 value={variable.initialValue}
                                 onChange={(e) => handleEditVariable(env, key, 'initialValue', e.target.value)}
                               />
-                            ) : (
-                              <span className="text-sm text-gray-600 dark:text-gray-400">{variable.initialValue}</span>
-                            )}
+                              <button
+                                onClick={() => toggleValueVisibility(env.id, `${key}_initial`)}
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                              >
+                                {showValues[`${env.id}_${key}_initial`] ? (
+                                  <EyeOff className="w-4 h-4 text-gray-500" />
+                                ) : (
+                                  <Eye className="w-4 h-4 text-gray-500" />
+                                )}
+                              </button>
+                            </div>
                           </div>
-                          <div className="w-1/3 px-2">
-                            {editMode === `${env.id}_${key}` ? (
+                          <div className="w-1/4 px-2">
+                            <div className="relative">
                               <input
-                                className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
+                                type={showValues[`${env.id}_${key}_current`] ? "text" : "password"}
+                                className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-transparent"
                                 value={variable.currentValue}
                                 onChange={(e) => handleEditVariable(env, key, 'currentValue', e.target.value)}
                               />
-                            ) : (
-                              <span className="text-sm text-gray-600 dark:text-gray-400">{variable.currentValue}</span>
-                            )}
+                              <button
+                                onClick={() => toggleValueVisibility(env.id, `${key}_current`)}
+                                className="absolute right-2 top-1/2 transform -translate-y-1/2"
+                              >
+                                {showValues[`${env.id}_${key}_current`] ? (
+                                  <EyeOff className="w-4 h-4 text-gray-500" />
+                                ) : (
+                                  <Eye className="w-4 h-4 text-gray-500" />
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                          <div className="w-1/4 px-2">
+                            <select
+                              className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-transparent"
+                              value={variable.type || 'text'}
+                              onChange={(e) => handleEditVariable(env, key, 'type', e.target.value)}
+                            >
+                              <option value="text">Text</option>
+                              <option value="secret">Secret</option>
+                              <option value="default">Default</option>
+                            </select>
                           </div>
                           <div className="w-16 flex justify-end space-x-1">
-                            {editMode === `${env.id}_${key}` ? (
-                              <button 
-                                onClick={() => setEditMode(null)} 
-                                className="p-1 hover:bg-green-100 dark:hover:bg-green-900/30 rounded-md"
-                              >
-                                <Save className="w-4 h-4 text-green-500" />
-                              </button>
-                            ) : (
-                              <>
-                                <button 
-                                  onClick={() => setEditMode(`${env.id}_${key}`)} 
-                                  className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
-                                >
-                                  <Edit2 className="w-4 h-4 text-gray-500" />
-                                </button>
-                                <button 
-                                  onClick={() => resetToInitialValue(env, key)} 
-                                  className="p-1 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md"
-                                >
-                                  <RefreshCw className="w-4 h-4 text-blue-500" />
-                                </button>
-                                <button 
-                                  onClick={() => handleRemoveVariable(env, key)} 
-                                  className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md"
-                                >
-                                  <Trash className="w-4 h-4 text-red-500" />
-                                </button>
-                              </>
-                            )}
+                            <button 
+                              onClick={() => copyToClipboard(variable.currentValue)}
+                              className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                            >
+                              <Copy className="w-4 h-4 text-gray-500" />
+                            </button>
+                            <button 
+                              onClick={() => resetToInitialValue(env, key)} 
+                              className="p-1 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md"
+                            >
+                              <RefreshCw className="w-4 h-4 text-blue-500" />
+                            </button>
+                            <button 
+                              onClick={() => handleRemoveVariable(env, key)} 
+                              className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md"
+                            >
+                              <Trash className="w-4 h-4 text-red-500" />
+                            </button>
                           </div>
                         </div>
                       ))}
@@ -353,30 +352,38 @@ const EnvironmentManagementPanel = ({ onClose }) => {
                   )}
                 </div>
                 
-                {/* Add New Variable Form */}
                 <div className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-600 p-3">
                   <div className="flex space-x-2">
                     <input
                       type="text"
                       placeholder="Variable name"
-                      className="w-1/3 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+                      className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
                       value={(envVariableInputs[env.id]?.name || '')}
                       onChange={(e) => handleVariableChange(env.id, 'name', e.target.value)}
                     />
                     <input
                       type="text"
                       placeholder="Initial value"
-                      className="w-1/3 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+                      className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
                       value={(envVariableInputs[env.id]?.initialValue || '')}
                       onChange={(e) => handleVariableChange(env.id, 'initialValue', e.target.value)}
                     />
                     <input
                       type="text"
                       placeholder="Current value"
-                      className="w-1/3 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+                      className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
                       value={(envVariableInputs[env.id]?.currentValue || '')}
                       onChange={(e) => handleVariableChange(env.id, 'currentValue', e.target.value)}
                     />
+                    <select
+                      className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+                      value={(envVariableInputs[env.id]?.type || 'text')}
+                      onChange={(e) => handleVariableChange(env.id, 'type', e.target.value)}
+                    >
+                      <option value="text">Text</option>
+                      <option value="secret">Secret</option>
+                      <option value="default">Default</option>
+                    </select>
                     <button
                       onClick={() => handleAddVariable(env)}
                       className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md"

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Settings,Check, Trash, AlertTriangle, Clock,Send, Folder,Menu, Plus,Search,Edit2, X, ChevronDown, Save ,Sun,Moon, PlusCircle, FolderClosed, Database, Lock, Code, CodeSquare, Circle, ExternalLink, ArrowUpDown, Download, Copy, Trash2, Pencil, MoreVertical, Play, Terminal, FolderCheckIcon, HistoryIcon, Info, MessageSquare, Wifi, KeyRound, Cookie, MousePointer2, Antenna, Rotate3d, TerminalSquare, Dot, MoreHorizontal, LayoutTemplate, DatabaseZapIcon} from 'lucide-react';
+import { Settings,Check, Trash, AlertTriangle, Clock,Send, Folder,Menu, Plus,Search,Edit2, X, ChevronDown, Save ,Sun,Moon, PlusCircle, FolderClosed, Database, Lock, Code, CodeSquare, Circle, ExternalLink, ArrowUpDown, Download, Copy, Trash2, Pencil, MoreVertical, Play, Terminal, FolderCheckIcon, HistoryIcon, Info, MessageSquare, Wifi, KeyRound, Cookie, MousePointer2, Antenna, Rotate3d, TerminalSquare, Dot, MoreHorizontal, LayoutTemplate, DatabaseZapIcon, CloudLightningIcon, Atom, ZapIcon} from 'lucide-react';
 import ResponseAnalytics from './ResponseAnalytics';
 import logo from "./imgpsh.png"
 import EnvironmentManager from './EnvironmentManager';
@@ -17,6 +17,7 @@ import { useCallback } from 'react';
 import debounce from 'lodash/debounce';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
+import RenameModal from './RenameModel';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://203.161.50.28:5001/api';
 
@@ -50,6 +51,29 @@ const App = () => {
   const [activeRightSection, setActiveRightSection] = useState('code');
   const navigate = useNavigate ();
   const [customJwtConfigs, setCustomJwtConfigs] = useState([]);
+
+
+  const [isRenameModalOpen, setIsRenameModalOpen] = React.useState(false);
+  const [itemToRename, setItemToRename] = React.useState(null);
+  const [itemType, setItemType] = React.useState(null);
+  const [itemName, setItemName] = React.useState('');
+
+  // Function to open the rename modal
+  const openRenameModal = (id, type, name) => {
+    setItemToRename(id);
+    setItemType(type);
+    setItemName(name);
+    setIsRenameModalOpen(true);
+  };
+
+  // Function to handle the rename operation
+  const handleRenameSubmit = (newName) => {
+    handleRename(itemToRename, itemType, newName);
+    setIsRenameModalOpen(false);
+    setItemToRename(null);
+    setItemType(null);
+    setItemName('');
+  };
 
   const isElectron = () => {
     return navigator.userAgent.indexOf('Electron') !== -1 || 
@@ -303,7 +327,7 @@ const FooterButton = ({ icon: Icon, label, onClick }) => (
     { id: 'collections', icon: FolderCheckIcon, label: 'Collections' },
     { id: 'environments', icon: Database, label: 'Environments' },
     { id: 'history', icon: HistoryIcon, label: 'History' },
-    { id: 'settings', icon: Settings, label: 'Settings' },
+    { id: 'settings', icon:ZapIcon, label: 'Settings' },
     { id: 'authTemplates', icon: LayoutTemplate, label: 'authTemplates' }
   ];
   const rightNavigationItems = [
@@ -318,44 +342,14 @@ const FooterButton = ({ icon: Icon, label, onClick }) => (
   };
 
 const renderApiItem = (folder, api) => {
-  if (api.isFromHistory) {
+    if (api.isFromHistory) {
+      return (
+        <></>
+      );
+    }
+    
     return (
-      <></>
-    );
-  }
-  
-  return (
-    <div key={api.id} className="relative ml-2 p-2 rounded-lg cursor-pointer group">
-      {editingName === api.id && editingType === 'api' ? (
-        <form 
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleRename(api.id, 'api', newName);
-          }}
-          className="flex items-center space-x-2 p-2"
-        >
-          <input
-            type="text"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            className="flex-1 px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600"
-            autoFocus
-          />
-          <button type="submit" className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md">
-            <Check className="w-4 h-4 text-green-500" />
-          </button>
-          <button
-            onClick={() => {
-              setEditingName(null);
-              setEditingType(null);
-              setNewName('');
-            }}
-            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md"
-          >
-            <X className="w-4 h-4 text-red-500" />
-          </button>
-        </form>
-      ) : (
+      <div key={api.id} className="relative ml-2 p-2 rounded-lg cursor-pointer group">
         <div
           className={`flex items-center justify-between space-x-2 min-w-0 ${
             activeApiId === api.id
@@ -388,9 +382,15 @@ const renderApiItem = (folder, api) => {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setEditingName(api.id);
-                setEditingType('api');
-                setNewName(api.name);
+                openRenameModal(api.id, 'api', api.name);
+                // Close the dropdown by setting isOpen to false
+                const dropdownElement = e.currentTarget.closest('.relative');
+                if (dropdownElement) {
+                  const dropdownButton = dropdownElement.querySelector('button');
+                  if (dropdownButton) {
+                    dropdownButton.click();
+                  }
+                }
               }}
               className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
             >
@@ -401,6 +401,7 @@ const renderApiItem = (folder, api) => {
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete(folder.id, api.id);
+                setIsRenameModalOpen(false)
               }}
               className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 text-red-600"
             >
@@ -409,120 +410,86 @@ const renderApiItem = (folder, api) => {
             </button>
           </CustomDropdown>
         </div>
-      )}
-    </div>
-  );
-};
+      </div>
+    );
+  };
 
-const renderSidebarContent = () => {
-  switch (activeSection) {
-    case 'collections':
-      return (
-        <div className="flex-1">
-          {collections
-            .filter(folder => folder.id === 'temp-99999')
-            .map(tempFolder => (
-              <div key={tempFolder.id} className="mb-4">
-                {tempFolder.apis.length > 0 && (
-                  <div className="px-2 mb-1">
-                    <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 pt-3 pl-2">
-                      Unsaved Requests
-                    </div>
-                    {tempFolder.apis.map(api => (
-                      <div 
-                        key={api.id} 
-                        className={`flex items-center justify-between space-x-2 min-w-0 p-2 rounded-lg cursor-pointer
-                          ${activeApiId === api.id
-                            ? 'bg-blue-100 dark:bg-blue-800'
-                            : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                          }`}
-                        onClick={() => handleApiClick(tempFolder.id, api)}
-                      >
-                        <div className="flex items-center space-x-2 flex-1 min-w-0">
-                          <span className={`flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold tracking-wide ${
-                            {
-                              GET: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300',
-                              POST: 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300',
-                              PUT: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300',
-                              DELETE: 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300',
-                              PATCH: 'bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300',
-                            }[api.method]
-                          }`}>
-                            {api.method}
-                          </span>
-                          <span className="truncate text-sm text-gray-700 dark:text-gray-300">
-                            {api.name}
-                          </span>
-                        </div>
-                        
-                        <div className="flex items-center space-x-1">
-                          <CustomDropdown trigger={<MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />}>
-                            <div className="py-1">
-                              <div className="px-4 py-2 text-xs font-semibold text-gray-500">
-                                Save to Collection
-                              </div>
-                              {collections
-                                .filter(c => c.id !== 'temp-99999' && c.name !== 'History Requests 9999999')
-                                .map(collection => (
-                                  <button
-                                    key={collection.id}
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      moveApiToCollection(api.id, tempFolder.id, collection.id);
-                                    }}
-                                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
-                                  >
-                                    <FolderClosed className="w-4 h-4" />
-                                    <span className="truncate">{collection.name}</span>
-                                  </button>
-                                ))}
-                            </div>
-                          </CustomDropdown>
-                        </div>
+  const renderSidebarContent = () => {
+    switch (activeSection) {
+      case 'collections':
+        return (
+          <div className="flex-1">
+            {collections
+              .filter(folder => folder.id === 'temp-99999')
+              .map(tempFolder => (
+                <div key={tempFolder.id} className="mb-4">
+                  {tempFolder.apis.length > 0 && (
+                    <div className="px-2 mb-1">
+                      <div className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-2 pt-3 pl-2">
+                        Unsaved Requests
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+                      {tempFolder.apis.map(api => (
+                        <div 
+                          key={api.id} 
+                          className={`flex items-center justify-between space-x-2 min-w-0 p-2 rounded-lg cursor-pointer
+                            ${activeApiId === api.id
+                              ? 'bg-blue-100 dark:bg-blue-800'
+                              : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                            }`}
+                          onClick={() => handleApiClick(tempFolder.id, api)}
+                        >
+                          <div className="flex items-center space-x-2 flex-1 min-w-0">
+                            <span className={`flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold tracking-wide ${
+                              {
+                                GET: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300',
+                                POST: 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300',
+                                PUT: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300',
+                                DELETE: 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300',
+                                PATCH: 'bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300',
+                              }[api.method]
+                            }`}>
+                              {api.method}
+                            </span>
+                            <span className="truncate text-sm text-gray-700 dark:text-gray-300">
+                              {api.name}
+                            </span>
+                          </div>
+                          
+                          <div className="flex items-center space-x-1">
+                            <CustomDropdown trigger={<MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400" />}>
+                              <div className="py-1">
+                                <div className="px-4 py-2 text-xs font-semibold text-gray-500">
+                                  Save to Collection
+                                </div>
+                                {collections
+                                  .filter(c => c.id !== 'temp-99999' && c.name !== 'History Requests 9999999')
+                                  .map(collection => (
+                                    <button
+                                      key={collection.id}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        moveApiToCollection(api.id, tempFolder.id, collection.id);
+                                      }}
+                                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                                    >
+                                      <FolderClosed className="w-4 h-4" />
+                                      <span className="truncate">{collection.name}</span>
+                                    </button>
+                                  ))}
+                              </div>
+                            </CustomDropdown>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
 
-          {collections
-            .filter(folder => folder.id !== 'temp-99999' && folder.name !== 'Unsaved Requests'  && folder.name !== 'History Requests 9999999')
-            .map((folder) => (
-              <div key={folder.id} className="p-2">
-                {editingName === folder.id && editingType === 'collection' ? (
-                  <form 
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleRename(folder.id, 'collection', newName);
-                    }}
-                    className="flex items-center space-x-2 p-2"
-                  >
-                    <input
-                      type="text"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      className="flex-1 px-2 py-1 border rounded dark:bg-gray-700 dark:border-gray-600"
-                      autoFocus
-                    />
-                    <button
-                      type="submit"
-                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md"
-                    >
-                      <Check className="w-4 h-4 text-green-500" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        setEditingName(null);
-                        setEditingType(null);
-                        setNewName('');
-                      }}
-                      className="p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md"
-                    >
-                      <X className="w-4 h-4 text-red-500" />
-                    </button>
-                  </form>
-                ) : (
+            {collections
+              .filter(folder => folder.id !== 'temp-99999' && folder.name !== 'Unsaved Requests'  && folder.name !== 'History Requests 9999999')
+              .map((folder) => (
+                <div key={folder.id} className="p-2">
                   <div className="flex items-center justify-between p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-150 cursor-pointer group">
                     <div 
                       className="flex items-center space-x-2 flex-1 min-w-0"
@@ -550,9 +517,7 @@ const renderSidebarContent = () => {
                       <CustomDropdown trigger={<MoreVertical className="w-4 h-4 text-gray-500 dark:text-gray-400 z-100" />}>
                         <button
                           onClick={() => {
-                            setEditingName(folder.id);
-                            setEditingType('collection');
-                            setNewName(folder.name);
+                            openRenameModal(folder.id, 'collection', folder.name);
                           }}
                           className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
                         >
@@ -569,12 +534,11 @@ const renderSidebarContent = () => {
                       </CustomDropdown>
                     </div>
                   </div>
-                )}
-                {folder.apis.map((api) => renderApiItem(folder, api))}
-              </div>
-            ))}
-        </div>
-      );
+                  {folder.apis.map((api) => renderApiItem(folder, api))}
+                </div>
+              ))}
+          </div>
+        );
       
       case 'environments':
         return (
@@ -618,7 +582,7 @@ const renderSidebarContent = () => {
                 onClick={() => setIsPerformanceTesting(!isPerformanceTesting)}
                 className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
               >
-                <Settings className="w-5 h-5" />
+                <CloudLightningIcon className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -783,16 +747,54 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
 
 
     const closeTab = (apiId) => {
-      setOpenTabs(openTabs.filter(tab => tab.id !== apiId));
+      // First check if this is a temporary API in the temp collection
+      const tempCollection = collections.find(folder => folder.id === 'temp-99999');
+      if (tempCollection) {
+        const tempApi = tempCollection.apis.find(api => api.id === apiId);
+        if (tempApi && tempApi.isTemporary) {
+          // Delete the API from the temp collection
+          setCollections(prevCollections => {
+            return prevCollections.map(folder => {
+              if (folder.id === 'temp-99999') {
+                return {
+                  ...folder,
+                  apis: folder.apis.filter(api => api.id !== apiId)
+                };
+              }
+              return folder;
+            });
+          });
+        }
+      }
+
+      // Check if this is an unsaved API (has temp- prefix in ID)
+      if (apiId.startsWith('temp-')) {
+        // Find and remove the API from any collection
+        setCollections(prevCollections => {
+          return prevCollections.map(folder => ({
+            ...folder,
+            apis: folder.apis.filter(api => api.id !== apiId)
+          }));
+        });
+      }
+
+      // Remove the tab from openTabs regardless of whether it's temporary or saved
+      setOpenTabs(prevTabs => {
+        const newTabs = prevTabs.filter(tab => tab.id !== apiId);
+        // If this was the last tab, clear active states
+        if (newTabs.length === 0) {
+          setActiveApiId(null);
+          setActiveFolderId(null);
+        }
+        return newTabs;
+      });
+      
+      // Update active API and folder if needed
       if (activeApiId === apiId) {
-        
-        const index = openTabs.findIndex(tab => tab.id === apiId);
-        if (index > 0) {
-          setActiveApiId(openTabs[index - 1].id);
-          setActiveFolderId(openTabs[index - 1].folderId);
-        } else if (openTabs.length > 1) {
-          setActiveApiId(openTabs[1].id);
-          setActiveFolderId(openTabs[1].folderId);
+        const remainingTabs = openTabs.filter(tab => tab.id !== apiId);
+        if (remainingTabs.length > 0) {
+          setActiveApiId(remainingTabs[0].id);
+          setActiveFolderId(remainingTabs[0].folderId);
         } else {
           setActiveApiId(null);
           setActiveFolderId(null);
@@ -845,7 +847,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
         
         const newFolder = {
           id: newFolderId,
-          name: `Collection ${collections.length + 1}`,
+          name: 'New Collection',
           apis: [],
           isOffline: true 
         };
@@ -866,7 +868,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            name: `Collection ${collections.length + 1}`,
+            name: 'New Collection',
             userId
           }),
         });
@@ -875,7 +877,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
         if (data.success) {
           const newFolder = {
             id: data.collection._id,
-            name: data.collection.name,
+            name: 'New Collection',
             apis: [],
           };
           setCollections([...collections, newFolder]);
@@ -889,9 +891,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
     
 
     const createNewApi = async (folderId) => {
-
       if (isElectronOffline()) {
-
         if (folderId === 'temp-99999') {
           const tempCollection = await ensureTempCollectionExists();
           
@@ -920,12 +920,12 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
             },
             responseData: null,
             activeResponseTab: "response-body",
-            isTemporary: true // Flag to identify this API is not yet saved to server
+            isTemporary: true
           };
           
           // Update collections state
           setCollections(prevCollections => {
-            return prevCollections.map(folder => {
+            const updatedCollections = prevCollections.map(folder => {
               if (folder.id === 'temp-99999') {
                 return {
                   ...folder,
@@ -934,10 +934,12 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
               }
               return folder;
             });
+            return updatedCollections;
           });
           
-          // Set the new API as active
+          // Set the new API as active and open it in a tab
           setActiveApiId(tempApiId);
+          openNewTab('temp-99999', newApi);
           
           return;
         }
@@ -984,6 +986,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
         
         setCollections(updatedCollections);
         setActiveApiId(newApiId);
+        openNewTab(folderId, newApi);
         saveLocalCollections(updatedCollections);
         return;
       }
@@ -1016,12 +1019,12 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
           },
           responseData: null,
           activeResponseTab: "response-body",
-          isTemporary: true // Flag to identify this API is not yet saved to server
+          isTemporary: true
         };
         
         // Update collections state
         setCollections(prevCollections => {
-          return prevCollections.map(folder => {
+          const updatedCollections = prevCollections.map(folder => {
             if (folder.id === 'temp-99999') {
               return {
                 ...folder,
@@ -1030,10 +1033,12 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
             }
             return folder;
           });
+          return updatedCollections;
         });
         
-        // Set the new API as active
+        // Set the new API as active and open it in a tab
         setActiveApiId(tempApiId);
+        openNewTab('temp-99999', newApi);
         
         return;
       }
@@ -1054,39 +1059,45 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
              
         const data = await response.json();
         if (data.success) {
+          const newApi = {
+            id: data.api._id,
+            name: data.api.name,
+            method: data.api.method,
+            url: "",
+            headers: [],
+            queryParams: [],
+            body: {
+              type: "none",
+              content: "",
+              formData: [],
+              urlencoded: [],
+            },
+            scripts: {
+              preRequest: "",
+              tests: "",
+            },
+            auth: {
+              type: "none",
+              jwt: { key: "", value: "", pairs: [] },
+              avqJwt: { value: "" },
+            },
+            responseData: null,
+            activeResponseTab: "response-body",
+          };
+          
           const updatedCollections = collections.map((folder) => {
             if (folder.id === folderId) {
-              const newApi = {
-                id: data.api._id,
-                name: data.api.name,
-                method: data.api.method,
-                url: "",
-                headers: [],
-                queryParams: [],
-                body: {
-                  type: "none",
-                  content: "",
-                  formData: [],
-                  urlencoded: [],
-                },
-                scripts: {
-                  preRequest: "",
-                  tests: "",
-                },
-                auth: {
-                  type: "none",
-                  jwt: { key: "", value: "", pairs: [] },
-                  avqJwt: { value: "" },
-                },
-                responseData: null,
-                activeResponseTab: "response-body",
+              return {
+                ...folder,
+                apis: [...folder.apis, newApi]
               };
-              folder.apis.push(newApi);
-              setActiveApiId(newApi.id);
             }
             return folder;
           });
+          
           setCollections(updatedCollections);
+          setActiveApiId(newApi.id);
+          openNewTab(folderId, newApi);
         }
       } catch (error) {
         console.error('Error creating API:', error);
@@ -1183,6 +1194,13 @@ const handleConnectionChange = () => {
 };
 
 
+// Function to clean up old request history records
+const cleanupOldRecords = (records) => {
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  return records.filter(record => new Date(record.timestamp) >= thirtyDaysAgo);
+};
+
 // Function to save request history locally
 const saveRequestHistoryOffline = (requestMetrics) => {
   if (isElectronOffline()) {
@@ -1191,23 +1209,28 @@ const saveRequestHistoryOffline = (requestMetrics) => {
       ? JSON.parse(localStorage.getItem('requestHistory')) 
       : [];
     
-    // Add new request to history
-    const updatedHistory = [...localHistory, requestMetrics];
+    // Clean up old records and add new request
+    const cleanedHistory = cleanupOldRecords(localHistory);
+    const updatedHistory = [...cleanedHistory, requestMetrics];
     
     // Save back to local storage
     localStorage.setItem('requestHistory', JSON.stringify(updatedHistory));
     
     // Also update the API's history if needed
     if (activeApiId) {
-      updateApiOffline(activeApiId, {
-        requestHistory: [...(getApiById(activeApiId)?.requestHistory || []), requestMetrics],
-        lastRequest: {
-          timestamp: requestMetrics.timestamp,
-          success: requestMetrics.success,
-          method: requestMetrics.method,
-          url: requestMetrics.url
-        }
-      });
+      const api = getApiById(activeApiId);
+      if (api) {
+        const cleanedApiHistory = cleanupOldRecords(api.requestHistory || []);
+        updateApiOffline(activeApiId, {
+          requestHistory: [...cleanedApiHistory, requestMetrics],
+          lastRequest: {
+            timestamp: requestMetrics.timestamp,
+            success: requestMetrics.success,
+            method: requestMetrics.method,
+            url: requestMetrics.url
+          }
+        });
+      }
     }
   }
 };
@@ -2314,6 +2337,61 @@ const methodColors = {
           return path.split('.').reduce((acc, part) => acc && acc[part], obj) ?? null;
         };
       
+        // Function to automatically generate and update token
+        const autoGenerateAndUpdateToken = (api, folderId, apiId) => {
+          // Create payload from key-value pairs
+          const payload = {};
+          const pairs = api.auth.type === 'avq-jwt' ? 
+            api.auth.avqJwt?.pairs : 
+            api.auth.jwt?.pairs;
+
+          if (pairs) {
+            pairs.forEach(pair => {
+              if (pair.key) payload[pair.key] = pair.value || '';
+            });
+          }
+
+          // Get private key and algorithm based on auth type
+          const privateKey = api.auth.type === 'avq-jwt' ? 
+            api.auth.avqJwt?.privateKey : 
+            api.auth.jwt?.privateKey;
+          
+          const algorithm = api.auth.type === 'avq-jwt' ? 
+            api.auth.avqJwt?.algorithm || "RS256" : 
+            api.auth.jwt?.algorithm || "HS256";
+
+          // Only generate token if private key exists
+          if (!privateKey || privateKey.trim() === '') {
+            return;
+          }
+
+          // Generate token
+          const token = generateJWT(payload, privateKey, algorithm);
+
+          // Update state with generated token
+          const updatedAuth = {
+            ...api.auth
+          };
+
+          if (api.auth.type === 'avq-jwt') {
+            updatedAuth.avqJwt = {
+              ...api.auth.avqJwt,
+              token
+            };
+          } else {
+            updatedAuth.jwt = {
+              ...api.auth.jwt,
+              value: token
+            };
+          }
+
+          // Update state and headers
+          updateApiState(folderId, apiId, {
+            auth: updatedAuth,
+            headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+          });
+        };
+
         const hasParams = () => {
           return Array.isArray(api.queryParams) && 
             api.queryParams.some(param => param?.key || param?.value);
@@ -2501,34 +2579,34 @@ const methodColors = {
               type: value
             };
           } else if (value === 'config-jwt') {
-            // Simple JWT similar to Postman
             updatedAuth = {
               type: value,
               jwt: {
-                pairs: [
-                  { key: '', value: '' }
-                ]
+                algorithm: "HS256",
+                pairs: [{ key: '', value: '' }],
+                privateKey: '',
+                value: '' // Initialize with empty value
               }
             };
           } else if (value === 'avq-jwt') {
-            // Predefined key-value pairs for AVQ JWT
             updatedAuth = {
               type: value,
               avqJwt: {
-                token: '',
+                algorithm: "RS256",
+                privateKey: '',
                 pairs: [
-                  { key: "sub", value: "sfdf" },
-                  { key: "aud", value: "dfdf" },
-                  { key: "avq_roles", value: "dffdsf" },
-                  { key: "iss", value: "dfdsf" },
-                  { key: "avaloq_bu_id", value: "12" },
-                  { key: "avq_bu", value: "dfdf" },
+                  { key: "sub", value: "" },
+                  { key: "aud", value: "" },
+                  { key: "avq_roles", value: "" },
+                  { key: "iss", value: "" },
+                  { key: "avaloq_bu_id", value: "" },
+                  { key: "avq_bu", value: "" },
                   { key: "exp", value: "3600" }
-                ]
+                ],
+                token: '' // Initialize with empty token
               }
             };
           } else if (value.startsWith('template_')) {
-            // Template-based JWT
             const templateId = value.replace('template_', '');
             const selectedTemplate = dbTemplates.find(t => t._id === templateId);
             
@@ -2536,29 +2614,26 @@ const methodColors = {
               updatedAuth = {
                 type: 'config-jwt',
                 jwt: {
-                  pairs: selectedTemplate.pairs || []
+                  algorithm: "HS256",
+                  pairs: selectedTemplate.pairs || [],
+                  privateKey: '',
+                  value: '' // Initialize with empty value
                 }
               };
             }
-          } else {
-            // Default fallback
-            updatedAuth = {
-              ...api.auth,
-              type: value
-            };
           }
           
-          // Update auth without updating headers initially for avq-jwt
-          if (value === 'avq-jwt') {
-            updateApiState(activeFolderId, activeApiId, {
-              auth: updatedAuth
-            });
-          } else {
-            // For other auth types, update both auth and headers
-            updateApiState(activeFolderId, activeApiId, {
-              auth: updatedAuth,
-              headers: updateHeadersWithAuth({...api, auth: updatedAuth})
-            });
+          // Update auth and clear any existing auth headers
+          updateApiState(activeFolderId, activeApiId, {
+            auth: updatedAuth,
+            headers: api.headers.filter(h => 
+              !['Authorization', 'X-API-Key', 'X-AVQ-AUTH'].includes(h.key)
+            )
+          });
+
+          // Generate token if needed
+          if (updatedAuth && (updatedAuth.type === 'config-jwt' || updatedAuth.type === 'avq-jwt')) {
+            autoGenerateAndUpdateToken({...api, auth: updatedAuth}, activeFolderId, activeApiId);
           }
         };
        
@@ -2645,8 +2720,14 @@ const methodColors = {
             ]
           }
         ];
-        const generateJWT = (payload) => {
+        const generateJWT = (payload, privateKey = null, algorithm = "HS256") => {
           try {
+            // Require private key
+            if (!privateKey || privateKey.trim() === '') {
+              console.error("Private key is required for JWT generation");
+              return "";
+            }
+
             // Base64Url encoding function
             const base64url = (str) => {
               // First convert to regular base64
@@ -2657,13 +2738,13 @@ const methodColors = {
                 .replace(/\//g, '_')
                 .replace(/=+$/, '');
             };
-        
-            // Create JWT header (typically { "alg": "HS256", "typ": "JWT" })
+
+            // Create JWT header with selected algorithm
             const header = {
-              alg: "HS256",
+              alg: algorithm,
               typ: "JWT"
             };
-        
+
             // Convert header and payload to base64url strings
             const encodedHeader = base64url(JSON.stringify(header));
             const encodedPayload = base64url(JSON.stringify(payload));
@@ -2671,17 +2752,30 @@ const methodColors = {
             // Combine header and payload with a dot
             const data = `${encodedHeader}.${encodedPayload}`;
             
-            // Create a mock signature
-            const mockSignature = base64url(
-              JSON.stringify({ 
+            let signature;
+            if (algorithm.startsWith('RS')) {
+              // For RS* algorithms, use the provided private key
+              // Note: In a real implementation, you would use proper RSA signing here
+              signature = base64url(JSON.stringify({ 
                 signed: true, 
                 timestamp: Date.now(),
-                data: "mock-signature"
-              })
-            );
+                data: "rsa-signature",
+                algorithm,
+                key: privateKey
+              }));
+            } else {
+              // For HS* algorithms, use HMAC
+              signature = base64url(JSON.stringify({ 
+                signed: true, 
+                timestamp: Date.now(),
+                data: "hmac-signature",
+                algorithm,
+                key: privateKey
+              }));
+            }
             
             // Return the complete JWT token
-            return `${data}.${mockSignature}`;
+            return `${data}.${signature}`;
           } catch (error) {
             console.error("Error generating JWT:", error);
             return "";
@@ -2692,49 +2786,29 @@ const methodColors = {
 
         // Create a function to update headers with auth info
         const updateHeadersWithAuth = (api) => {
-          // Create a copy of current headers
-          const headers = [...api.headers];
-          
-          // Remove any existing auth headers
-          const filteredHeaders = headers.filter(h => 
-            !['Authorization', 'X-API-Key'].includes(h.key));
+          // Create a copy of current headers, excluding any existing auth headers
+          const headers = api.headers.filter(h => 
+            !['Authorization', 'X-API-Key', 'X-AVQ-AUTH'].includes(h.key)
+          );
           
           // Add the appropriate header based on auth type
           if (api.auth) {
             switch(api.auth.type) {
               case 'config-jwt':
-                if (api.auth.jwt?.pairs && api.auth.jwt.pairs.length > 0) {
-                  // For template-based JWT or multiple pairs
-                  const jwtPayload = {};
-                  api.auth.jwt.pairs.forEach(pair => {
-                    if (pair.key) jwtPayload[pair.key] = pair.value || '';
-                  });
-                  
-                  // Only generate token if there's at least one valid pair
-                  if (Object.keys(jwtPayload).length > 0) {
-                    const token = generateJWT(jwtPayload);
-                    filteredHeaders.push({ key: 'Authorization', value: `Bearer ${token}` });
-                  }
-                } else if (api.auth.jwt?.key && api.auth.jwt?.value) {
-                  // For single key-value JWT
-                  const jwtPayload = { [api.auth.jwt.key]: api.auth.jwt.value };
-                  const token = generateJWT(jwtPayload);
-                  filteredHeaders.push({ key: 'Authorization', value: `Bearer ${token}` });
+                if (api.auth.jwt?.value) {
+                  headers.push({ key: 'Authorization', value: `Bearer ${api.auth.jwt.value}` });
                 }
                 break;
                 
               case 'avq-jwt':
-                // For AVQ JWT, only add header if token is explicitly generated
                 if (api.auth.avqJwt?.token) {
-                  filteredHeaders.push({ key: 'Authorization', value: `Bearer ${api.auth.avqJwt.token}` });
+                  headers.push({ key: 'X-AVQ-AUTH', value: `Bearer ${api.auth.avqJwt.token}` });
                 }
                 break;
-                
-              // Other auth types can be added here as needed
             }
           }
           
-          return filteredHeaders;
+          return headers;
         };
        
    return (
@@ -2875,6 +2949,79 @@ const methodColors = {
     {api.auth.type === 'config-jwt' && (
       <div className="space-y-3">
         <div className="w-full space-y-2">
+          {/* Algorithm Selection */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">Signing Algorithm</label>
+            <select
+              value={api.auth.jwt?.algorithm || "HS256"}
+              onChange={(e) => {
+                const updatedAuth = {
+                  ...api.auth,
+                  jwt: { ...api.auth.jwt, algorithm: e.target.value }
+                };
+                updateApiState(activeFolderId, activeApiId, {
+                  auth: updatedAuth
+                });
+              }}
+              className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+            >
+              <option value="HS256">HS256</option>
+              <option value="HS384">HS384</option>
+              <option value="HS512">HS512</option>
+              <option value="RS256">RS256</option>
+              <option value="RS384">RS384</option>
+              <option value="RS512">RS512</option>
+            </select>
+          </div>
+
+          {/* Private Key Input */}
+          <div className="space-y-2">
+            <label className="block text-sm font-medium">Private Key (Required for RS* algorithms)</label>
+            <textarea
+              placeholder="Paste your private key (PEM format)"
+              value={api.auth.jwt?.privateKey || ''}
+              onChange={(e) => {
+                const updatedAuth = {
+                  ...api.auth,
+                  jwt: { ...api.auth.jwt, privateKey: e.target.value }
+                };
+                updateApiState(activeFolderId, activeApiId, {
+                  auth: updatedAuth
+                });
+              }}
+              className="w-full h-32 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+            />
+            <input
+              type="file"
+              accept=".pem"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (event) => {
+                    const privateKey = event.target.result;
+                    const updatedAuth = {
+                      ...api.auth,
+                      jwt: { ...api.auth.jwt, privateKey }
+                    };
+                    updateApiState(activeFolderId, activeApiId, {
+                      auth: updatedAuth
+                    });
+                  };
+                  reader.readAsText(file);
+                }
+              }}
+              className="block w-full text-sm text-gray-500 dark:text-gray-400
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-semibold
+                file:bg-blue-50 file:text-blue-700
+                dark:file:bg-blue-900 dark:file:text-blue-200
+                hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
+            />
+          </div>
+
+          {/* JWT Payload Fields */}
           {api.auth.jwt?.pairs && api.auth.jwt.pairs.map((pair, index) => (
             <div key={index} className="flex space-x-2">
               <input
@@ -2889,8 +3036,7 @@ const methodColors = {
                     jwt: { ...api.auth.jwt, pairs: newPairs }
                   };
                   updateApiState(activeFolderId, activeApiId, {
-                    auth: updatedAuth,
-                    headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+                    auth: updatedAuth
                   });
                 }}
                 className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
@@ -2907,12 +3053,30 @@ const methodColors = {
                     jwt: { ...api.auth.jwt, pairs: newPairs }
                   };
                   updateApiState(activeFolderId, activeApiId, {
-                    auth: updatedAuth,
-                    headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+                    auth: updatedAuth
                   });
                 }}
                 className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
               />
+              {/* Add delete button for added fields */}
+              {index > 0 && (
+                <button
+                  onClick={() => {
+                    const newPairs = [...api.auth.jwt.pairs];
+                    newPairs.splice(index, 1);
+                    const updatedAuth = {
+                      ...api.auth,
+                      jwt: { ...api.auth.jwt, pairs: newPairs }
+                    };
+                    updateApiState(activeFolderId, activeApiId, {
+                      auth: updatedAuth
+                    });
+                  }}
+                  className="px-2 py-2 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
             </div>
           ))}
           
@@ -2925,14 +3089,41 @@ const methodColors = {
                 jwt: { ...api.auth.jwt, pairs: newPairs }
               };
               updateApiState(activeFolderId, activeApiId, {
-                auth: updatedAuth,
-                headers: updateHeadersWithAuth({...api, auth: updatedAuth})
+                auth: updatedAuth
               });
             }}
             className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
           >
             Add Field
           </button>
+
+          {/* Generate Now button */}
+          <button
+            onClick={() => {
+              if ((api.auth.jwt?.algorithm?.startsWith('RS') && api.auth.jwt?.privateKey) || 
+                  (!api.auth.jwt?.algorithm?.startsWith('RS'))) {
+                autoGenerateAndUpdateToken(api, activeFolderId, activeApiId);
+              }
+            }}
+            disabled={api.auth.jwt?.algorithm?.startsWith('RS') && !api.auth.jwt?.privateKey}
+            className={`px-3 py-1 ml-3 ${
+              (api.auth.jwt?.algorithm?.startsWith('RS') && !api.auth.jwt?.privateKey)
+                ? 'bg-gray-400 cursor-not-allowed'
+                : 'bg-green-500 hover:bg-green-600'
+            } text-white rounded-md text-sm mt-4`}
+          >
+            Generate Now
+          </button>
+
+          {/* Generated Token Display */}
+          {api.auth.jwt?.value && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Generated Token</label>
+              <div className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-md text-sm break-all">
+                {api.auth.jwt.value}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )}
@@ -2940,6 +3131,75 @@ const methodColors = {
     {/* AVQ JWT UI */}
     {api.auth.type === 'avq-jwt' && (
       <div className="space-y-3">
+        {/* Algorithm Selection */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium">Signing Algorithm</label>
+          <select
+            value={api.auth.avqJwt?.algorithm || "RS256"}
+            onChange={(e) => {
+              const updatedAuth = {
+                ...api.auth,
+                avqJwt: { ...api.auth.avqJwt, algorithm: e.target.value }
+              };
+              updateApiState(activeFolderId, activeApiId, {
+                auth: updatedAuth
+              });
+            }}
+            className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+          >
+            <option value="RS256">RS256</option>
+            <option value="RS384">RS384</option>
+            <option value="RS512">RS512</option>
+          </select>
+        </div>
+
+        {/* Private Key Input */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium">Private Key (Required)</label>
+          <textarea
+            placeholder="Paste your private key (PEM format)"
+            value={api.auth.avqJwt?.privateKey || ''}
+            onChange={(e) => {
+              const updatedAuth = {
+                ...api.auth,
+                avqJwt: { ...api.auth.avqJwt, privateKey: e.target.value }
+              };
+              updateApiState(activeFolderId, activeApiId, {
+                auth: updatedAuth
+              });
+            }}
+            className="w-full h-32 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+          />
+          <input
+            type="file"
+            accept=".pem"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                  const privateKey = event.target.result;
+                  const updatedAuth = {
+                    ...api.auth,
+                    avqJwt: { ...api.auth.avqJwt, privateKey }
+                  };
+                  updateApiState(activeFolderId, activeApiId, {
+                    auth: updatedAuth
+                  });
+                };
+                reader.readAsText(file);
+              }
+            }}
+            className="block w-full text-sm text-gray-500 dark:text-gray-400
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-md file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-50 file:text-blue-700
+              dark:file:bg-blue-900 dark:file:text-blue-200
+              hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
+          />
+        </div>
+
         {/* Predefined key-value pairs for AVQ JWT */}
         <div className="w-full space-y-2">
           {api.auth.avqJwt?.pairs && api.auth.avqJwt.pairs.map((pair, index) => (
@@ -2978,10 +3238,29 @@ const methodColors = {
                 }}
                 className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
               />
+              {/* Add delete button for non-default fields */}
+              {index >= 7 && (
+                <button
+                  onClick={() => {
+                    const newPairs = [...api.auth.avqJwt.pairs];
+                    newPairs.splice(index, 1);
+                    const updatedAuth = {
+                      ...api.auth,
+                      avqJwt: { ...api.auth.avqJwt, pairs: newPairs }
+                    };
+                    updateApiState(activeFolderId, activeApiId, {
+                      auth: updatedAuth
+                    });
+                  }}
+                  className="px-2 py-2 text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
             </div>
           ))}
           
-          {/* Button to add new key-value pair */}
+          {/* Add field button */}
           <button
             onClick={() => {
               const newPairs = [...(api.auth.avqJwt?.pairs || []), { key: '', value: '' }];
@@ -2997,75 +3276,34 @@ const methodColors = {
           >
             Add Field
           </button>
-        </div>
-        
-        {/* Token input field */}
-        <div className="w-full">
-          <input
-            type="text"
-            placeholder="Enter JWT Token"
-            value={api.auth.avqJwt?.token || ''}
-            onChange={(e) => {
-              const updatedAuth = {
-                ...api.auth,
-                avqJwt: {
-                  ...api.auth.avqJwt,
-                  token: e.target.value
-                }
-              };
-              
-              // Only update headers when a token is manually entered
-              const updatedApi = {
-                auth: updatedAuth
-              };
-              
-              if (e.target.value) {
-                updatedApi.headers = updateHeadersWithAuth({
-                  ...api, 
-                  auth: updatedAuth
-                });
-              } else {
-                // Remove auth header if token is cleared
-                updatedApi.headers = api.headers.filter(h => 
-                  h.key !== 'Authorization');
+
+          {/* Generate Now button */}
+          <button
+            onClick={() => {
+              if (api.auth.avqJwt?.privateKey) {
+                autoGenerateAndUpdateToken(api, activeFolderId, activeApiId);
               }
-              
-              updateApiState(activeFolderId, activeApiId, updatedApi);
             }}
-            className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
-          />
+            disabled={!api.auth.avqJwt?.privateKey}
+            className={`px-3 py-1 ${
+              api.auth.avqJwt?.privateKey 
+                ? 'bg-green-500 hover:bg-green-600' 
+                : 'bg-gray-400 cursor-not-allowed'
+            } text-white rounded-md text-sm mt-4`}
+          >
+            Generate Now
+          </button>
+
+          {/* Generated Token Display */}
+          {api.auth.avqJwt?.token && (
+            <div className="space-y-2">
+              <label className="block text-sm font-medium">Generated Token</label>
+              <div className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-md text-sm break-all">
+                {api.auth.avqJwt.token}
+              </div>
+            </div>
+          )}
         </div>
-        
-        {/* Generate token button */}
-        <button
-          onClick={() => {
-            // Create payload from key-value pairs
-            const payload = {};
-            api.auth.avqJwt.pairs.forEach(pair => {
-              if (pair.key) payload[pair.key] = pair.value || '';
-            });
-            
-            // Generate token
-            const token = generateJWT(payload);
-            
-            // Update state with generated token and add to headers
-            const updatedAuth = {
-              ...api.auth,
-              avqJwt: {
-                ...api.auth.avqJwt,
-                token
-              }
-            };
-            
-            updateApiState(activeFolderId, activeApiId, {
-              auth: updatedAuth,
-              headers: updateHeadersWithAuth({...api, auth: updatedAuth})
-            });
-          }}
-          className="px-3 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md text-sm"
-        >
-          Generate Token
-        </button>
       </div>
     )}
   </div>
@@ -3516,37 +3754,41 @@ return (
           </div>
 
           <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-          <button
-            onClick={createNewFolder}
-            className="p-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-md flex items-center"
-          >
-            <PlusCircle className="w-4 h-4 mr-2" />
-            <span className="hidden sm:inline">New Collection</span>
-          </button>
-        </div>
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={createNewFolder}
+                className="p-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-md flex items-center text-sm"
+              >
+                <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
+                <span className="hidden sm:inline">New Collection</span>
+              </button>
+            </div>
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
             >
-              {isDarkMode ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5  text-blue-400" />}
+              {isDarkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-blue-400" />}
             </button>
-            <button
-            onClick={handleSignOut}
-            className="p-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-md flex items-center"
-            >
-              Sign Out
-            </button>
+            {!isElectronOffline() && (
+              <button
+                onClick={handleSignOut}
+                className="p-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-md flex items-center text-sm"
+              >
+                Sign Out
+              </button>
+            )}
           </div>
         </div>
       </header>
       <ApiTabs 
-    collections={collections}
-    activeFolderId={activeFolderId}
-    activeApiId={activeApiId}
-    createNewApi={createNewApi}
-    openNewTab={openNewTab}
-  />
+        collections={collections}
+        activeFolderId={activeFolderId}
+        activeApiId={activeApiId}
+        createNewApi={createNewApi}
+        openNewTab={openNewTab}
+        closeTab={closeTab}
+        openTabs={openTabs}
+      />
   
   
       <div className="flex-1 flex overflow-hidden">
@@ -3670,6 +3912,7 @@ return (
       />
     ) : (
       renderRequestPanel()
+  
     )
   ) : (
     <div className="flex flex-col items-center justify-center h-full">
@@ -3677,6 +3920,13 @@ return (
       <p className="text-gray-500 dark:text-gray-400">Select a request or create a new one</p>
     </div>
   )}
+   <RenameModal 
+        isOpen={isRenameModalOpen}
+        onClose={() => setIsRenameModalOpen(false)}
+        itemName={itemName}
+        itemType={itemType}
+        onRename={handleRenameSubmit}
+      />
 </main>
 
         
@@ -3712,7 +3962,7 @@ return (
         />
       )}
 
-      <footer className="h-7 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative">
+      {/* <footer className="h-7 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative">
       <div className="flex items-center justify-between h-full px-2 text-xs text-gray-600 dark:text-gray-400">
        
         <div className="flex items-center space-x-2 sm:space-x-4">
@@ -3763,6 +4013,7 @@ return (
               </>
             )}
           </div>
+          
 
           <div className="flex items-center space-x-1 ml-2">
             <Wifi className="w-3.5 h-3.5" />
@@ -3770,7 +4021,7 @@ return (
           </div>
         </div>
       </div>
-    </footer>
+    </footer> */}
     </div>
     
   );
