@@ -18,6 +18,7 @@ import debounce from 'lodash/debounce';
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import RenameModal from './RenameModel';
+import Toast from './Toast';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://203.161.50.28:5001/api';
 
@@ -51,7 +52,51 @@ const App = () => {
   const [activeRightSection, setActiveRightSection] = useState('code');
   const navigate = useNavigate ();
   const [customJwtConfigs, setCustomJwtConfigs] = useState([]);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
+  // Load saved tabs from localStorage when component mounts
+  useEffect(() => {
+    const savedTabs = localStorage.getItem('openTabs');
+    if (savedTabs) {
+      try {
+        const parsedTabs = JSON.parse(savedTabs);
+        setOpenTabs(parsedTabs);
+      } catch (error) {
+        console.error('Error parsing saved tabs:', error);
+      }
+    }
+  }, []);
+
+  // Restore active tab after collections are loaded
+  useEffect(() => {
+    if (collections.length > 0 && openTabs.length > 0) {
+      // Filter out tabs whose APIs no longer exist in any collection
+      const validTabs = openTabs.filter(tab => {
+        return collections.some(folder => {
+          return folder.apis.some(api => api.id === tab.id);
+        });
+      });
+      
+      // Update openTabs if some tabs were filtered out
+      if (validTabs.length !== openTabs.length) {
+        setOpenTabs(validTabs);
+        localStorage.setItem('openTabs', JSON.stringify(validTabs));
+      }
+      
+      // Set active tab if none is selected
+      if (!activeApiId && validTabs.length > 0) {
+        const firstValidTab = validTabs[0];
+        const folder = collections.find(f => 
+          f.apis.some(api => api.id === firstValidTab.id)
+        );
+        
+        if (folder) {
+          setActiveApiId(firstValidTab.id);
+          setActiveFolderId(folder.id);
+        }
+      }
+    }
+  }, [collections, openTabs, activeApiId]);
 
   const [isRenameModalOpen, setIsRenameModalOpen] = React.useState(false);
   const [itemToRename, setItemToRename] = React.useState(null);
@@ -120,8 +165,120 @@ const [isOffline, setIsOffline] = useState(false);
 
   const [isMobile, setIsMobile] = useState(false);
   const [userId, setUserId] = useState(localStorage.getItem('userId'));
-  const openRequestInTab = (historyRequest) => {
+  const openRequestInTab = (historyRequest, targetCollectionId = null) => {
     setActiveSection('collections');
+    
+    // If a specific target collection is provided, use that instead of looking for existing folder
+    if (targetCollectionId) {
+      const targetCollection = collections.find(folder => folder.id === targetCollectionId);
+      
+      if (targetCollection) {
+        // Create the API object with isFromHistory flag
+        const newApi = {
+          id: `api-${Date.now()}`,
+          name: historyRequest.apiName || historyRequest.url.split('/').pop(),
+          method: historyRequest.method,
+          url: historyRequest.url,
+          headers: historyRequest.requestDetails?.headers || [],
+          queryParams: historyRequest.requestDetails?.queryParams || [],
+          body: historyRequest.requestDetails?.body || {},
+          auth: historyRequest.requestDetails?.auth || { type: 'none' },
+          settings: historyRequest.settings || {},
+          isFromHistory: false // Not marking as from history since we're saving it
+        };
+        
+        // If we're online and not in a temporary collection, save to server
+        if (!isElectronOffline() && !targetCollectionId.startsWith('temp-') && !targetCollectionId.startsWith('local-')) {
+          // Create the API on the server
+          fetch('http://203.161.50.28:5001/api/apis', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              collectionId: targetCollectionId,
+              name: newApi.name,
+              method: newApi.method,
+              url: newApi.url
+            }),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Update the API with the server ID
+              const serverApi = {
+                ...newApi,
+                id: data.api._id
+              };
+              
+              // Update collections with the server API
+              const updatedCollections = collections.map(folder => {
+                if (folder.id === targetCollectionId) {
+                  return {
+                    ...folder,
+                    apis: folder.apis.map(api => 
+                      api.id === newApi.id ? serverApi : api
+                    )
+                  };
+                }
+                return folder;
+              });
+              
+              setCollections(updatedCollections);
+              
+              // Update active API ID if needed
+              if (activeApiId === newApi.id) {
+                setActiveApiId(serverApi.id);
+              }
+              
+              // Update open tabs
+              setOpenTabs(prevTabs => 
+                prevTabs.map(tab => 
+                  tab.id === newApi.id ? { ...tab, id: serverApi.id } : tab
+                )
+              );
+              
+              // Update the API details on the server
+              fetch(`http://203.161.50.28:5001/api/apis/${serverApi.id}`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  headers: newApi.headers,
+                  queryParams: newApi.queryParams,
+                  body: newApi.body,
+                  auth: newApi.auth,
+                  settings: newApi.settings
+                }),
+              }).catch(error => {
+                console.error('Error updating API details:', error);
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error saving API to server:', error);
+          });
+        }
+        
+        // Add the new API to the target collection
+        const updatedCollections = collections.map(folder => {
+          if (folder.id === targetCollectionId) {
+            return {
+              ...folder,
+              apis: [...folder.apis, newApi]
+            };
+          }
+          return folder;
+        });
+        
+        setCollections(updatedCollections);
+        openNewTab(targetCollectionId, newApi);
+        return;
+      }
+    }
+    
+    // Original logic for when no target collection is specified
     const existingFolder = collections.find(folder => 
       folder.id === historyRequest.folderId || folder.name === historyRequest.folderName
     );
@@ -787,6 +944,10 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
           setActiveApiId(null);
           setActiveFolderId(null);
         }
+        
+        // Save updated tabs to localStorage
+        localStorage.setItem('openTabs', JSON.stringify(newTabs));
+        
         return newTabs;
       });
       
@@ -805,12 +966,16 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
   
     const openNewTab = (folderId, api) => {
       if (!openTabs.find(tab => tab.id === api.id)) {
-        setOpenTabs([...openTabs, { 
+        const newTabs = [...openTabs, { 
           id: api.id, 
           name: api.name, 
           method: api.method,
           folderId: folderId 
-        }]);
+        }];
+        setOpenTabs(newTabs);
+        
+        // Save tabs to localStorage
+        localStorage.setItem('openTabs', JSON.stringify(newTabs));
       }
       setActiveFolderId(folderId);
       setActiveApiId(api.id);
@@ -2004,7 +2169,7 @@ const XMLView = ({ data }) => {
   );
 };
 const ResponsePanel = ({ api }) => {
-  const [height, setHeight] = useState(384);
+  const [height, setHeight] = useState(300); // Reduced initial height
   const [isDragging, setIsDragging] = useState(false);
   const [viewFormat, setViewFormat] = useState('highlighted');
   const [copiedHeader, setCopiedHeader] = useState(null);
@@ -2162,20 +2327,20 @@ const ResponsePanel = ({ api }) => {
   return (
     <div 
       style={{ height: `${height}px` }}
-      className="border-t border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-150"
+      className="border-t border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-150 mt-4"
     >
-      <div className="flex justify-between items-center px-6 py-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center space-x-4">
+      <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-800">
+        <div className="flex items-center space-x-2">
           <div 
             ref={dragRef}
             className="cursor-ns-resize hover:bg-blue-500/10 rounded-full p-1 transition-colors"
             onMouseDown={handleMouseDown}
           >
-            <ArrowUpDown className="w-4 h-4 text-gray-400" />
+            <ArrowUpDown className="w-3 h-3 text-gray-400" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Response</h3>
+          <h3 className="text-base font-semibold text-gray-900 dark:text-white">Response</h3>
           {api.responseData && (
-            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
               api.responseData.status < 400 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100' :
               'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
             }`}>
@@ -2185,25 +2350,25 @@ const ResponsePanel = ({ api }) => {
         </div>
         
         {api.responseData && (
-          <div className="flex items-center space-x-6">
-            <div className="flex flex-col text-sm text-gray-600 dark:text-gray-300">
+          <div className="flex items-center space-x-2 text-xs">
+            <div className="flex flex-col text-gray-600 dark:text-gray-300">
               <span>{((api.responseData.size || 0) / 1024).toFixed(1)} KB</span>
               <span>{api.responseData.responseTime}ms</span>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               <button 
                 onClick={handleCopyResponse}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 title="Copy Response"
               >
-                <Copy className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                <Copy className="w-3 h-3 text-gray-600 dark:text-gray-300" />
               </button>
               <button 
                 onClick={handleDownloadResponse}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
                 title="Download Response"
               >
-                <Download className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                <Download className="w-3 h-3 text-gray-600 dark:text-gray-300" />
               </button>
             </div>
           </div>
@@ -2211,7 +2376,7 @@ const ResponsePanel = ({ api }) => {
       </div>
 
       <div className="flex bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex px-6 space-x-1">
+        <div className="flex px-2 space-x-1">
           {['Body', 'Headers', 'Analytics'].map((tab) => {
             const isActive = api.activeResponseTab === `response-${tab.toLowerCase()}`;
             return (
@@ -2220,7 +2385,7 @@ const ResponsePanel = ({ api }) => {
                 onClick={() => updateApiState(activeFolderId, activeApiId, { 
                   activeResponseTab: `response-${tab.toLowerCase()}` 
                 })}
-                className={`px-4 py-3 text-sm font-medium rounded-t-lg transition-colors relative ${
+                className={`px-3 py-2 text-xs font-medium rounded-t-lg transition-colors relative ${
                   isActive
                     ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-900'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
@@ -2237,7 +2402,7 @@ const ResponsePanel = ({ api }) => {
       </div>
 
       {api.activeResponseTab === 'response-body' && (
-        <div className="flex font-sans space-x-2 p-3 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex font-sans space-x-1 p-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
           {[
             { id: 'highlighted', label: 'JSON' },
             { id: 'pretty', label: 'Pretty' },
@@ -2247,7 +2412,7 @@ const ResponsePanel = ({ api }) => {
             <button
               key={format.id}
               onClick={() => setViewFormat(format.id)}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors ${
+              className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
                 viewFormat === format.id
                   ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100'
                   : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
@@ -2263,7 +2428,7 @@ const ResponsePanel = ({ api }) => {
         {(api.isLoading || api.responseData) ? (
           <>
             {api.activeResponseTab === 'response-body' && (
-              <div className="p-6 bg-white dark:bg-gray-900 min-h-full font-sans">
+              <div className="p-3 bg-white dark:bg-gray-900 min-h-full font-sans">
                 {renderResponseContent()}
               </div>
             )}
@@ -2309,9 +2474,9 @@ const ResponsePanel = ({ api }) => {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full space-y-4 text-gray-400 dark:text-gray-500">
-            <ExternalLink className="w-12 h-12" />
-            <p className="text-sm">Send a request to see the response</p>
+          <div className="flex flex-col items-center justify-center h-full space-y-2 text-gray-400 dark:text-gray-500">
+            <ExternalLink className="w-8 h-8" />
+            <p className="text-xs">Send a request to see the response</p>
           </div>
         )}
       </div>
@@ -2837,6 +3002,147 @@ const methodColors = {
           className="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
         />
       </div>
+
+      {api.isFromHistory && (() => {
+        // Check if this API still exists in any collection
+        const apiExists = collections.some(collection => 
+          // Skip temporary and history collections
+          collection.id !== 'temp-99999' && 
+          collection.name !== 'History Requests 9999999' &&
+          // Check if any API in this collection has the same URL and method
+          collection.apis.some(existingApi => 
+            existingApi.url === api.url && 
+            existingApi.method === api.method &&
+            !existingApi.isFromHistory
+          )
+        );
+        
+        // Only show the Save button if the API doesn't exist in any collection
+        return !apiExists ? (
+          <div className="relative">
+            <CustomDropdown 
+              trigger={
+                <button className="px-4 py-2 bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 flex items-center space-x-2">
+                  <Save className="w-4 h-4" />
+                  <span>Save</span>
+                </button>
+              }
+            >
+              <div className="py-1">
+                <div className="px-4 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                  Save to Collection
+                </div>
+                {collections
+                  .filter(c => c.id !== 'temp-99999' && c.name !== 'History Requests 9999999')
+                  .map(collection => (
+                    <button
+                      key={collection.id}
+                      onClick={() => {
+                        // Create a copy of the current API without the isFromHistory flag
+                        const apiCopy = {
+                          ...api,
+                          id: `api-${Date.now()}`,
+                          isFromHistory: false
+                        };
+                        
+                        // Add the API to the selected collection
+                        const updatedCollections = collections.map(folder => {
+                          if (folder.id === collection.id) {
+                            return {
+                              ...folder,
+                              apis: [...folder.apis, apiCopy]
+                            };
+                          }
+                          return folder;
+                        });
+                        
+                        setCollections(updatedCollections);
+                        
+                        // If we're online and not in a temporary collection, save to server
+                        if (!isElectronOffline() && !collection.id.startsWith('temp-') && !collection.id.startsWith('local-')) {
+                          // Create the API on the server
+                          fetch('http://203.161.50.28:5001/api/apis', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                              collectionId: collection.id,
+                              name: apiCopy.name,
+                              method: apiCopy.method,
+                              url: apiCopy.url
+                            }),
+                          })
+                          .then(response => response.json())
+                          .then(data => {
+                            if (data.success) {
+                              // Update the API with the server ID
+                              const serverApi = {
+                                ...apiCopy,
+                                id: data.api._id
+                              };
+                              
+                              // Update collections with the server API
+                              setCollections(prevCollections => {
+                                return prevCollections.map(folder => {
+                                  if (folder.id === collection.id) {
+                                    return {
+                                      ...folder,
+                                      apis: folder.apis.map(a => 
+                                        a.id === apiCopy.id ? serverApi : a
+                                      )
+                                    };
+                                  }
+                                  return folder;
+                                });
+                              });
+                              
+                              // Update the API details on the server
+                              fetch(`http://203.161.50.28:5001/api/apis/${serverApi.id}`, {
+                                method: 'PUT',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                  headers: apiCopy.headers,
+                                  queryParams: apiCopy.queryParams,
+                                  body: apiCopy.body,
+                                  auth: apiCopy.auth,
+                                  settings: apiCopy.settings
+                                }),
+                              }).catch(error => {
+                                console.error('Error updating API details:', error);
+                              });
+                            }
+                          })
+                          .catch(error => {
+                            console.error('Error saving API to server:', error);
+                          });
+                        }
+                        
+                        // Show a toast notification instead of an alert
+                        setToast({
+                          show: true,
+                          message: `Request saved to ${collection.name}`,
+                          type: 'success'
+                        });
+                        
+                        // Hide the toast after 3 seconds
+                        setTimeout(() => {
+                          setToast(prev => ({ ...prev, show: false }));
+                        }, 3000);
+                      }}
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                    >
+                      <FolderClosed className="w-4 h-4" />
+                      <span className="truncate">{collection.name}</span>
+                    </button>
+                  ))}
+              </div>
+            </CustomDropdown>
+          </div>
+        ) : null;
+      })()}
 
       <button 
         onClick={handleSend}
@@ -3740,7 +4046,7 @@ const methodColors = {
 return (
   <div className={`h-screen flex flex-col ${isDarkMode ? 'dark' : ''}`}>
 
-      <header className="h-14 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <header className="h-12 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between h-full px-4">
           <div className="flex items-center">
             {isMobile && (
@@ -3751,7 +4057,10 @@ return (
                 <Menu className="w-6 h-6" />
               </button>
             )}
-            <img src={logo} alt="Logo" className="h-8" />
+            {/* <img src={logo} alt="Logo" className="h-8" /> */}
+
+            <h1 class="bg-gradient-to-r from-purple-800 via-purple-600 to-purple-500 inline-block text-transparent bg-clip-text text-2xl font-extrabold">AuthRator</h1>
+
           </div>
 
           <div className="flex items-center space-x-4">
@@ -3931,6 +4240,13 @@ return (
         onRename={handleRenameSubmit}
       />
 </main>
+      {toast.show && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ ...toast, show: false })}
+        />
+      )}
 
         
         {/* {!isMobile && (

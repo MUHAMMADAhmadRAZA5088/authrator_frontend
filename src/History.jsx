@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, Search, Calendar, MoreVertical, Weight, Link2, X, Wifi, WifiOff, Copy, Info } from 'lucide-react';
+import { Clock, Search, Calendar, MoreVertical, Weight, Link2, X, Wifi, WifiOff, Copy, Info, FolderClosed } from 'lucide-react';
 import CustomDropdown from './CustomDropdown';
 import Toast from './Toast';
 
@@ -138,9 +138,9 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
     setShowDetailsModal(true);
   };
 
-  const handleOpenInTab = (request) => {
+  const handleOpenInTab = (request, collectionId) => {
     if (openRequestInTab && request) {
-      openRequestInTab(request);
+      openRequestInTab(request, collectionId);
     }
   };
 
@@ -274,7 +274,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
               key={`${request?.apiId}-${request?.timestamp}-${index}`}
               className={`p-4 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 
                         ${request?.success ? '' : 'bg-red-50 dark:bg-red-900/20'} cursor-pointer`}
-              onClick={() => handleOpenInTab(request)}
+              onClick={() => handleOpenInTab(request, null)}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-3">
@@ -312,6 +312,33 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
                       <Info className="w-4 h-4" />
                       <span>View Details</span>
                     </button>
+                    {collections && collections.length > 0 && (
+                      <>
+                        <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+                        <div className="px-4 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                          Save to Collection
+                        </div>
+                        {collections
+                          .filter(c => c.id !== 'temp-99999' && c.name !== 'History Requests 9999999')
+                          .map(collection => (
+                            <button
+                              key={collection.id}
+                              onClick={() => {
+                                handleOpenInTab(request, collection.id);
+                                setToast({
+                                  show: true,
+                                  message: `Request saved to ${collection.name}`,
+                                  type: 'success'
+                                });
+                              }}
+                              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                            >
+                              <FolderClosed className="w-4 h-4" />
+                              <span className="truncate">{collection.name}</span>
+                            </button>
+                          ))}
+                      </>
+                    )}
                   </CustomDropdown>
                 </div>
               </div>

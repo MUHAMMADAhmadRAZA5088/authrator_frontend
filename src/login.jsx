@@ -42,6 +42,11 @@ const Login = () => {
     );
   }, []);
 
+  const handlesignup = () =>{
+
+    navigate("/signup")
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -164,7 +169,7 @@ const Login = () => {
           <p className="text-center mt-4 text-purple-200">
             Don't have an account? 
             <a 
-              href="/signup" 
+              onClick={handlesignup}
               className="text-purple-400 ml-1 hover:text-purple-300 
                 transition duration-300"
             >
