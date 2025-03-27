@@ -1,0 +1,92 @@
+{
+  "name": "authrator",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "./",
+  "main": "build/electron.js",
+  "dependencies": {
+    "axios": "^1.7.9",
+    "buffer": "^6.0.3",
+    "chart.js": "^4.4.2",
+    "cors": "^2.8.5",
+    "cra-template": "1.2.0",
+    "express": "^4.21.2",
+    "node-forge": "^1.3.1",
+    "form-data": "^4.0.1",
+    "gsap": "^3.12.7",
+    "jspdf": "^3.0.0",
+    "jspdf-autotable": "^5.0.2",
+    "lucide-react": "^0.471.0",
+    "node-fetch": "^2.7.0",
+    "react": "^19.0.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^19.0.0",
+    "react-helmet": "^6.1.0",
+    "react-resizable": "^3.0.5",
+    "react-router": "^7.1.1",
+    "react-router-dom": "^7.1.1",
+    "react-scripts": "5.0.1",
+    "recharts": "^2.15.0",
+    "xml-js": "^1.6.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build && cp public/electron.js build/",
+    "build:analyze": "source-map-explorer 'build/static/js/*.js'",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "dist": "npm run build && electron-builder --mac --win portable"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^33.4.1",
+    "electron-builder": "^24.13.3",
+    "tailwindcss": "^3.4.17"
+  },
+  "build": {
+    "appId": "com.yourapp.id",
+    "productName": "Authrator",
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "assets/icon.png",
+      "signAndEditExecutable": false
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "icon": "assets/icon.png",
+      "category": "public.app-category.developer-tools"
+    },
+    "portable": {
+      "artifactName": "${productName}-Portable-${version}.exe"
+    },
+    "files": [
+      "build/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  }
+}
