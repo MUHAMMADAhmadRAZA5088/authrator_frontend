@@ -2,6 +2,10 @@ const { app, BrowserWindow, session } = require('electron');
 const path = require('path');
 const url = require('url');
 
+// Set the app name explicitly
+app.setName('Authrator');
+app.setAppUserModelId('com.authrator.app');
+
 function createWindow() {
   // Create the browser window
   const win = new BrowserWindow({
@@ -13,11 +17,15 @@ function createWindow() {
       webSecurity: true, // Keep security enabled
     },
     roundedCorners: true,
-    icon: path.join(__dirname, 'icon.png')
+    icon: path.join(__dirname, 'icon.png'),
+    title: 'Authrator'
   });
 
   // Load the index.html file - this is the key change
   win.loadFile(path.join(__dirname, 'index.html'));
+  
+  // Set window title
+  win.setTitle('Authrator');
   
   // Configure the session to allow access to localhost even when offline
   configureLocalNetworkAccess(win);
