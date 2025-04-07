@@ -48,7 +48,7 @@ const AdminDashboard = () => {
     try {
       const adminUser = JSON.parse(localStorage.getItem('adminUser'));
       
-      const response = await axios.get('http://203.161.50.28:5001/api/admin/stats', {
+      const response = await axios.get('https://203.161.50.28:5001/api/admin/stats', {
         headers: {
           Authorization: `Bearer ${adminUser.id}`
         }

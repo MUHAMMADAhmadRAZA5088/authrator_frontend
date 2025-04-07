@@ -9,7 +9,7 @@ const LandingPage = () => {
   useEffect(() => {
     const trackVisit = async () => {
       try {
-        await axios.post('http://203.161.50.28:5001/api/stats/visit', {
+        await axios.post('https://203.161.50.28:5001/api/stats/visit', {
           referrer: document.referrer || 'direct'
         });
       } catch (error) {
@@ -32,7 +32,7 @@ const LandingPage = () => {
   
   const handleDownload = async () => {
     try {
-      await axios.post('http://203.161.50.28:5001/api/stats/download', {
+      await axios.post('https://203.161.50.28:5001/api/stats/download', {
         referrer: document.referrer || 'direct'
       });
     } catch (error) {

@@ -50,7 +50,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://203.161.50.28:5001/api/login', { email, password });
+      const response = await axios.post('https://203.161.50.28:5001/api/login', { email, password });
       if (response.data.success) {
         localStorage.setItem('userId', response.data.user.id);
         localStorage.setItem('user', JSON.stringify(response.data.user));

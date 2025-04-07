@@ -86,7 +86,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
       }
     } else {
       try {
-        const response = await fetch(`http://203.161.50.28:5001/api/request-history/${userId}`);
+        const response = await fetch(`https://203.161.50.28:5001/api/request-history/${userId}`);
         const data = await response.json();
         
         if (data.success) {

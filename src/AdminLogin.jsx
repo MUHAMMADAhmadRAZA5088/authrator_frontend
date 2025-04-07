@@ -16,7 +16,7 @@ const AdminLogin = () => {
     setError('');
     
     try {
-      const response = await axios.post('http://203.161.50.28:5001/api/admin/login', {
+      const response = await axios.post('https://203.161.50.28:5001/api/admin/login', {
         email,
         password
       });

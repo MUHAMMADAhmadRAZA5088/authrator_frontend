@@ -23,7 +23,7 @@ import Toast from './Toast';
 import responseimagelight from "./assets/bg_rlm1.png"
 import responseimagedark from "./assets/bg_rlm2.png"
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://203.161.50.28:5001/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://203.161.50.28:5001/api';
 
 const createDebouncedUpdate = (updateFn) => {
   return debounce(updateFn, 5000, { maxWait: 5000 });
@@ -686,7 +686,7 @@ const [isOffline, setIsOffline] = useState(false);
         // If we're online and not in a temporary collection, save to server
         if (!isElectronOffline() && !targetCollectionId.startsWith('temp-') && !targetCollectionId.startsWith('local-')) {
           // Create the API on the server
-          fetch('http://203.161.50.28:5001/api/apis', {
+          fetch('https://203.161.50.28:5001/api/apis', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -735,7 +735,7 @@ const [isOffline, setIsOffline] = useState(false);
               );
               
               // Update the API details on the server
-              fetch(`http://203.161.50.28:5001/api/apis/${serverApi.id}`, {
+              fetch(`https://203.161.50.28:5001/api/apis/${serverApi.id}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -1411,7 +1411,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
     // If moving from temporary collection, create on server
     if (sourceFolderId === 'temp-99999') {
       // Create the API on the server in the target collection
-      const response = await fetch('http://203.161.50.28:5001/api/apis', {
+      const response = await fetch('https://203.161.50.28:5001/api/apis', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1470,7 +1470,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
       }
     } else {
       // Moving between regular collections - update on server
-      const response = await fetch(`http://203.161.50.28:5001/api/apis/${apiId}/move`, {
+      const response = await fetch(`https://203.161.50.28:5001/api/apis/${apiId}/move`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -1779,7 +1779,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
           
           if (userId && user && navigator.onLine) {
             // For logged-in users, fetch from API
-            const response = await fetch(`http://203.161.50.28:5001/api/collections/${userId}`);
+            const response = await fetch(`https://203.161.50.28:5001/api/collections/${userId}`);
             const data = await response.json();
             if (data.success) {
               setCollections(data.collections);
@@ -1842,7 +1842,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
       
       // Online mode for logged in users
       try {
-        const response = await fetch('http://203.161.50.28:5001/api/collections', {
+        const response = await fetch('https://203.161.50.28:5001/api/collections', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -2045,7 +2045,7 @@ const moveApiToCollection = async (apiId, sourceFolderId, targetFolderId) => {
       
       // Regular collection - Create API on server
       try {
-        const response = await fetch('http://203.161.50.28:5001/api/apis', {
+        const response = await fetch('https://203.161.50.28:5001/api/apis', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -2339,7 +2339,7 @@ const getApiById = (apiId) => {
       try {
         if (apiId) {
           // Delete API
-          const response = await fetch(`http://203.161.50.28:5001/api/apis/${apiId}`, {
+          const response = await fetch(`https://203.161.50.28:5001/api/apis/${apiId}`, {
             method: 'DELETE',
           });
           
@@ -2361,7 +2361,7 @@ const getApiById = (apiId) => {
           }
         } else {
           // Delete Collection
-          const response = await fetch(`http://203.161.50.28:5001/api/collections/${folderId}`, {
+          const response = await fetch(`https://203.161.50.28:5001/api/collections/${folderId}`, {
             method: 'DELETE',
           });
           
@@ -2381,7 +2381,7 @@ const getApiById = (apiId) => {
     const debouncedUpdateApi = useCallback(
       createDebouncedUpdate(async (folderId, apiId, updatedData) => {
         try {
-          const response = await fetch(`http://203.161.50.28:5001/api/apis/${apiId}`, {
+          const response = await fetch(`https://203.161.50.28:5001/api/apis/${apiId}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
@@ -2699,7 +2699,7 @@ const getApiById = (apiId) => {
             } else {
               // Save request history to server (for logged-in users)
               try {
-                await fetch('http://203.161.50.28:5001/api/request-history', {
+                await fetch('https://203.161.50.28:5001/api/request-history', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -2766,7 +2766,7 @@ const getApiById = (apiId) => {
               saveRequestHistoryOffline(errorMetrics);
             } else {
               try {
-                await fetch('http://203.161.50.28:5001/api/request-history', {
+                await fetch('https://203.161.50.28:5001/api/request-history', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -4669,7 +4669,7 @@ const methodColors = {
                         // If we're online and not in a temporary collection, save to server
                         if (!isElectronOffline() && !collection.id.startsWith('temp-') && !collection.id.startsWith('local-')) {
                           // Create the API on the server
-                          fetch('http://203.161.50.28:5001/api/apis', {
+                          fetch('https://203.161.50.28:5001/api/apis', {
                             method: 'POST',
                             headers: {
                               'Content-Type': 'application/json',
@@ -4706,7 +4706,7 @@ const methodColors = {
                               });
                               
                               // Update the API details on the server
-                              fetch(`http://203.161.50.28:5001/api/apis/${serverApi.id}`, {
+                              fetch(`https://203.161.50.28:5001/api/apis/${serverApi.id}`, {
                                 method: 'PUT',
                                 headers: {
                                   'Content-Type': 'application/json',
