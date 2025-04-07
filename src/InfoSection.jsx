@@ -40,7 +40,7 @@ const InfoSection = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-full">
-              <HelpCircle className="w-5 h-5 text-blue-500" />
+              <HelpCircle className="w-5 h-5 text-purple-500" />
             </div>
             <h3 className="text-base font-medium dark:text-white">Documentation</h3>
           </div>
@@ -51,7 +51,7 @@ const InfoSection = () => {
             href="https://authrator.com/docs" 
             target="_blank" 
             rel="noopener noreferrer"
-            className="flex items-center gap-2 text-blue-500 hover:text-blue-600 text-sm font-medium group"
+            className="flex items-center gap-2 text-purple-500 hover:text-purple-600 text-sm font-medium group"
           >
             Visit Documentation
             <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
@@ -62,7 +62,7 @@ const InfoSection = () => {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-full">
-              <MailOpen className="w-5 h-5 text-green-500" />
+              <MailOpen className="w-5 h-5 text-purple-500" />
             </div>
             <h3 className="text-base font-medium dark:text-white">Feedback & Feature Requests</h3>
           </div>
@@ -71,7 +71,7 @@ const InfoSection = () => {
           </p>
           <a 
             href="mailto:support@authrator.com" 
-            className="flex items-center gap-2 text-green-500 hover:text-green-600 text-sm font-medium"
+            className="flex items-center gap-2 text-purple-500 hover:text-purple-600 text-sm font-medium"
           >
             Email us at support@authrator.com
           </a>

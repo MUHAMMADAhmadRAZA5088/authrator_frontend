@@ -124,7 +124,7 @@ const JwtDecoder = ({ isOpen, onClose }) => {
         <button
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'decoder'
-              ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
+              ? 'text-purple-600 border-b-2 border-purple-600 dark:text-purple-400 dark:border-purple-400'
               : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
           }`}
           onClick={() => setActiveTab('decoder')}
@@ -313,7 +313,7 @@ const KeyGenerator = () => {
             name="countryName"
             value={certDetails.countryName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="US"
             maxLength={2}
           />
@@ -326,7 +326,7 @@ const KeyGenerator = () => {
             name="stateOrProvince"
             value={certDetails.stateOrProvince}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="California"
           />
         </div>
@@ -338,7 +338,7 @@ const KeyGenerator = () => {
             name="localityName"
             value={certDetails.localityName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="San Francisco"
           />
         </div>
@@ -350,7 +350,7 @@ const KeyGenerator = () => {
             name="organizationName"
             value={certDetails.organizationName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="Company Name"
           />
         </div>
@@ -362,7 +362,7 @@ const KeyGenerator = () => {
             name="organizationalUnitName"
             value={certDetails.organizationalUnitName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="IT Department"
           />
         </div>
@@ -374,7 +374,7 @@ const KeyGenerator = () => {
             name="commonName"
             value={certDetails.commonName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="example.com"
           />
         </div>
@@ -386,7 +386,7 @@ const KeyGenerator = () => {
             name="emailAddress"
             value={certDetails.emailAddress}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="user@example.com"
           />
         </div>
@@ -394,7 +394,7 @@ const KeyGenerator = () => {
         <button
           onClick={generateKeys}
           disabled={isGenerating}
-          className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-gray-600"
+          className="w-full bg-purple-500 text-white py-2 px-4 rounded hover:bg-pruple-600 dark:bg-purple-600 dark:hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600"
         >
           {isGenerating ? 'Generating...' : 'Generate Keys'}
         </button>
@@ -1091,7 +1091,7 @@ const renderApiItem = (folder, api) => {
         <div
           className={`flex items-center justify-between space-x-2 min-w-0 ${
             activeApiId === api.id
-              ? 'bg-blue-100 dark:bg-blue-800 pl-1 pr-1 rounded-lg'
+              ? 'bg-purple-50 dark:bg-purple-800 pl-1 pr-1 rounded-lg'
               : 'hover:bg-gray-100 dark:hover:bg-gray-800 pl-1 pr-1 rounded-lg'
           }`}
           onClick={() => {
@@ -1104,7 +1104,7 @@ const renderApiItem = (folder, api) => {
             <span className={`flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold tracking-wide ${
               {
                 GET: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300',
-                POST: 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300',
+                POST: 'bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300',
                 PUT: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300',
                 DELETE: 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300',
                 PATCH: 'bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300',
@@ -1171,7 +1171,7 @@ const renderApiItem = (folder, api) => {
                           key={api.id} 
                           className={`flex items-center justify-between space-x-2 min-w-0 p-2 rounded-lg cursor-pointer
                             ${activeApiId === api.id
-                              ? 'bg-blue-100 dark:bg-blue-800'
+                              ? 'bg-purple-100 dark:bg-purple-800'
                               : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                             }`}
                           onClick={() => handleApiClick(tempFolder.id, api)}
@@ -1180,7 +1180,7 @@ const renderApiItem = (folder, api) => {
                             <span className={`flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold tracking-wide ${
                               {
                                 GET: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300',
-                                POST: 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300',
+                                POST: 'bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300',
                                 PUT: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300',
                                 DELETE: 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300',
                                 PATCH: 'bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300',
@@ -1321,7 +1321,7 @@ const renderApiItem = (folder, api) => {
                 onClick={() => setIsDarkMode(!isDarkMode)}
                 className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
               >
-                {isDarkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-blue-400" />}
+                {isDarkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-purple-400" />}
               </button>
             </div>
             <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
@@ -2966,7 +2966,7 @@ const JsonHighlighter = ({ data }) => {
             key={`brace-${i}`}
             className={`cursor-pointer ${
               isHighlighted 
-                ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
+                ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' 
                 : 'text-gray-900 dark:text-gray-100'
             }`}
             onMouseEnter={() => handleBraceHover(i)}
@@ -3095,7 +3095,7 @@ const JsonHighlighter = ({ data }) => {
           numberEnd++;
         }
         result.push(
-          <span key={`number-${i}`} className="text-blue-600 dark:text-blue-400">
+          <span key={`number-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, numberEnd)}
           </span>
         );
@@ -3203,7 +3203,7 @@ const PrettyJson = ({ data }) => {
             key={`brace-${i}`}
             className={`cursor-pointer ${
               isHighlighted 
-                ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' 
+                ? 'bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400' 
                 : 'text-gray-900 dark:text-gray-100'
             }`}
             onMouseEnter={() => handleBraceHover(i)}
@@ -3332,7 +3332,7 @@ const PrettyJson = ({ data }) => {
           numberEnd++;
         }
         result.push(
-          <span key={`number-${i}`} className="text-blue-600 dark:text-blue-400">
+          <span key={`number-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, numberEnd)}
           </span>
         );
@@ -3398,7 +3398,7 @@ const RawView = ({ data }) => {
           {'{'}
           {Object.entries(obj).map(([key, value], index, arr) => (
             <React.Fragment key={key}>
-              <span className="text-blue-500 dark:text-blue-400">"{key}"</span>
+              <span className="text-purple-500 dark:text-purple-400">"{key}"</span>
               :
               {renderRawJson(value)}
               {index < arr.length - 1 ? ',' : ''}
@@ -3555,15 +3555,15 @@ const XMLView = ({ data }) => {
           
           return (
             <span>
-              <span className="text-blue-600 dark:text-blue-400">{isClosingTag ? '</' : '<'}</span>
+              <span className="text-purple-600 dark:text-purple-400">{isClosingTag ? '</' : '<'}</span>
               <span className="text-purple-600 dark:text-purple-400">{tagName}</span>
-              <span className="text-blue-600 dark:text-blue-400">{isSelfClosingTag ? '/>' : '>'}</span>
+              <span className="text-purple-600 dark:text-purple-400">{isSelfClosingTag ? '/>' : '>'}</span>
               {value && <span className="text-gray-700 dark:text-gray-300">{value}</span>}
               {!isSelfClosingTag && value && (
                 <>
-                  <span className="text-blue-600 dark:text-blue-400">{'</'}</span>
+                  <span className="text-purple-600 dark:text-purple-400">{'</'}</span>
                   <span className="text-purple-600 dark:text-purple-400">{tagName}</span>
-                  <span className="text-blue-600 dark:text-blue-400">{'>'}</span>
+                  <span className="text-purple-600 dark:text-purple-400">{'>'}</span>
                 </>
               )}
             </span>
@@ -3617,9 +3617,9 @@ const ResponsePanel = ({ api }) => {
     <div className="flex items-center justify-center h-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
       <div className="flex flex-col items-center space-y-4 mt-20">
         <div className="flex space-x-1">
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}} />
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '100ms'}} />
-          <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{animationDelay: '200ms'}} />
+          <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}} />
+          <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '100ms'}} />
+          <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '200ms'}} />
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-300">Loading response...</p>
       </div>
@@ -3797,7 +3797,7 @@ const ResponsePanel = ({ api }) => {
         <div className="flex items-center space-x-2">
           <div 
             ref={dragRef}
-            className="hover:bg-blue-500/10 rounded-full p-1 transition-colors"
+            className="hover:bg-purple-500/10 rounded-full p-1 transition-colors"
           >
             <ArrowUpDown className="w-3 h-3 text-gray-400" />
           </div>
@@ -3852,13 +3852,13 @@ const ResponsePanel = ({ api }) => {
                 })}
                 className={`px-3 py-2 text-xs font-medium rounded-t-lg transition-colors relative ${
                   isActive
-                    ? 'text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-900'
+                    ? 'text-purple-600 dark:text-purple-400 bg-white dark:bg-gray-900'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 {tab}
                 {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 dark:bg-blue-400" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 dark:bg-purple-400" />
                 )}
               </button>
             );
@@ -3879,7 +3879,7 @@ const ResponsePanel = ({ api }) => {
               onClick={() => setViewFormat(format.id)}
               className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
                 viewFormat === format.id
-                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100'
+                  ? 'bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-100'
                   : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
               }`}
             >
@@ -3952,7 +3952,7 @@ const ResponsePanel = ({ api }) => {
 
 const methodColors = {
   GET: 'text-emerald-700 dark:text-emerald-300',
-  POST: 'text-blue-700 dark:text-blue-300',
+  POST: 'text-purple-700 dark:text-purple-300',
   PUT: 'text-amber-700 dark:text-amber-300',
   DELETE: 'text-red-700 dark:text-red-300',
   PATCH: 'text-purple-700 dark:text-purple-300'
@@ -4594,7 +4594,7 @@ const methodColors = {
         className={`px-3 py-2 rounded-md font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white dark:bg-gray-900 border border-gray-300  dark:border-gray-700`}
       >
         <option className="text-emerald-700 dark:text-emerald-300" value="GET">GET</option>
-        <option className="text-blue-700 dark:text-blue-300" value="POST">POST</option>
+        <option className="text-purple-700 dark:text-purple-300" value="POST">POST</option>
         <option className="text-amber-700 dark:text-amber-300" value="PUT">PUT</option>
         <option className="text-red-700 dark:text-red-300" value="DELETE">DELETE</option>
         <option className="text-purple-700 dark:text-purple-300" value="PATCH">PATCH</option>
@@ -4607,7 +4607,7 @@ const methodColors = {
           value={api.url}
           onChange={handleUrlChange}
           placeholder="Enter request URL"
-          className="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+          className="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
         />
       </div>
 
@@ -4754,7 +4754,7 @@ const methodColors = {
 
       <button 
         onClick={handleSend}
-        className="px-4 py-2 bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 text-white rounded-md text-sm font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center space-x-2"
+        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 flex items-center space-x-2"
       >
         <Send className="w-4 h-4" />
         <span>Send</span>
@@ -4776,14 +4776,14 @@ const methodColors = {
             onClick={() => setActiveTab(name.toLowerCase())}
             className={`relative flex items-center space-x-2 px-4 py-3 text-sm font-medium transition-colors duration-150 ease-in-out
               ${activeTab === name.toLowerCase()
-                ? 'border-b-2 border-blue-500 text-blue-500 dark:text-blue-400'
+                ? 'border-b-2 border-purple-500 text-purple-500 dark:text-purple-400'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
               }`}
           >
             <Icon className="w-4 h-4" />
             <span>{name}</span>
             {hasContent && (
-              <span className="absolute top-2 right-2 w-2 h-2 bg-blue-500 rounded-full" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-purple-500 rounded-full" />
             )}
           </button>
         ))}
@@ -4800,14 +4800,14 @@ const methodColors = {
                   placeholder="Key"
                   value={param.key}
                   onChange={(e) => handleParamChange(index, 'key', e.target.value)}
-                  className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                  className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                 />
                 <input
                   type="text"
                   placeholder="Value"
                   value={param.value}
                   onChange={(e) => handleParamChange(index, 'value', e.target.value)}
-                  className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                  className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                 />
                 <button
                   onClick={() => {
@@ -4832,7 +4832,7 @@ const methodColors = {
                   queryParams: newParams
                 });
               }}
-              className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm transition-colors duration-150"
+              className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
             >
               <Plus className="w-4 h-4" />
               <span>Add Parameter</span>
@@ -4844,7 +4844,7 @@ const methodColors = {
     <select
       value={api.auth.type}
       onChange={handleAuthTypeChange}
-      className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+      className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
     >
       <option value="none">No Auth</option>
       <option value="config-jwt">Config JWT</option>
@@ -4878,7 +4878,7 @@ const methodColors = {
                   auth: updatedAuth
                 });
               }}
-              className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             >
               <option value="HS256">HS256</option>
               <option value="HS384">HS384</option>
@@ -4904,7 +4904,7 @@ const methodColors = {
                   auth: updatedAuth
                 });
               }}
-              className="w-full h-32 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              className="w-full h-32 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <input
               type="file"
@@ -4930,9 +4930,9 @@ const methodColors = {
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-md file:border-0
                 file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                dark:file:bg-blue-900 dark:file:text-blue-200
-                hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
+                file:bg-purple-50 file:text-purple-700
+                dark:file:bg-purple-900 dark:file:text-purple-200
+                hover:file:bg-purple-100 dark:hover:file:bg-purple-800"
             />
           </div>
 
@@ -4954,7 +4954,7 @@ const methodColors = {
                     auth: updatedAuth
                   });
                 }}
-                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               />
               <input
                 type="text"
@@ -4971,7 +4971,7 @@ const methodColors = {
                     auth: updatedAuth
                   });
                 }}
-                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               />
               {/* Add delete button for added fields */}
               {index > 0 && (
@@ -5007,7 +5007,7 @@ const methodColors = {
                 auth: updatedAuth
               });
             }}
-            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
+            className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm"
           >
             Add Field
           </button>
@@ -5060,7 +5060,7 @@ const methodColors = {
                 auth: updatedAuth
               });
             }}
-            className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+            className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
           >
             <option value="RS256">RS256</option>
             <option value="RS384">RS384</option>
@@ -5083,7 +5083,7 @@ const methodColors = {
                 auth: updatedAuth
               });
             }}
-            className="w-full h-32 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+            className="w-full h-32 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
           />
           <input
             type="file"
@@ -5109,9 +5109,9 @@ const methodColors = {
               file:mr-4 file:py-2 file:px-4
               file:rounded-md file:border-0
               file:text-sm file:font-semibold
-              file:bg-blue-50 file:text-blue-700
-              dark:file:bg-blue-900 dark:file:text-blue-200
-              hover:file:bg-blue-100 dark:hover:file:bg-blue-800"
+              file:bg-purple-50 file:text-purple-700
+              dark:file:bg-purple-900 dark:file:text-purple-200
+              hover:file:bg-purple-100 dark:hover:file:bg-purple-800"
           />
         </div>
 
@@ -5134,7 +5134,7 @@ const methodColors = {
                     auth: updatedAuth
                   });
                 }}
-                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               />
               <input
                 type="text"
@@ -5151,7 +5151,7 @@ const methodColors = {
                     auth: updatedAuth
                   });
                 }}
-                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               />
               {/* Add delete button for non-default fields */}
               {index >= 7 && (
@@ -5188,7 +5188,7 @@ const methodColors = {
                 auth: updatedAuth
               });
             }}
-            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded-md text-sm"
+            className="px-3 py-1 bg-purple-500 hover:bg-purple-600 text-white rounded-md text-sm"
           >
             Add Field
           </button>
@@ -5238,7 +5238,7 @@ const methodColors = {
             newHeaders[index].key = e.target.value;
             updateApiState(activeFolderId, activeApiId, { headers: newHeaders });
           }}
-          className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+          className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
         />
         <input
           type="text"
@@ -5249,7 +5249,7 @@ const methodColors = {
             newHeaders[index].value = e.target.value;
             updateApiState(activeFolderId, activeApiId, { headers: newHeaders });
           }}
-          className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+          className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
         />
         <button
           onClick={() => {
@@ -5266,7 +5266,7 @@ const methodColors = {
       onClick={() => updateApiState(activeFolderId, activeApiId, {
         headers: [...api.headers, { key: '', value: '' }]
       })}
-      className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm transition-colors duration-150"
+      className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
     >
       <Plus className="w-4 h-4" />
       <span>Add Header</span>
@@ -5412,7 +5412,7 @@ const methodColors = {
         onClick={() => setScriptType('pre-request')}
         className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
           scriptType === 'pre-request'
-            ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+            ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
         }`}
       >
@@ -5422,7 +5422,7 @@ const methodColors = {
         onClick={() => setScriptType('test')}
         className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
           scriptType === 'test'
-            ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+            ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-purple-400 shadow-sm'
             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
         }`}
       >
@@ -5485,7 +5485,7 @@ const methodColors = {
                 ? 'text-red-500 dark:text-red-400'
                 : log.type === 'success'
                 ? 'text-green-500 dark:text-green-400'
-                : 'text-blue-500 dark:text-blue-400'
+                : 'text-purple-500 dark:text-purple-400'
             }`}
           >
             <span className="select-none">›</span>
@@ -5497,7 +5497,7 @@ const methodColors = {
 
     <button
       onClick={runScript}
-      className="flex items-center justify-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-lg transition-colors duration-150 font-medium text-sm w-full sm:w-auto"
+      className="flex items-center justify-center space-x-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white rounded-lg transition-colors duration-150 font-medium text-sm w-full sm:w-auto"
     >
       <Play className="w-4 h-4" />
       <span>Run Script</span>
@@ -5511,7 +5511,7 @@ const methodColors = {
       onChange={(e) => updateApiState(activeFolderId, activeApiId, {
         body: { ...api.body, type: e.target.value }
       })}
-      className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+      className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
     >
       <option value="none">None</option>
       <option value="raw">Raw</option>
@@ -5526,7 +5526,7 @@ const methodColors = {
           body: { ...api.body, content: e.target.value }
         })}
         placeholder="Enter raw body (JSON, XML, etc.)"
-        className="w-full h-64 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+        className="w-full h-64 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
       />
     )}
 
@@ -5545,7 +5545,7 @@ const methodColors = {
                   body: { ...api.body, formData: newFormData }
                 });
               }}
-              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <input
               type="text"
@@ -5558,7 +5558,7 @@ const methodColors = {
                   body: { ...api.body, formData: newFormData }
                 });
               }}
-              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <button
               onClick={() => {
@@ -5580,7 +5580,7 @@ const methodColors = {
               formData: [...api.body.formData, { key: '', value: '' }]
             }
           })}
-          className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm transition-colors duration-150"
+          className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
         >
           <Plus className="w-4 h-4" />
           <span>Add Form Field</span>
@@ -5603,7 +5603,7 @@ const methodColors = {
                   body: { ...api.body, urlencoded: newUrlencoded }
                 });
               }}
-              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <input
               type="text"
@@ -5616,7 +5616,7 @@ const methodColors = {
                   body: { ...api.body, urlencoded: newUrlencoded }
                 });
               }}
-              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <button
               onClick={() => {
@@ -5638,7 +5638,7 @@ const methodColors = {
               urlencoded: [...api.body.urlencoded, { key: '', value: '' }]
             }
           })}
-          className="flex items-center space-x-2 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-medium text-sm transition-colors duration-150"
+          className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
         >
           <Plus className="w-4 h-4" />
           <span>Add URL Encoded Field</span>
@@ -5698,7 +5698,7 @@ return (
                           setShowEnvironmentDropdown(false);
                           setActiveSection('environments');
                         }}
-                        className="text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                        className="text-xs text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300"
                       >
                         Manage
                       </button>
@@ -5707,7 +5707,7 @@ return (
                   <div className="max-h-64 overflow-y-auto py-1">
                     <button
                       className={`flex items-center w-full px-4 py-2 text-sm ${
-                        !activeEnvironment ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750'
+                        !activeEnvironment ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750'
                       }`}
                       onClick={() => {
                         setActiveEnvironment(null);
@@ -5722,7 +5722,7 @@ return (
                       <button
                         key={env.id}
                         className={`flex items-center w-full px-4 py-2 text-sm ${
-                          activeEnvironment?.id === env.id ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750'
+                          activeEnvironment?.id === env.id ? 'bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750'
                         }`}
                         onClick={() => {
                           handleEnvironmentChange(env);
@@ -5747,7 +5747,7 @@ return (
             <div className="flex items-center space-x-2">
               <button
                 onClick={createNewFolder}
-                className="p-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-md flex items-center text-sm"
+                className="p-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white rounded-md flex items-center text-sm"
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                 <span className="hidden sm:inline">New Collection</span>
@@ -5759,7 +5759,7 @@ return (
   className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative group"
   title="JWT Token Tool"
 >
-  <KeyRound className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+  <KeyRound className="w-4 h-4 text-purple-500 dark:text-purple-400" />
   <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap">
     JWT Token Tool
   </div>
@@ -5771,7 +5771,7 @@ return (
               onClick={() => setIsDarkMode(!isDarkMode)}
               className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
             >
-              {isDarkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-blue-400" />}
+              {isDarkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-purple-400" />}
             </button>
             {isElectronOffline() && (
               <div className="ml-2 inline-flex items-center px-2.5 py-1.5 rounded-md text-sm font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
@@ -5782,7 +5782,7 @@ return (
             {!isElectronOffline() && isLoggedIn && (
               <button
                 onClick={handleSignOut}
-                className="p-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white rounded-md flex items-center text-sm"
+                className="p-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white rounded-md flex items-center text-sm"
               >
                 Sign Out
               </button>
@@ -5847,7 +5847,7 @@ return (
                   }}
                   className={`
                     w-full p-3 flex items-center justify-center
-                    ${activeSection === item.id ? 'bg-blue-50 dark:bg-blue-900 dark:text-white' : ''}
+                    ${activeSection === item.id ? 'bg-purple-50 dark:bg-purple-900 dark:text-white' : ''}
                     hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white
                   `}
                 >
@@ -5870,7 +5870,7 @@ return (
           onResize={handleLeftResize}
           axis="x"
           handle={
-            <div className="w-1 cursor-col-resize hover:bg-blue-500 active:bg-blue-600 ">
+            <div className="w-1 cursor-col-resize hover:bg-purple-500 active:bg-purple-600 ">
                  <div className="w-1 h-full bg-gray-200 dark:bg-gray-700 hover:bg-purple-400 active:bg-purple-400" />
             </div>
           }
@@ -5890,7 +5890,7 @@ return (
                 onClick={() => setActiveSection(item.id)}
                 className={`
                   w-full p-3 flex items-center justify-center
-                  ${activeSection === item.id ? 'bg-blue-50 dark:bg-blue-900 dark:text-white' : ''}
+                  ${activeSection === item.id ? 'bg-purple-200 dark:bg-purple-900 dark:text-white' : ''}
                   hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white
                 `}
               >
@@ -5978,7 +5978,7 @@ return (
             onResize={handleRightResize}
             axis="x"
             handle={
-              <div className="w-1 cursor-col-resize hover:bg-blue-500 active:bg-blue-600 absolute left-0 top-0 bottom-0">
+              <div className="w-1 cursor-col-resize hover:bg-purple-500 active:bg-purple-600 absolute left-0 top-0 bottom-0">
                 <div className="w-1 h-full bg-gray-200 dark:bg-gray-700 hover:bg-purple-400 active:bg-purple-400" />
               </div>
             }
@@ -6008,7 +6008,7 @@ return (
                         }}
                         className={`
                           w-full p-3 flex items-center justify-center
-                          ${activeRightSection === item.id ? 'bg-blue-50 dark:bg-blue-900 dark:text-white' : ''}
+                          ${activeRightSection === item.id ? 'bg-purple-200 dark:bg-purple-900 dark:text-white' : ''}
                           hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white
                         `}
                       >
@@ -6034,7 +6034,7 @@ return (
                         }}
                         className={`
                           w-full p-3 flex items-center justify-center
-                          ${activeRightSection === item.id ? 'bg-blue-50 dark:bg-blue-900 dark:text-white' : ''}
+                          ${activeRightSection === item.id ? 'bg-purple-200 dark:bg-purple-900 dark:text-white' : ''}
                           hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white
                         `}
                       >
@@ -6108,8 +6108,8 @@ return (
       <p className="bg-gradient-to-r from-purple-800 via-purple-600 to-purple-500 inline-block text-transparent bg-clip-text mr-2 font-extrabold">
                 Authrator
               </p>
-        {/* <p className="text-blue-400 dark:text-blue-300" style={{ fontFamily: 'Motter Tektura' }}> */}
-        <p className="text-blue-400 dark:text-blue-300f font-bold">
+        {/* <p className="text-purple-400 dark:text-purple-300" style={{ fontFamily: 'Motter Tektura' }}> */}
+        <p className="text-purple-400 dark:text-purple-300f font-bold">
          powered by Provayu
         </p>
       </div>

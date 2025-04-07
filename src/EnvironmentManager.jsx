@@ -485,10 +485,10 @@ const EnvironmentManagementPanel = ({
                       resetGlobalToInitialValue(key) : 
                       resetToInitialValue(env, key)
                     } 
-                    className="p-1 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md"
+                    className="p-1 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md"
                     title="Reset to initial value"
                   >
-                    <RefreshCw className="w-4 h-4 text-blue-500" />
+                    <RefreshCw className="w-4 h-4 text-purple-500" />
                   </button>
                   <button 
                     onClick={() => isGlobal ? 
@@ -549,7 +549,7 @@ const EnvironmentManagementPanel = ({
           </select>
           <button
             onClick={() => isGlobal ? handleAddGlobalVariable() : handleAddVariable(localEnvironments.find(e => e.id === id))}
-            className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md"
+            className="px-4 py-2 text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 rounded-md"
             disabled={!envVariableInputs[id]?.name?.trim()}
           >
             <Plus className="w-4 h-4 inline" />
@@ -569,13 +569,13 @@ const EnvironmentManagementPanel = ({
         <div className="flex items-center space-x-2">
           <button 
             onClick={exportAllEnvironments}
-            className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md flex items-center text-blue-500"
+            className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md flex items-center text-purple-500"
             title="Export all environments"
           >
             <Download className="w-5 h-5 mr-1" />
             <span className="text-sm">Export All</span>
           </button>
-          <label className="p-2 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-md flex items-center text-blue-500 cursor-pointer" title="Import environment">
+          <label className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md flex items-center text-purple-500 cursor-pointer" title="Import environment">
             <Upload className="w-5 h-5 mr-1" />
             <span className="text-sm">Import</span>
             <input 
@@ -619,7 +619,7 @@ const EnvironmentManagementPanel = ({
             />
             <button
               onClick={handleAddEnvironment}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-md"
+              className="px-4 py-2 text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 rounded-md"
               disabled={!newEnvName.trim()}
             >
               <Plus className="w-4 h-4 mr-2 inline" /> Add
@@ -628,12 +628,12 @@ const EnvironmentManagementPanel = ({
         </div>
         
        
-        <div className="mb-6 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-4 border border-indigo-200 dark:border-indigo-600">
+        <div className="mb-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-600">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <Globe className="w-5 h-5 text-indigo-500 dark:text-indigo-400" />
-              <h3 className="text-md font-semibold text-indigo-700 dark:text-indigo-300">Global Environment</h3>
-              <span className="text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-full">
+              <Globe className="w-5 h-5 text-purple-500 dark:text-purple-400" />
+              <h3 className="text-md font-semibold text-purple-700 dark:text-purple-300">Global Environment</h3>
+              <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded-full">
                 Always Active
               </span>
             </div>
@@ -642,7 +642,7 @@ const EnvironmentManagementPanel = ({
           {renderEnvironmentVariableList({ id: 'global' }, true)}
           {renderVariableForm('global', true)}
           
-          <div className="mt-2 text-xs text-indigo-600 dark:text-indigo-400">
+          <div className="mt-2 text-xs text-purple-600 dark:text-purple-400">
             <ExternalLink className="w-3 h-3 inline mr-1" />
             Global variables are available in all environments and are overridden by environment-specific variables.
           </div>
@@ -659,7 +659,7 @@ const EnvironmentManagementPanel = ({
                     <Database className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200">{env.name}</h3>
                     {localActiveEnvironment?.id === env.id && (
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-0.5 rounded-full">Active</span>
+                      <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded-full">Active</span>
                     )}
                   </div>
                   <div className="flex items-center space-x-2">

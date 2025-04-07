@@ -169,7 +169,7 @@ const AuthTemplateManager = ({
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Auth Templates</h2>
           <button
             onClick={startNewTemplate}
-            className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+            className="flex items-center px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors duration-200"
             disabled={isLoading}
           >
             <Plus className="w-4 h-4 mr-2" />
@@ -184,14 +184,14 @@ const AuthTemplateManager = ({
               className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200"
             >
               <div className="flex items-center space-x-3">
-                <FileText className="w-5 h-5 text-blue-500" />
+                <FileText className="w-5 h-5 text-purple-500" />
                 <span className="text-gray-700 dark:text-gray-200 font-medium">{template.name}</span>
                 <span className="text-gray-400 text-sm">({template.pairs.length} pairs)</span>
               </div>
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => loadTemplate(template)}
-                  className="p-2 text-blue-500 hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded-lg transition-colors duration-200"
+                  className="p-2 text-purple-500 hover:bg-purple-100 dark:hover:bg-purple-500/20 rounded-lg transition-colors duration-200"
                   title="Load Template"
                   disabled={isLoading}
                 >
@@ -223,7 +223,7 @@ const AuthTemplateManager = ({
           placeholder="Template Name"
           value={newTemplate.name}
           onChange={(e) => setNewTemplate(prev => ({ ...prev, name: e.target.value }))}
-          className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+          className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
           disabled={isLoading}
         />
         
@@ -234,7 +234,7 @@ const AuthTemplateManager = ({
               placeholder="Key"
               value={pair.key}
               onChange={(e) => updatePair(index, 'key', e.target.value)}
-              className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+              className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               disabled={isLoading}
             />
             <input
@@ -242,7 +242,7 @@ const AuthTemplateManager = ({
               placeholder="Value"
               value={pair.value}
               onChange={(e) => updatePair(index, 'value', e.target.value)}
-              className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+              className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               disabled={isLoading}
             />
             <button
@@ -266,7 +266,7 @@ const AuthTemplateManager = ({
           </button>
           <button
             onClick={saveTemplate}
-            className="px-4 py-2 bg-blue-500 text-white hover:bg-blue-600 rounded-lg transition-colors duration-200 flex items-center"
+            className="px-4 py-2 bg-purple-500 text-white hover:bg-purple-600 rounded-lg transition-colors duration-200 flex items-center"
             disabled={isLoading}
           >
             <Save className="w-4 h-4 mr-2" />
