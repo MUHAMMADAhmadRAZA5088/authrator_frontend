@@ -2606,7 +2606,7 @@ const getApiById = (apiId) => {
           const shouldUseDirectRequest = isOfflineMode && isLocalRequest;
           
           // Determine the appropriate endpoint based on online status and URL
-          let endpoint = 'http://203.161.50.28:5000/api/proxy';
+          let endpoint = 'https://authrator.com/api/api/proxy';
           let requestOptions = {
             method: 'POST',
             headers: {
