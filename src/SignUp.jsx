@@ -81,7 +81,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post('https://203.161.50.28:5001/api/signup', { email, password });
+      const response = await axios.post('https://authrator.com/db-api/api/signup', { email, password });
       if (response.data.success) {
         console.log(response.data);
         
