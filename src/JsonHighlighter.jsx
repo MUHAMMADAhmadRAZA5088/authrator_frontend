@@ -95,7 +95,7 @@ const JsonHighlighter = ({ data }) => {
               inKey = false;
             }
             characters.push(
-              <span key={i} className={inKey ? "text-blue-500 dark:text-blue-400" : "text-teal-500 dark:text-teal-400"}>
+              <span key={i} className={inKey ? "text-purple-600 dark:text-purple-400" : "text-teal-500 dark:text-teal-400"}>
                 {char}
               </span>
             );
@@ -106,7 +106,7 @@ const JsonHighlighter = ({ data }) => {
             characters.push(
               <span 
                 key={i} 
-                className={`cursor-pointer transition-colors ${isHighlighted ? 'text-yellow-500 dark:text-yellow-300 font-bold' : 'text-gray-600 dark:text-gray-400'}`}
+                className={`cursor-pointer transition-colors ${isHighlighted ? 'text-yellow-500 dark:text-yellow-300 font-bold' : 'text-gray-600 dark:text-zinc-400'}`}
                 onMouseEnter={() => handleBraceHover(globalIndex)}
                 onMouseLeave={() => setHoveredBrace(null)}
                 onClick={() => handleBraceClick(globalIndex)}
@@ -143,7 +143,7 @@ const JsonHighlighter = ({ data }) => {
           // Handle null values
           else if (!inString && line.substring(i, i+4) === 'null') {
             characters.push(
-              <span key={i} className="text-gray-500 dark:text-gray-400">
+              <span key={i} className="text-gray-500 dark:text-zinc-400">
                 null
               </span>
             );
@@ -152,7 +152,7 @@ const JsonHighlighter = ({ data }) => {
           // Other characters (commas, colons, whitespace)
           else {
             characters.push(
-              <span key={i} className="text-gray-800 dark:text-gray-200">
+              <span key={i} className="text-gray-800 dark:text-zinc-200">
                 {char}
               </span>
             );
@@ -192,7 +192,7 @@ const JsonHighlighter = ({ data }) => {
             {'{\n'}
             {Object.entries(obj).map(([key, value], index, arr) => (
               <React.Fragment key={key}>
-                {indent}  <span className="text-blue-500 dark:text-blue-400">"{key}"</span>: {renderJson(value, level + 1)}
+                {indent}  <span className="text-purple-600 dark:text-purple-400">"{key}"</span>: {renderJson(value, level + 1)}
                 {index < arr.length - 1 ? ',' : ''}{'\n'}
               </React.Fragment>
             ))}

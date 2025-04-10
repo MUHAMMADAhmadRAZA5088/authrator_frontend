@@ -190,10 +190,10 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white dark:bg-gray-800 rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto m-4">
+        <div className="bg-white dark:bg-zinc-800 rounded-lg w-full max-w-4xl max-h-[80vh] overflow-y-auto m-4">
           <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <h3 className="text-lg font-semibold dark:text-white">Request Details</h3>
-            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+            <button onClick={onClose} className="text-gray-500 hover:text-gray-700 dark:text-zinc-400">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -203,7 +203,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
               <h4 className="font-medium mb-2 dark:text-white">Request Headers</h4>
               {request.requestDetails?.headers?.map((header, index) => (
-                <div key={index} className="text-sm text-gray-600 dark:text-gray-300">
+                <div key={index} className="text-sm text-gray-600 dark:text-zinc-300">
                   <span className="font-medium">{header.key}:</span> {header.value}
                 </div>
               ))}
@@ -213,7 +213,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
               <h4 className="font-medium mb-2 dark:text-white">Query Parameters</h4>
               {request.requestDetails?.queryParams?.map((param, index) => (
-                <div key={index} className="text-sm text-gray-600 dark:text-gray-300">
+                <div key={index} className="text-sm text-gray-600 dark:text-zinc-300">
                   <span className="font-medium">{param.key}:</span> {param.value}
                 </div>
               ))}
@@ -222,7 +222,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             {/* Body Section */}
             <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
               <h4 className="font-medium mb-2 dark:text-white">Request Body</h4>
-              <div className="text-sm text-gray-600 dark:text-gray-300">
+              <div className="text-sm text-gray-600 dark:text-zinc-300">
                 <pre className="whitespace-pre-wrap">
                   {JSON.stringify(request.requestDetails?.body, null, 2)}
                 </pre>
@@ -232,7 +232,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             {/* Auth Section */}
             <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
               <h4 className="font-medium mb-2 dark:text-white">Authentication</h4>
-              <div className="text-sm text-gray-600 dark:text-gray-300">
+              <div className="text-sm text-gray-600 dark:text-zinc-300">
                 Type: {request.requestDetails?.auth?.type || 'None'}
               </div>
             </div>
@@ -240,7 +240,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             {/* Response Section */}
             <div className="border-b border-gray-200 dark:border-gray-700 pb-4">
               <h4 className="font-medium mb-2 dark:text-white">Response</h4>
-              <div className="text-sm text-gray-600 dark:text-gray-300">
+              <div className="text-sm text-gray-600 dark:text-zinc-300">
                 <pre className="whitespace-pre-wrap">
                   {JSON.stringify(request.responseDetails, null, 2)}
                 </pre>
@@ -250,7 +250,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             {/* Settings Section */}
             <div>
               <h4 className="font-medium mb-2 dark:text-white">Settings</h4>
-              <div className="text-sm text-gray-600 dark:text-gray-300">
+              <div className="text-sm text-gray-600 dark:text-zinc-300">
                 <div>Follow Redirects: {request.settings?.followRedirects ? 'Yes' : 'No'}</div>
                 <div>SSL Verification: {request.settings?.sslVerification ? 'Yes' : 'No'}</div>
                 <div>Timeout: {request.settings?.timeout}ms</div>
@@ -264,7 +264,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-800">
+    <div className="h-full flex flex-col bg-white dark:bg-zinc-800">
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold dark:text-white">Request History</h2>
@@ -292,7 +292,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by URL, method, collection, or request name..."
             className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 
-                     bg-white dark:bg-gray-900 text-gray-900 dark:text-white
+                     bg-white dark:bg-zinc-900 text-gray-900 dark:text-white
                      focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
@@ -303,7 +303,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
           </div>
         ) : filteredHistory.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-zinc-400">
             <p className="text-lg">No request history found</p>
             <p className="text-sm">
               {isOffline ? "You're in offline mode. History is loaded from local storage." : "Try adjusting your search criteria"}
@@ -322,7 +322,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
                   <span className={`px-2 py-1 rounded text-xs font-medium text-white ${getMethodColor(request?.method)}`}>
                     {request?.method}
                   </span>
-                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-300">
+                  <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-zinc-300">
                     <Link2 className="w-4 h-4" />
                     <span className="truncate max-w-md">{request?.url}</span>
                   </div>
@@ -356,7 +356,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
                     {collections && collections.length > 0 && (
                       <>
                         <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                        <div className="px-4 py-1 text-xs font-semibold text-gray-500 dark:text-gray-400">
+                        <div className="px-4 py-1 text-xs font-semibold text-gray-500 dark:text-zinc-400">
                           Save to Collection
                         </div>
                         {collections
@@ -384,7 +384,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
                 </div>
               </div>
               
-              <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+              <div className="mb-2 text-sm text-gray-600 dark:text-zinc-400">
                 <span className="font-medium">{request?.folderName}</span>
                 <span className="mx-2">•</span>
                 <span>{request?.apiName}</span>
@@ -399,7 +399,7 @@ const RequestHistoryPanel = ({ collections = [], openRequestInTab }) => {
                 )}
               </div>
               
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-zinc-400">
                 <div className="flex items-center space-x-1">
                   <Clock className="w-4 h-4" />
                   <span>{new Date(request?.timestamp).toLocaleTimeString()}</span>

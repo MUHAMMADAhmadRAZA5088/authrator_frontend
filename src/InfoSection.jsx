@@ -37,9 +37,9 @@ const InfoSection = () => {
       
       <div className="space-y-6 flex-1">
         {/* Documentation Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-full">
+            <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-full">
               <HelpCircle className="w-5 h-5 text-purple-500" />
             </div>
             <h3 className="text-base font-medium dark:text-white">Documentation</h3>
@@ -59,9 +59,9 @@ const InfoSection = () => {
         </div>
 
         {/* Feedback Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-green-50 dark:bg-green-900/30 rounded-full">
+            <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-full">
               <MailOpen className="w-5 h-5 text-purple-500" />
             </div>
             <h3 className="text-base font-medium dark:text-white">Feedback & Feature Requests</h3>
@@ -78,7 +78,7 @@ const InfoSection = () => {
         </div>
 
         {/* Chat Support Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow p-4 hover:shadow-md transition-shadow">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-2 bg-purple-50 dark:bg-purple-900/30 rounded-full">
               <MessageSquare className="w-5 h-5 text-purple-500" />

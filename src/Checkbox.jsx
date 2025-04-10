@@ -6,7 +6,7 @@ const Checkbox = ({ checked, onChange, label }) => (
       <div 
         onClick={() => onChange(!checked)}
         className={`relative w-11 h-6 rounded-full transition-colors duration-200 ease-in-out cursor-pointer ${
-          checked ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+          checked ? 'bg-blue-500' : 'bg-gray-300 dark:bg-zinc-600'
         }`}
       >
         <div

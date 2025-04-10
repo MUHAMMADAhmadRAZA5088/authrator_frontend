@@ -366,8 +366,8 @@ const PerformanceTestingPanel = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900 dark:text-gray-300">
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col h-full bg-white dark:bg-zinc-900 dark:text-gray-300">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-purple-200 dark:border-zinc-700">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Performance Testing</h2>
         <div className="flex items-center gap-2">
           {results.responseTimeData.length > 0 && (
@@ -381,7 +381,7 @@ const PerformanceTestingPanel = ({
               </button>
               <button
                 onClick={generatePDFReport}
-                className="flex items-center px-3 py-1.5 text-sm rounded-md text-white bg-blue-500 hover:bg-blue-600"
+                className="flex items-center px-3 py-1.5 text-sm rounded-md text-white bg-purple-500 hover:bg-purple-600"
               >
                 <FileText size={16} className="mr-1.5" />
                 PDF Report
@@ -398,7 +398,7 @@ const PerformanceTestingPanel = ({
       </div>
 
 
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-b border-purple-200 dark:border-zinc-700">
         <div className="space-y-4">
         
           <div className="relative">
@@ -407,20 +407,20 @@ const PerformanceTestingPanel = ({
             </label>
             <button
               onClick={() => setShowCollectionSelect(!showCollectionSelect)}
-              className="w-full px-3 py-2 text-left border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 flex items-center justify-between"
+              className="w-full px-3 py-2 text-left border border-purple-300 dark:border-zinc-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 flex items-center justify-between"
             >
               <span>{selectedCollection?.name || 'Select Collection'}</span>
               <ChevronDown className="w-4 h-4" />
             </button>
             {showCollectionSelect && (
-              <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-auto">
+              <div className="absolute z-10 w-full mt-1 bg-white dark:bg-zinc-700 border border-purple-200 dark:border-zinc-600 rounded-md shadow-lg max-h-60 overflow-auto">
                 {collections
                   .filter(collection => collection.id !== 'temp-99999' && collection.name !== 'Unsaved Requests' && collection.name !== 'History Requests 9999999')
                   .map(collection => (
                   <button
                     key={collection.id}
                     onClick={() => handleSelectCollection(collection)}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center"
+                    className="w-full px-4 py-2 text-left hover:bg-gray-100 dark:hover:bg-zinc-600 flex items-center"
                   >
                     <FolderOpen className="w-4 h-4 mr-2" />
                     {collection.name}
@@ -436,19 +436,19 @@ const PerformanceTestingPanel = ({
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Selected APIs
               </label>
-              <div className="space-y-2 max-h-40 overflow-auto border border-gray-200 dark:border-gray-600 rounded-md p-2">
+              <div className="space-y-2 max-h-40 overflow-auto border border-purple-200 dark:border-zinc-600 rounded-md p-2">
                 {selectedCollection.apis.map(api => (
                   <label key={api.id} className="flex items-center space-x-2">
                     <input
                       type="checkbox"
                       checked={selectedApis.some(a => a.id === api.id)}
                       onChange={() => handleSelectApi(api)}
-                      className="rounded border-gray-300 dark:border-gray-600"
+                      className="rounded border-purple-300 dark:border-zinc-600"
                     />
                     <span className={`px-2 py-0.5 rounded-md text-xs font-semibold tracking-wide ${
                       {
                         GET: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300',
-                        POST: 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300',
+                        POST: 'bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300',
                         PUT: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300',
                         DELETE: 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300',
                         PATCH: 'bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-300',
@@ -466,7 +466,7 @@ const PerformanceTestingPanel = ({
       </div>
 
     
-      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-4 border-b border-purple-200 dark:border-zinc-700">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -479,7 +479,7 @@ const PerformanceTestingPanel = ({
                 ...prev,
                 iterations: parseInt(e.target.value)
               }))}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
+              className="w-full px-3 py-2 border border-purple-300 dark:border-zinc-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800"
             />
           </div>
           <div>
@@ -493,7 +493,7 @@ const PerformanceTestingPanel = ({
                 ...prev,
                 concurrentUsers: parseInt(e.target.value)
               }))}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
+              className="w-full px-3 py-2 border border-purple-300 dark:border-zinc-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800"
             />
           </div>
           <div>
@@ -507,7 +507,7 @@ const PerformanceTestingPanel = ({
                 ...prev,
                 rampUpPeriod: parseInt(e.target.value)
               }))}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
+              className="w-full px-3 py-2 border border-purple-300 dark:border-zinc-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800"
             />
           </div>
           <div>
@@ -521,7 +521,7 @@ const PerformanceTestingPanel = ({
                 ...prev,
                 delay: parseInt(e.target.value)
               }))}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-gray-800"
+              className="w-full px-3 py-2 border border-purple-300 dark:border-zinc-600 rounded-md focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800"
             />
           </div>
         </div>
@@ -541,7 +541,7 @@ const PerformanceTestingPanel = ({
             className={`flex items-center px-4 py-2 rounded-md text-white ${
               isRunning || selectedApis.length === 0 || hasInvalidUrls
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600'
+                : 'bg-purple-500 hover:bg-purple-600'
             }`}
           >
             {isRunning ? (
@@ -560,7 +560,7 @@ const PerformanceTestingPanel = ({
       </div>
       <div className="flex-1 p-4 overflow-auto">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Response Time</h3>
             <div className="mt-2">
               <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
@@ -572,7 +572,7 @@ const PerformanceTestingPanel = ({
             </div>
           </div>
           
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Error Rate</h3>
             <div className="mt-2">
               <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
@@ -584,7 +584,7 @@ const PerformanceTestingPanel = ({
             </div>
           </div>
           
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+          <div className="p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Throughput</h3>
             <div className="mt-2">
               <p className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
@@ -600,7 +600,7 @@ const PerformanceTestingPanel = ({
       
         <div className="space-y-6">
        
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
+          <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg">
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Response Time Over Time</h3>
             <div className="w-full h-[400px] min-h-[400px] flex items-center justify-center">
               {results.responseTimeData.length > 0 ? (
@@ -678,7 +678,7 @@ const PerformanceTestingPanel = ({
           </div>
 
       
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg">
+          <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg">
             <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Throughput Over Time</h3>
             <div className="w-full h-[400px] min-h-[400px] flex items-center justify-center">
               {results.throughputData.length > 0 ? (
@@ -760,7 +760,7 @@ const PerformanceTestingPanel = ({
 
           
           {selectedApis.length > 1 && (
-            <div className="bg-white dark:bg-gray-700 p-4 rounded-lg">
+            <div className="bg-white dark:bg-zinc-700 p-4 rounded-lg">
               <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">API Performance Summary</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-600">

@@ -104,7 +104,7 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
   };
 
   return (
-    <div className="border-b border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900">
+    <div className="border-b border-gray-200 dark:border-zinc-700 bg-gray-100 dark:bg-zinc-900">
       <div className="flex items-center overflow-x-auto" style={{ height: '40px' }}>
         {openTabs.map((tab) => (
           <div 
@@ -112,7 +112,7 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
             onClick={() => handleTabSelect(tab)}
             onContextMenu={(e) => handleContextMenu(e, tab)}
             className={`flex items-center min-w-0 h-full px-4 cursor-pointer group
-              ${activeTab === tab.id ? 'bg-white dark:bg-gray-800 border-t-2' : 'bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+              ${activeTab === tab.id ? 'bg-white dark:bg-zinc-800 border-t-2' : 'bg-gray-50 dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
             style={{ borderTopColor: activeTab === tab.id ? methodColors[tab.method] : 'transparent' }}
           >
             <span 
@@ -145,7 +145,7 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
 
       {contextMenu.visible && (
         <div 
-          className="fixed bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-[9999]"
+          className="fixed bg-white dark:bg-zinc-800 rounded-md shadow-lg border border-gray-200 dark:border-zinc-700 py-1 z-[9999]"
           style={{ top: `${contextMenu.y}px`, left: `${contextMenu.x}px` }}
           onClick={(e) => e.stopPropagation()}
         >

@@ -8,7 +8,10 @@ import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
 import PrivacyPolicy from "./PrivacyPolicy";
 import TermsOfService from './TermsOfService';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
+// Google OAuth Client ID
+const GOOGLE_CLIENT_ID = '614789424048-m4mh823c5ds28bv3dcjqv54f7si8ag9a.apps.googleusercontent.com';
 
 function App() {
   const [isOffline, setIsOffline] = useState(false);
@@ -74,8 +77,55 @@ function App() {
 
   if (isElectron()) {
     return (
+      <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+        <HashRouter>
+          <Routes>
+            <Route 
+              path="/login" 
+              element={
+                <PublicRoute>
+                  <Login />
+                </PublicRoute>
+              } 
+            />
+            <Route 
+              path="/signup" 
+              element={
+                <PublicRoute>
+                  <Signup />
+                </PublicRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <Dashboard />
+              } 
+            />
+            <Route 
+              path="/" 
+              element={
+                <Navigate to="/dashboard" />
+              }
+            />
+            <Route 
+              path="*" 
+              element={<Navigate to="/login" />}
+            />
+          </Routes>
+        </HashRouter>
+      </GoogleOAuthProvider>
+    );
+  }
+
+
+  return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <HashRouter>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route 
             path="/login" 
             element={
@@ -90,7 +140,7 @@ function App() {
               <PublicRoute>
                 <Signup />
               </PublicRoute>
-            } 
+              } 
           />
           <Route 
             path="/dashboard" 
@@ -98,65 +148,22 @@ function App() {
               <Dashboard />
             } 
           />
+          <Route path="/admin" element={<AdminLogin />} />
           <Route 
-            path="/" 
+            path="/admin/dashboard" 
             element={
-              <Navigate to="/dashboard" />
-            }
+              <AdminProtectedRoute>
+                <AdminDashboard />
+              </AdminProtectedRoute>
+            } 
           />
           <Route 
             path="*" 
-            element={<Navigate to="/login" />}
+            element={<Navigate to="/" />}
           />
         </Routes>
       </HashRouter>
-    );
-  }
-
-
-  return (
-    <HashRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/terms-of-service" element={<TermsOfService />} />
-        <Route 
-          path="/login" 
-          element={
-            <PublicRoute>
-              <Login />
-            </PublicRoute>
-          } 
-        />
-        <Route 
-          path="/signup" 
-          element={
-            <PublicRoute>
-              <Signup />
-            </PublicRoute>
-            } 
-        />
-        <Route 
-          path="/dashboard" 
-          element={
-            <Dashboard />
-          } 
-        />
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route 
-          path="/admin/dashboard" 
-          element={
-            <AdminProtectedRoute>
-              <AdminDashboard />
-            </AdminProtectedRoute>
-          } 
-        />
-        <Route 
-          path="*" 
-          element={<Navigate to="/" />}
-        />
-      </Routes>
-    </HashRouter>
+    </GoogleOAuthProvider>
   );
 }
 

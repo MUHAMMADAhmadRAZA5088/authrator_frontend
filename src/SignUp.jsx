@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { gsap } from 'gsap';
 import logo from "./imgpsh.png"; 
+import { GoogleLogin } from '@react-oauth/google';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -116,6 +117,57 @@ const Signup = () => {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      const response = await axios.post('https://authrator.com/db-api/api/google-login', {
+        token: credentialResponse.credential
+      });
+      
+      if (response.data.success) {
+        localStorage.setItem('userId', response.data.user.id);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        
+        // Clear any existing tabs
+        clearTabsFromLocalStorage();
+        
+        gsap.to(formRef.current, {
+          opacity: 0,
+          y: 50,
+          duration: 0.5,
+          onComplete: () => navigate('/dashboard')
+        });
+      }
+    } catch (err) {
+      gsap.fromTo(
+        errorRef.current,
+        { x: -10, rotation: -2 },
+        { 
+          x: 10, 
+          rotation: 2, 
+          duration: 0.1, 
+          repeat: 5, 
+          yoyo: true,
+          onComplete: () => setError('Google signup failed')
+        }
+      );
+    }
+  };
+
+  const handleGoogleError = () => {
+    gsap.fromTo(
+      errorRef.current,
+      { x: -10, rotation: -2 },
+      { 
+        x: 10, 
+        rotation: 2, 
+        duration: 0.1, 
+        repeat: 5, 
+        yoyo: true,
+        onComplete: () => setError('Google signup failed')
+      }
+    );
+  };
+
   return (
     <div 
       ref={backgroundRef} 
@@ -216,6 +268,25 @@ const Signup = () => {
           >
             Sign Up
           </button>
+          
+          <div className="flex items-center my-4">
+            <div className="flex-1 border-t border-purple-500/30"></div>
+            <span className="px-3 text-purple-300 text-sm">OR</span>
+            <div className="flex-1 border-t border-purple-500/30"></div>
+          </div>
+          
+          <div className="flex justify-center mb-4">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="filled_black"
+              shape="pill"
+              width="100%"
+              text="signup_with"
+              locale="en"
+            />
+          </div>
+          
           <p className="text-center mt-4 text-purple-200">
             Already have an account? 
             <a 

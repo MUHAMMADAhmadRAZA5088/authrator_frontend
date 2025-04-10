@@ -104,9 +104,9 @@ const JwtDecoder = ({ isOpen, onClose }) => {
     return (
       <div className="mt-4 space-y-2">
         {Object.entries(data).map(([key, value]) => (
-          <div key={key} className="bg-gray-50 dark:bg-gray-800 p-2 rounded">
+          <div key={key} className="bg-gray-50 dark:bg-zinc-800 p-2 rounded">
             <div className="text-sm font-medium text-gray-500 dark:text-gray-400">{key}</div>
-            <div className="text-sm font-mono break-all">
+            <div className="text-sm font-mono break-all dark:text-white">
               {typeof value === 'object' 
                 ? JSON.stringify(value, null, 2) 
                 : String(value)
@@ -120,11 +120,11 @@ const JwtDecoder = ({ isOpen, onClose }) => {
 
   const renderTabs = () => {
     return (
-      <div className="flex border-b border-gray-200 dark:border-gray-700 mb-4">
+      <div className="flex border-b border-gray-200 dark:border-zinc-700 mb-4">
         <button
           className={`px-4 py-2 text-sm font-medium ${
             activeTab === 'decoder'
-              ? 'text-purple-600 border-b-2 border-purple-600 dark:text-blue-400 dark:border-purple-400'
+              ? 'text-purple-600 border-b-2 border-purple-600 dark:text-purple-400 dark:border-purple-400'
               : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
           }`}
           onClick={() => setActiveTab('decoder')}
@@ -136,7 +136,7 @@ const JwtDecoder = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className={`fixed inset-y-0 right-0 w-96 bg-white dark:bg-gray-900 shadow-lg transform ${
+    <div className={`fixed inset-y-0 right-0 w-96 bg-white dark:bg-zinc-900 shadow-lg transform ${
       isOpen ? 'translate-x-0' : 'translate-x-full'
     } transition-transform duration-300 ease-in-out z-50 overflow-y-auto`}>
       <div className="p-4">
@@ -162,7 +162,7 @@ const JwtDecoder = ({ isOpen, onClose }) => {
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
                 placeholder="Paste your JWT token here"
-                className="w-full h-24 px-3 py-2 text-sm border border-gray-300 dark:border-gray-700 rounded-md dark:bg-gray-800 dark:text-white"
+                className="w-full h-24 px-3 py-2 text-sm border border-gray-300 dark:border-zinc-700 rounded-md dark:bg-zinc-800 dark:text-white"
               />
             </div>
             
@@ -173,11 +173,11 @@ const JwtDecoder = ({ isOpen, onClose }) => {
             )}
             
             {(decodedHeader || decodedPayload) && (
-              <div className="border border-gray-200 dark:border-gray-700 rounded-md divide-y divide-gray-200 dark:divide-gray-700">
+              <div className="border border-gray-200 dark:border-zinc-700 rounded-md divide-y divide-gray-200 dark:divide-gray-700">
                 {decodedHeader && (
                   <div className="p-3">
                     <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Header</h3>
-                    <pre className="bg-gray-50 dark:bg-gray-800 p-2 rounded text-xs overflow-x-auto">
+                    <pre className="bg-gray-50 dark:bg-zinc-800 p-2 rounded text-xs overflow-x-auto dark:text-white ">
                       {JSON.stringify(decodedHeader, null, 2)}
                     </pre>
                   </div>
@@ -192,7 +192,7 @@ const JwtDecoder = ({ isOpen, onClose }) => {
                 
                 <div className="p-3">
                   <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Signature</h3>
-                  <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded text-xs text-gray-500 dark:text-gray-400">
+                  <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded text-xs text-gray-500 dark:text-gray-400">
                     [Signature encoded data]
                   </div>
                 </div>
@@ -302,7 +302,7 @@ const KeyGenerator = () => {
 
   return (
     <div className="p-4 h-full overflow-y-auto">
-      <h3 className="text-lg font-semibold mb-4 sticky top-0 bg-white dark:bg-gray-900 py-2 text-gray-800 dark:text-gray-100">Generate JWT Keys</h3>
+      <h3 className="text-lg font-semibold mb-4 sticky top-0 bg-white dark:bg-zinc-900 py-2 text-gray-800 dark:text-gray-100">Generate JWT Keys</h3>
       
       <div className="space-y-4">
 
@@ -313,7 +313,7 @@ const KeyGenerator = () => {
             name="countryName"
             value={certDetails.countryName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="US"
             maxLength={2}
           />
@@ -326,7 +326,7 @@ const KeyGenerator = () => {
             name="stateOrProvince"
             value={certDetails.stateOrProvince}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="California"
           />
         </div>
@@ -338,7 +338,7 @@ const KeyGenerator = () => {
             name="localityName"
             value={certDetails.localityName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="San Francisco"
           />
         </div>
@@ -350,7 +350,7 @@ const KeyGenerator = () => {
             name="organizationName"
             value={certDetails.organizationName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="Company Name"
           />
         </div>
@@ -362,7 +362,7 @@ const KeyGenerator = () => {
             name="organizationalUnitName"
             value={certDetails.organizationalUnitName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="IT Department"
           />
         </div>
@@ -374,7 +374,7 @@ const KeyGenerator = () => {
             name="commonName"
             value={certDetails.commonName}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="example.com"
           />
         </div>
@@ -386,7 +386,7 @@ const KeyGenerator = () => {
             name="emailAddress"
             value={certDetails.emailAddress}
             onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
             placeholder="user@example.com"
           />
         </div>
@@ -394,7 +394,7 @@ const KeyGenerator = () => {
         <button
           onClick={generateKeys}
           disabled={isGenerating}
-          className="w-full bg-purple-500 text-white py-2 px-4 rounded hover:bg-pruple-600 dark:bg-blue-600 dark:hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600"
+          className="w-full bg-purple-500 text-white py-2 px-4 rounded hover:bg-pruple-600 dark:bg-purple-600 dark:hover:bg-purple-700 disabled:bg-gray-400 dark:disabled:bg-gray-600"
         >
           {isGenerating ? 'Generating...' : 'Generate Keys'}
         </button>
@@ -412,7 +412,7 @@ const KeyGenerator = () => {
                 <textarea
                   value={privateKey}
                   readOnly
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded font-mono text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded font-mono text-sm bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100"
                   rows={4}
                 />
               </div>
@@ -421,7 +421,7 @@ const KeyGenerator = () => {
                 <textarea
                   value={publicKey}
                   readOnly
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded font-mono text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded font-mono text-sm bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100"
                   rows={4}
                 />
                 <p className="text-xs text-green-600 dark:text-green-400 mt-1">
@@ -433,7 +433,7 @@ const KeyGenerator = () => {
                 <textarea
                   value={certificate}
                   readOnly
-                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded font-mono text-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded font-mono text-sm bg-white dark:bg-zinc-800 text-gray-900 dark:text-gray-100"
                   rows={4}
                 />
               </div>
@@ -1091,7 +1091,7 @@ const renderApiItem = (folder, api) => {
         <div
           className={`flex items-center justify-between space-x-2 min-w-0 ${
             activeApiId === api.id
-              ? 'bg-purple-50 dark:bg-blue-800 pl-1 pr-1 rounded-lg'
+              ? 'bg-purple-50 dark:bg-zinc-800 pl-1 pr-1 rounded-lg'
               : 'hover:bg-gray-100 dark:hover:bg-gray-800 pl-1 pr-1 rounded-lg'
           }`}
           onClick={() => {
@@ -1104,10 +1104,10 @@ const renderApiItem = (folder, api) => {
             <span className={`flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold tracking-wide ${
               {
                 GET: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300',
-                POST: 'bg-purple-100 dark:bg-blue-800 text-purple-700 dark:text-blue-300',
+                POST: 'bg-purple-100 dark:bg-zinc-800 text-purple-700 dark:text-blue-300',
                 PUT: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300',
                 DELETE: 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300',
-                PATCH: 'bg-purple-100 dark:bg-blue-800 text-purple-700 dark:text-blue-300',
+                PATCH: 'bg-purple-100 dark:bg-zinc-800 text-purple-700 dark:text-blue-300',
               }[api.method]
             }`}>
               {api.method}
@@ -1130,7 +1130,7 @@ const renderApiItem = (folder, api) => {
                   }
                 }
               }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center space-x-2"
             >
               <Pencil className="w-4 h-4" />
               <span>Rename</span>
@@ -1141,7 +1141,7 @@ const renderApiItem = (folder, api) => {
                 handleDelete(folder.id, api.id);
                 setIsRenameModalOpen(false)
               }}
-              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 text-red-600"
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center space-x-2 text-red-600"
             >
               <Trash2 className="w-4 h-4" />
               <span>Delete</span>
@@ -1171,7 +1171,7 @@ const renderApiItem = (folder, api) => {
                           key={api.id} 
                           className={`flex items-center justify-between space-x-2 min-w-0 p-2 rounded-lg cursor-pointer
                             ${activeApiId === api.id
-                              ? 'bg-purple-100 dark:bg-blue-800'
+                              ? 'bg-purple-100 dark:bg-zinc-800'
                               : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                             }`}
                           onClick={() => handleApiClick(tempFolder.id, api)}
@@ -1180,10 +1180,10 @@ const renderApiItem = (folder, api) => {
                             <span className={`flex-shrink-0 px-2 py-0.5 rounded-md text-xs font-semibold tracking-wide ${
                               {
                                 GET: 'bg-green-100 dark:bg-green-800 text-green-700 dark:text-green-300',
-                                POST: 'bg-purple-100 dark:bg-blue-800 text-purple-700 dark:text-blue-300',
+                                POST: 'bg-purple-100 dark:bg-zinc-800 text-purple-700 dark:text-blue-300',
                                 PUT: 'bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300',
                                 DELETE: 'bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-300',
-                                PATCH: 'bg-purple-100 dark:bg-blue-800 text-purple-700 dark:text-blue-300',
+                                PATCH: 'bg-purple-100 dark:bg-zinc-800 text-purple-700 dark:text-blue-300',
                               }[api.method]
                             }`}>
                               {api.method}
@@ -1201,7 +1201,7 @@ const renderApiItem = (folder, api) => {
                                     e.stopPropagation();
                                     openRenameModal(api.id, 'api', api.name);
                                   }}
-                                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                                  className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center space-x-2"
                                 >
                                   <Pencil className="w-4 h-4" />
                                   <span>Rename</span>
@@ -1218,7 +1218,7 @@ const renderApiItem = (folder, api) => {
                                         e.stopPropagation();
                                         moveApiToCollection(api.id, tempFolder.id, collection.id);
                                       }}
-                                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center space-x-2"
                                     >
                                       <FolderClosed className="w-4 h-4" />
                                       <span className="truncate">{collection.name}</span>
@@ -1261,7 +1261,7 @@ const renderApiItem = (folder, api) => {
                           e.stopPropagation();
                           createNewApi(folder.id);
                         }}
-                        className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md"
+                        className="p-1.5 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-md"
                       >
                         <PlusCircle className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                       </button>
@@ -1271,14 +1271,14 @@ const renderApiItem = (folder, api) => {
                             setSelectedColor(folder.color || '#FF6B6B');
                             openRenameModal(folder.id, 'collection', folder.name);
                           }}
-                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center space-x-2"
                         >
                           <Pencil className="w-4 h-4" />
                           <span>Rename</span>
                         </button>
                         <button
                           onClick={() => handleDelete(folder.id)}
-                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2 text-red-600"
+                          className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center space-x-2 text-red-600"
                         >
                           <Trash2 className="w-4 h-4" />
                           <span>Delete</span>
@@ -1294,7 +1294,7 @@ const renderApiItem = (folder, api) => {
       
       case 'environments':
         return (
-          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-900 rounded-lg">
           <span>Environment Management</span>
            
             <DatabaseZapIcon className="w-5 h-5" />
@@ -1315,20 +1315,20 @@ const renderApiItem = (folder, api) => {
       case 'settings':
         return (
           <div className="p-4 space-y-4">
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-900 rounded-lg">
               <span>Dark Mode</span>
               <button
                 onClick={() => setIsDarkMode(!isDarkMode)}
-                className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-zinc-700"
               >
                 {isDarkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-purple-400" />}
               </button>
             </div>
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-900 rounded-lg">
               <span>Performance Testing</span>
               <button
                 onClick={() => setIsPerformanceTesting(!isPerformanceTesting)}
-                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+                className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-zinc-700"
               >
                 <CloudLightningIcon className="w-5 h-5" />
               </button>
@@ -1338,7 +1338,7 @@ const renderApiItem = (folder, api) => {
 
         case 'authTemplates':
           return (
-            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-900 rounded-lg">
               <span> Auth Template</span>
                
                 <LayoutTemplate className="w-5 h-5" />
@@ -2882,7 +2882,7 @@ const getStatusColor = (status) => {
   if (status >= 200 && status < 300) return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200';
   if (status >= 400 && status < 500) return 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200';
   if (status >= 500) return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
-  return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200';
+  return 'bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-gray-200';
 };
 
 const JsonHighlighter = ({ data }) => {
@@ -2929,18 +2929,27 @@ const JsonHighlighter = ({ data }) => {
     let currentIndex = 0;
     let inString = false;
     let stringStart = 0;
+    let isKey = false;
 
     for (let i = 0; i < jsonString.length; i++) {
       const char = jsonString[i];
       
       if (char === '"' && jsonString[i - 1] !== '\\') {
         if (!inString) {
+          // Check if this string is a key by looking ahead for a colon
+          let j = i + 1;
+          while (j < jsonString.length && jsonString[j] !== '"' && jsonString[j - 1] !== '\\') j++;
+          // Look for colon after the closing quote
+          j++;
+          while (j < jsonString.length && /\s/.test(jsonString[j])) j++;
+          isKey = j < jsonString.length && jsonString[j] === ':';
+          
           stringStart = i;
           inString = true;
         } else {
           inString = false;
           result.push(
-            <span key={`string-${i}`} className="text-green-600 dark:text-green-400">
+            <span key={`string-${i}`} className={isKey ? "text-purple-600 dark:text-purple-400" : "text-green-600 dark:text-green-400"}>
               {jsonString.slice(stringStart, i + 1)}
             </span>
           );
@@ -2966,7 +2975,7 @@ const JsonHighlighter = ({ data }) => {
             key={`brace-${i}`}
             className={`cursor-pointer ${
               isHighlighted 
-                ? 'bg-purple-100 dark:bg-blue-900 text-purple-600 dark:text-blue-400' 
+                ? 'bg-purple-100 dark:bg-zinc-900 text-purple-600 dark:text-purple-400' 
                 : 'text-gray-900 dark:text-gray-100'
             }`}
             onMouseEnter={() => handleBraceHover(i)}
@@ -3040,7 +3049,7 @@ const JsonHighlighter = ({ data }) => {
           );
         }
         result.push(
-          <span key={`boolean-${i}`} className="text-purple-600 dark:text-blue-400">
+          <span key={`boolean-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, i + 4)}
           </span>
         );
@@ -3057,7 +3066,7 @@ const JsonHighlighter = ({ data }) => {
           );
         }
         result.push(
-          <span key={`boolean-${i}`} className="text-purple-600 dark:text-blue-400">
+          <span key={`boolean-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, i + 5)}
           </span>
         );
@@ -3074,7 +3083,7 @@ const JsonHighlighter = ({ data }) => {
           );
         }
         result.push(
-          <span key={`null-${i}`} className="text-purple-600 dark:text-blue-400">
+          <span key={`null-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, i + 4)}
           </span>
         );
@@ -3095,7 +3104,7 @@ const JsonHighlighter = ({ data }) => {
           numberEnd++;
         }
         result.push(
-          <span key={`number-${i}`} className="text-purple-600 dark:text-blue-400">
+          <span key={`number-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, numberEnd)}
           </span>
         );
@@ -3203,7 +3212,7 @@ const PrettyJson = ({ data }) => {
             key={`brace-${i}`}
             className={`cursor-pointer ${
               isHighlighted 
-                ? 'bg-purple-100 dark:bg-blue-900 text-purple-600 dark:text-blue-400' 
+                ? 'bg-purple-100 dark:bg-zinc-900 text-purple-600 dark:text-purple-400' 
                 : 'text-gray-900 dark:text-gray-100'
             }`}
             onMouseEnter={() => handleBraceHover(i)}
@@ -3277,7 +3286,7 @@ const PrettyJson = ({ data }) => {
           );
         }
         result.push(
-          <span key={`boolean-${i}`} className="text-purple-600 dark:text-blue-400">
+          <span key={`boolean-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, i + 4)}
           </span>
         );
@@ -3294,7 +3303,7 @@ const PrettyJson = ({ data }) => {
           );
         }
         result.push(
-          <span key={`boolean-${i}`} className="text-purple-600 dark:text-blue-400">
+          <span key={`boolean-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, i + 5)}
           </span>
         );
@@ -3311,7 +3320,7 @@ const PrettyJson = ({ data }) => {
           );
         }
         result.push(
-          <span key={`null-${i}`} className="text-purple-600 dark:text-blue-400">
+          <span key={`null-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, i + 4)}
           </span>
         );
@@ -3332,7 +3341,7 @@ const PrettyJson = ({ data }) => {
           numberEnd++;
         }
         result.push(
-          <span key={`number-${i}`} className="text-purple-600 dark:text-blue-400">
+          <span key={`number-${i}`} className="text-purple-600 dark:text-purple-400">
             {jsonString.slice(i, numberEnd)}
           </span>
         );
@@ -3359,6 +3368,19 @@ const PrettyJson = ({ data }) => {
   );
 };
 
+const PlainTextView = ({ data }) => {
+  // Convert data to a string if it's not already
+  const textContent = typeof data === 'string' 
+    ? data 
+    : JSON.stringify(data, null, 2);
+    
+  return (
+    <pre className="font-mono text-sm text-gray-800 dark:text-gray-200 whitespace-pre-wrap">
+      {textContent}
+    </pre>
+  );
+};
+
 const RawView = ({ data }) => {
   const renderValue = (value) => {
     if (typeof value === 'boolean') {
@@ -3372,6 +3394,9 @@ const RawView = ({ data }) => {
         return <span className="text-green-500 dark:text-green-400">"{value}"</span>;
       }
       return <span className="text-teal-500 dark:text-teal-400">"{value}"</span>;
+    }
+    if (value === null) {
+      return <span className="text-gray-500 dark:text-gray-400">null</span>;
     }
     return value;
   };
@@ -3398,7 +3423,7 @@ const RawView = ({ data }) => {
           {'{'}
           {Object.entries(obj).map(([key, value], index, arr) => (
             <React.Fragment key={key}>
-              <span className="text-purple-500 dark:text-blue-400">"{key}"</span>
+              <span className="text-purple-600 dark:text-purple-400">"{key}"</span>
               :
               {renderRawJson(value)}
               {index < arr.length - 1 ? ',' : ''}
@@ -3555,15 +3580,15 @@ const XMLView = ({ data }) => {
           
           return (
             <span>
-              <span className="text-purple-600 dark:text-blue-400">{isClosingTag ? '</' : '<'}</span>
-              <span className="text-purple-600 dark:text-blue-400">{tagName}</span>
-              <span className="text-purple-600 dark:text-blue-400">{isSelfClosingTag ? '/>' : '>'}</span>
+              <span className="text-purple-600 dark:text-purple-400">{isClosingTag ? '</' : '<'}</span>
+              <span className="text-purple-600 dark:text-purple-400">{tagName}</span>
+              <span className="text-purple-600 dark:text-purple-400">{isSelfClosingTag ? '/>' : '>'}</span>
               {value && <span className="text-gray-700 dark:text-gray-300">{value}</span>}
               {!isSelfClosingTag && value && (
                 <>
-                  <span className="text-purple-600 dark:text-blue-400">{'</'}</span>
-                  <span className="text-purple-600 dark:text-blue-400">{tagName}</span>
-                  <span className="text-purple-600 dark:text-blue-400">{'>'}</span>
+                  <span className="text-purple-600 dark:text-purple-400">{'</'}</span>
+                  <span className="text-purple-600 dark:text-purple-400">{tagName}</span>
+                  <span className="text-purple-600 dark:text-purple-400">{'>'}</span>
                 </>
               )}
             </span>
@@ -3588,7 +3613,7 @@ const XMLView = ({ data }) => {
   const xmlString = formatXML(data);
   
   return (
-    <div className="bg-white dark:bg-gray-900 p-4 rounded-lg overflow-x-auto">
+    <div className="bg-white dark:bg-zinc-900 p-4 rounded-lg overflow-x-auto">
       {renderFormattedXML(xmlString)}
     </div>
   );
@@ -3614,7 +3639,7 @@ const ResponsePanel = ({ api }) => {
 
 
   const renderLoader = () => (
-    <div className="flex items-center justify-center h-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm">
+    <div className="flex items-center justify-center h-full bg-white/80 dark:bg-zinc-800/80 backdrop-blur-sm">
       <div className="flex flex-col items-center space-y-4 mt-20">
         <div className="flex space-x-1">
           <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{animationDelay: '0ms'}} />
@@ -3725,11 +3750,11 @@ const ResponsePanel = ({ api }) => {
             <div className="text-gray-600 dark:text-gray-400 text-sm">
               <div className="font-medium mb-1">Error Details:</div>
               {typeof api.responseData.details === 'object' ? (
-                <pre className="bg-gray-100 dark:bg-gray-800 p-2 rounded">
+                <pre className="bg-gray-100 dark:bg-zinc-800 p-2 rounded">
                   {JSON.stringify(api.responseData.details, null, 2)}
                 </pre>
               ) : (
-                <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded">
+                <div className="bg-gray-100 dark:bg-zinc-800 p-2 rounded">
                   {api.responseData.details}
                 </div>
               )}
@@ -3761,8 +3786,8 @@ const ResponsePanel = ({ api }) => {
       case 'pretty':
         return <PrettyJson data={responseContent} />;
       case 'raw':
-        // For raw view, handle different data types appropriately
-        return <RawView data={typeof responseContent === 'string' ? responseContent : JSON.stringify(responseContent, null, 2)} />;
+        // For raw view, just show the plain text without syntax highlighting
+        return <PlainTextView data={responseContent} />;
       case 'xml':
         const xml = require('xml-js');
         try {
@@ -3788,10 +3813,10 @@ const ResponsePanel = ({ api }) => {
   return (
     <div 
       style={{ height: `${height}px` }}
-      className="border-t border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-150 mt-4"
+      className="border-t border-gray-200 dark:border-zinc-700 flex flex-col transition-all duration-150 mt-4"
     >
       <div 
-        className="flex items-center justify-between p-2 bg-white dark:bg-gray-800 cursor-ns-resize"
+        className="flex items-center justify-between p-2 bg-white dark:bg-zinc-800 cursor-ns-resize"
         onMouseDown={handleMouseDown}
       >
         <div className="flex items-center space-x-2">
@@ -3821,7 +3846,7 @@ const ResponsePanel = ({ api }) => {
             <div className="flex items-center space-x-1">
               <button 
                 onClick={handleCopyResponse}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
                 title="Copy Response"
                 onMouseDown={(e) => e.stopPropagation()} // Prevent drag when clicking buttons
               >
@@ -3829,7 +3854,7 @@ const ResponsePanel = ({ api }) => {
               </button>
               <button 
                 onClick={handleDownloadResponse}
-                className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-lg transition-colors"
                 title="Download Response"
                 onMouseDown={(e) => e.stopPropagation()} // Prevent drag when clicking buttons
               >
@@ -3840,7 +3865,7 @@ const ResponsePanel = ({ api }) => {
         )}
       </div>
 
-      <div className="flex bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex bg-white dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700">
         <div className="flex px-2 space-x-1">
           {['Body', 'Headers', 'Analytics'].map((tab) => {
             const isActive = api.activeResponseTab === `response-${tab.toLowerCase()}`;
@@ -3852,13 +3877,13 @@ const ResponsePanel = ({ api }) => {
                 })}
                 className={`px-3 py-2 text-xs font-medium rounded-t-lg transition-colors relative ${
                   isActive
-                    ? 'text-purple-600 dark:text-blue-400 bg-white dark:bg-gray-900'
+                    ? 'text-purple-600 dark:text-purple-400 bg-white dark:bg-zinc-900'
                     : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
                 }`}
               >
                 {tab}
                 {isActive && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 dark:bg-blue-400" />
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-purple-600 dark:bg-purple-400" />
                 )}
               </button>
             );
@@ -3867,7 +3892,7 @@ const ResponsePanel = ({ api }) => {
       </div>
 
       {api.activeResponseTab === 'response-body' && (
-        <div className="flex font-sans space-x-1 p-2 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex font-sans space-x-1 p-2 bg-gray-50 dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-700">
           {[
             { id: 'highlighted', label: 'JSON' },
             { id: 'pretty', label: 'Pretty' },
@@ -3879,8 +3904,8 @@ const ResponsePanel = ({ api }) => {
               onClick={() => setViewFormat(format.id)}
               className={`px-2 py-1 rounded-md text-xs font-medium transition-colors ${
                 viewFormat === format.id
-                  ? 'bg-purple-100 text-purple-700 dark:bg-blue-900 dark:text-blue-100'
-                  : 'hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300'
+                  ? 'bg-purple-100 text-purple-700 dark:bg-zinc-900 dark:text-blue-100'
+                  : 'hover:bg-gray-200 dark:hover:bg-zinc-700 text-gray-600 dark:text-gray-300'
               }`}
             >
               {format.label}
@@ -3893,16 +3918,16 @@ const ResponsePanel = ({ api }) => {
         {(api.isLoading || api.responseData) ? (
           <>
             {api.activeResponseTab === 'response-body' && (
-              <div className="p-3 bg-white dark:bg-gray-900 min-h-full font-sans">
+              <div className="p-3 bg-white dark:bg-zinc-900 min-h-full font-sans">
                 {renderResponseContent()}
               </div>
             )}
             {api.activeResponseTab === 'response-headers' && (
-              <div className="p-6 bg-white dark:bg-gray-900">
+              <div className="p-6 bg-white dark:bg-zinc-900">
                 {api.isLoading ? renderLoader() : (
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <tr className="border-b border-gray-200 dark:border-zinc-700">
                         <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Header</th>
                         <th className="text-left py-3 px-4 text-sm font-medium text-gray-500 dark:text-gray-400">Value</th>
                         <th className="w-16"></th>
@@ -3910,13 +3935,13 @@ const ResponsePanel = ({ api }) => {
                     </thead>
                     <tbody>
                       {Object.entries(api.responseData?.headers || {}).map(([key, value]) => (
-                        <tr key={key} className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800">
+                        <tr key={key} className="border-b border-gray-100 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-gray-800">
                           <td className="py-3 px-4 font-sans font-semibold text-sm text-rose-600 dark:text-rose-400">{key}</td>
                           <td className="py-3 px-4 font-sans font-semibold text-sm text-violet-600 dark:text-violet-400">{value}</td>
                           <td className="py-3 px-4">
                             <button
                               onClick={() => handleCopyHeader(key, value)}
-                              className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                              className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
                             >
                               {copiedHeader === key ? (
                                 <Check className="w-4 h-4 text-green-500" />
@@ -4586,12 +4611,12 @@ const methodColors = {
         };
        
    return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-    <div className="flex items-center space-x-3 p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col h-full bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100">
+    <div className="flex items-center space-x-3 p-4 bg-gray-50 dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700">
       <select
         value={api.method}
         onChange={(e) => updateApiState(activeFolderId, activeApiId, { method: e.target.value })}
-        className={`px-3 py-2 rounded-md font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white dark:bg-gray-900 border border-gray-300  dark:border-gray-700`}
+        className={`px-3 py-2 rounded-md font-medium text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white dark:bg-zinc-900 border border-gray-300  dark:border-zinc-700`}
       >
         <option className="text-emerald-700 dark:text-emerald-300" value="GET">GET</option>
         <option className="text-purple-700 dark:text-blue-300" value="POST">POST</option>
@@ -4607,7 +4632,7 @@ const methodColors = {
           value={api.url}
           onChange={handleUrlChange}
           placeholder="Enter request URL"
-          className="w-full px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+          className="w-full px-4 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
         />
       </div>
 
@@ -4740,7 +4765,7 @@ const methodColors = {
                           setToast(prev => ({ ...prev, show: false }));
                         }, 3000);
                       }}
-                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+                      className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-zinc-700 flex items-center space-x-2"
                     >
                       <FolderClosed className="w-4 h-4" />
                       <span className="truncate">{collection.name}</span>
@@ -4754,14 +4779,14 @@ const methodColors = {
 
       <button 
         onClick={handleSend}
-        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 dark:bg-blue-600 dark:hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 flex items-center space-x-2"
+        className="px-4 py-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 flex items-center space-x-2"
       >
         <Send className="w-4 h-4" />
         <span>Send</span>
       </button>
     </div>
 
-    <div className="border-b border-gray-200 dark:border-gray-700">
+    <div className="border-b border-gray-200 dark:border-zinc-700">
       <div className="flex">
         {[
           { name: 'Params', icon: Database, hasContent: hasParams() },
@@ -4776,7 +4801,7 @@ const methodColors = {
             onClick={() => setActiveTab(name.toLowerCase())}
             className={`relative flex items-center space-x-2 px-4 py-3 text-sm font-medium transition-colors duration-150 ease-in-out
               ${activeTab === name.toLowerCase()
-                ? 'border-b-2 border-purple-500 text-purple-500 dark:text-blue-400'
+                ? 'border-b-2 border-purple-500 text-purple-500 dark:text-purple-400'
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
               }`}
           >
@@ -4790,7 +4815,7 @@ const methodColors = {
       </div>
     </div>
 
-    <div className="flex-1 overflow-auto p-4 bg-gray-50 dark:bg-gray-800">
+    <div className="flex-1 overflow-auto p-4 bg-gray-50 dark:bg-zinc-800">
         {activeTab === 'params' && (
           <div className="space-y-3">
             {api.queryParams.map((param, index) => (
@@ -4800,14 +4825,14 @@ const methodColors = {
                   placeholder="Key"
                   value={param.key}
                   onChange={(e) => handleParamChange(index, 'key', e.target.value)}
-                  className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                  className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                 />
                 <input
                   type="text"
                   placeholder="Value"
                   value={param.value}
                   onChange={(e) => handleParamChange(index, 'value', e.target.value)}
-                  className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                  className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
                 />
                 <button
                   onClick={() => {
@@ -4832,7 +4857,7 @@ const methodColors = {
                   queryParams: newParams
                 });
               }}
-              className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-blue-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
+              className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
             >
               <Plus className="w-4 h-4" />
               <span>Add Parameter</span>
@@ -4844,7 +4869,7 @@ const methodColors = {
     <select
       value={api.auth.type}
       onChange={handleAuthTypeChange}
-      className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+      className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
     >
       <option value="none">No Auth</option>
       <option value="config-jwt">Config JWT</option>
@@ -4878,7 +4903,7 @@ const methodColors = {
                   auth: updatedAuth
                 });
               }}
-              className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+              className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             >
               <option value="HS256">HS256</option>
               <option value="HS384">HS384</option>
@@ -4904,7 +4929,7 @@ const methodColors = {
                   auth: updatedAuth
                 });
               }}
-              className="w-full h-32 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+              className="w-full h-32 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <input
               type="file"
@@ -4954,7 +4979,7 @@ const methodColors = {
                     auth: updatedAuth
                   });
                 }}
-                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               />
               <input
                 type="text"
@@ -4971,7 +4996,7 @@ const methodColors = {
                     auth: updatedAuth
                   });
                 }}
-                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               />
               {/* Add delete button for added fields */}
               {index > 0 && (
@@ -5034,7 +5059,7 @@ const methodColors = {
           {api.auth.jwt?.value && (
             <div className="space-y-2">
               <label className="block text-sm font-medium">Generated Token</label>
-              <div className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-md text-sm break-all">
+              <div className="w-full px-3 py-2 bg-gray-100 dark:bg-zinc-800 rounded-md text-sm break-all">
                 {api.auth.jwt.value}
               </div>
             </div>
@@ -5060,7 +5085,7 @@ const methodColors = {
                 auth: updatedAuth
               });
             }}
-            className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+            className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
           >
             <option value="RS256">RS256</option>
             <option value="RS384">RS384</option>
@@ -5083,7 +5108,7 @@ const methodColors = {
                 auth: updatedAuth
               });
             }}
-            className="w-full h-32 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+            className="w-full h-32 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
           />
           <input
             type="file"
@@ -5134,7 +5159,7 @@ const methodColors = {
                     auth: updatedAuth
                   });
                 }}
-                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               />
               <input
                 type="text"
@@ -5151,7 +5176,7 @@ const methodColors = {
                     auth: updatedAuth
                   });
                 }}
-                className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+                className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
               />
               {/* Add delete button for non-default fields */}
               {index >= 7 && (
@@ -5214,7 +5239,7 @@ const methodColors = {
           {api.auth.avqJwt?.token && (
             <div className="space-y-2">
               <label className="block text-sm font-medium">Generated Token</label>
-              <div className="w-full px-3 py-2 bg-gray-100 dark:bg-gray-800 rounded-md text-sm break-all">
+              <div className="w-full px-3 py-2 bg-gray-100 dark:bg-zinc-800 rounded-md text-sm break-all">
                 {api.auth.avqJwt.token}
               </div>
             </div>
@@ -5238,7 +5263,7 @@ const methodColors = {
             newHeaders[index].key = e.target.value;
             updateApiState(activeFolderId, activeApiId, { headers: newHeaders });
           }}
-          className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+          className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
         />
         <input
           type="text"
@@ -5249,7 +5274,7 @@ const methodColors = {
             newHeaders[index].value = e.target.value;
             updateApiState(activeFolderId, activeApiId, { headers: newHeaders });
           }}
-          className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+          className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
         />
         <button
           onClick={() => {
@@ -5266,7 +5291,7 @@ const methodColors = {
       onClick={() => updateApiState(activeFolderId, activeApiId, {
         headers: [...api.headers, { key: '', value: '' }]
       })}
-      className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-blue-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
+      className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
     >
       <Plus className="w-4 h-4" />
       <span>Add Header</span>
@@ -5304,7 +5329,7 @@ const methodColors = {
             onChange={(e) => updateApiState(activeFolderId, activeApiId, {
               settings: { ...api.settings, timeout: parseInt(e.target.value) }
             })}
-            className="mt-1 w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
+            className="mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
             min="0"
           />
         </div>
@@ -5324,7 +5349,7 @@ const methodColors = {
             onChange={(e) => updateApiState(activeFolderId, activeApiId, {
               settings: { ...api.settings, responseSizeLimit: parseInt(e.target.value) }
             })}
-            className="mt-1 w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
+            className="mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
             min="1"
           />
         </div>
@@ -5363,7 +5388,7 @@ const methodColors = {
                   settings: { ...api.settings, proxyUrl: e.target.value }
                 })}
                 placeholder="http://proxy-server:port"
-                className="mt-1 w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
+                className="mt-1 w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
               />
             </div>
 
@@ -5384,7 +5409,7 @@ const methodColors = {
                     settings: { ...api.settings, proxyUsername: e.target.value }
                   })}
                   placeholder="Username"
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
+                  className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
                 />
                 <input
                   type="password"
@@ -5393,7 +5418,7 @@ const methodColors = {
                     settings: { ...api.settings, proxyPassword: e.target.value }
                   })}
                   placeholder="Password"
-                  className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
+                  className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm"
                 />
               </div>
             )}
@@ -5407,12 +5432,12 @@ const methodColors = {
 {activeTab === 'scripts' && (
   <div className="flex flex-col space-y-2 p-6 font-sans">
  
-    <div className="flex space-x-3 bg-gray-100 dark:bg-gray-800 p-1.5 rounded-lg w-fit">
+    <div className="flex space-x-3 bg-gray-100 dark:bg-zinc-800 p-1.5 rounded-lg w-fit">
       <button
         onClick={() => setScriptType('pre-request')}
         className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
           scriptType === 'pre-request'
-            ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-blue-400 shadow-sm'
+            ? 'bg-white dark:bg-zinc-700 text-purple-600 dark:text-purple-400 shadow-sm'
             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
         }`}
       >
@@ -5422,7 +5447,7 @@ const methodColors = {
         onClick={() => setScriptType('test')}
         className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
           scriptType === 'test'
-            ? 'bg-white dark:bg-gray-700 text-purple-600 dark:text-blue-400 shadow-sm'
+            ? 'bg-white dark:bg-zinc-700 text-purple-600 dark:text-purple-400 shadow-sm'
             : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
         }`}
       >
@@ -5430,8 +5455,8 @@ const methodColors = {
       </button>
     </div>
 
-    <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900">
+      <div className="flex items-center justify-between px-4 py-2 bg-gray-50 dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700">
         <div className="flex items-center space-x-2">
           <div className="flex space-x-1.5">
             <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -5454,7 +5479,7 @@ const methodColors = {
           }
           updateApiState(activeFolderId, activeApiId, { scripts: newScripts });
         }}
-        className="w-full h-64 p-4 font-mono text-sm bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 focus:outline-none"
+        className="w-full h-64 p-4 font-mono text-sm bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-200 focus:outline-none"
         placeholder={scriptType === 'pre-request' 
           ? "// Pre-request script example:\npm.environment.set('timestamp', Date.now());"
           : "// Test script example:\npm.test('Status test', () => {\n  pm.response.to.have.status(200);\n});"
@@ -5463,8 +5488,8 @@ const methodColors = {
       />
     </div>
 
-    <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-      <div className="flex justify-between items-center px-4 py-2 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+    <div className="rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700">
+      <div className="flex justify-between items-center px-4 py-2 bg-gray-50 dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700">
         <div className="flex items-center space-x-2">
           <Terminal className="w-4 h-4 text-gray-600 dark:text-gray-400" />
           <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Console</span>
@@ -5476,7 +5501,7 @@ const methodColors = {
           Clear Console
         </button>
       </div>
-      <div className="h-40 overflow-auto p-4 font-mono text-sm bg-white dark:bg-gray-900">
+      <div className="h-40 overflow-auto p-4 font-mono text-sm bg-white dark:bg-zinc-900">
         {consoleOutput.map((log, index) => (
           <div
             key={index}
@@ -5485,7 +5510,7 @@ const methodColors = {
                 ? 'text-red-500 dark:text-red-400'
                 : log.type === 'success'
                 ? 'text-green-500 dark:text-green-400'
-                : 'text-purple-500 dark:text-blue-400'
+                : 'text-purple-500 dark:text-purple-400'
             }`}
           >
             <span className="select-none">›</span>
@@ -5497,7 +5522,7 @@ const methodColors = {
 
     <button
       onClick={runScript}
-      className="flex items-center justify-center space-x-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 dark:bg-blue-500 dark:hover:bg-purple-600 text-white rounded-lg transition-colors duration-150 font-medium text-sm w-full sm:w-auto"
+      className="flex items-center justify-center space-x-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 text-white rounded-lg transition-colors duration-150 font-medium text-sm w-full sm:w-auto"
     >
       <Play className="w-4 h-4" />
       <span>Run Script</span>
@@ -5511,7 +5536,7 @@ const methodColors = {
       onChange={(e) => updateApiState(activeFolderId, activeApiId, {
         body: { ...api.body, type: e.target.value }
       })}
-      className="w-full px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+      className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
     >
       <option value="none">None</option>
       <option value="raw">Raw</option>
@@ -5526,7 +5551,7 @@ const methodColors = {
           body: { ...api.body, content: e.target.value }
         })}
         placeholder="Enter raw body (JSON, XML, etc.)"
-        className="w-full h-64 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+        className="w-full h-64 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-mono focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
       />
     )}
 
@@ -5545,7 +5570,7 @@ const methodColors = {
                   body: { ...api.body, formData: newFormData }
                 });
               }}
-              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <input
               type="text"
@@ -5558,7 +5583,7 @@ const methodColors = {
                   body: { ...api.body, formData: newFormData }
                 });
               }}
-              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <button
               onClick={() => {
@@ -5580,7 +5605,7 @@ const methodColors = {
               formData: [...api.body.formData, { key: '', value: '' }]
             }
           })}
-          className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-blue-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
+          className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
         >
           <Plus className="w-4 h-4" />
           <span>Add Form Field</span>
@@ -5603,7 +5628,7 @@ const methodColors = {
                   body: { ...api.body, urlencoded: newUrlencoded }
                 });
               }}
-              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <input
               type="text"
@@ -5616,7 +5641,7 @@ const methodColors = {
                   body: { ...api.body, urlencoded: newUrlencoded }
                 });
               }}
-              className="flex-1 px-3 py-2 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
             />
             <button
               onClick={() => {
@@ -5638,7 +5663,7 @@ const methodColors = {
               urlencoded: [...api.body.urlencoded, { key: '', value: '' }]
             }
           })}
-          className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-blue-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
+          className="flex items-center space-x-2 text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300 font-medium text-sm transition-colors duration-150"
         >
           <Plus className="w-4 h-4" />
           <span>Add URL Encoded Field</span>
@@ -5655,7 +5680,7 @@ const methodColors = {
 return (
   <div className={`h-screen flex flex-col dashboard-compact ${isDarkMode ? 'dark' : ''}`}>
 
-      <header className="h-12 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <header className="h-12 flex-shrink-0 bg-gray-100 dark:bg-zinc-800 border-b border-gray-200 dark:border-zinc-700">
         <div className="flex items-center justify-between h-full px-4">
           <div className="flex items-center">
             {isMobile && (
@@ -5677,7 +5702,7 @@ return (
             {/* Environment Selector Dropdown */}
             <div className="relative">
               <button 
-                className="flex items-center space-x-2 py-1 px-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-650 text-sm"
+                className="flex items-center space-x-2 py-1 px-3 rounded-md border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-zinc-700 hover:bg-gray-100 dark:hover:bg-gray-650 text-sm"
                 onClick={() => setShowEnvironmentDropdown(!showEnvironmentDropdown)}
                 title="Environment selector"
               >
@@ -5689,8 +5714,8 @@ return (
               </button>
               
               {showEnvironmentDropdown && (
-                <div className="absolute right-0 top-full mt-1 w-64 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50">
-                  <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+                <div className="absolute right-0 top-full mt-1 w-64 bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md shadow-lg z-50">
+                  <div className="p-2 border-b border-gray-200 dark:border-zinc-700">
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Environments</span>
                       <button 
@@ -5698,7 +5723,7 @@ return (
                           setShowEnvironmentDropdown(false);
                           setActiveSection('environments');
                         }}
-                        className="text-xs text-purple-500 hover:text-purple-600 dark:text-blue-400 dark:hover:text-purple-300"
+                        className="text-xs text-purple-500 hover:text-purple-600 dark:text-purple-400 dark:hover:text-purple-300"
                       >
                         Manage
                       </button>
@@ -5707,7 +5732,7 @@ return (
                   <div className="max-h-64 overflow-y-auto py-1">
                     <button
                       className={`flex items-center w-full px-4 py-2 text-sm ${
-                        !activeEnvironment ? 'bg-purple-50 dark:bg-blue-900/20 text-purple-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750'
+                        !activeEnvironment ? 'bg-purple-50 dark:bg-zinc-900/20 text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750'
                       }`}
                       onClick={() => {
                         setActiveEnvironment(null);
@@ -5722,7 +5747,7 @@ return (
                       <button
                         key={env.id}
                         className={`flex items-center w-full px-4 py-2 text-sm ${
-                          activeEnvironment?.id === env.id ? 'bg-purple-50 dark:bg-blue-900/20 text-purple-600 dark:text-blue-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750'
+                          activeEnvironment?.id === env.id ? 'bg-purple-50 dark:bg-zinc-900/20 text-purple-600 dark:text-purple-400' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-750'
                         }`}
                         onClick={() => {
                           handleEnvironmentChange(env);
@@ -5734,7 +5759,7 @@ return (
                       </button>
                     ))}
                   </div>
-                  <div className="p-2 border-t border-gray-200 dark:border-gray-700">
+                  <div className="p-2 border-t border-gray-200 dark:border-zinc-700">
                     <div className="text-xs text-gray-500 dark:text-gray-400">
                       <Globe className="w-3 h-3 inline mr-1" />
                       Global variables are always available
@@ -5747,7 +5772,7 @@ return (
             <div className="flex items-center space-x-2">
               <button
                 onClick={createNewFolder}
-                className="p-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 dark:bg-blue-700 dark:hover:bg-purple-800 text-white rounded-md flex items-center text-sm"
+                className="p-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white rounded-md flex items-center text-sm"
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                 <span className="hidden sm:inline">New Collection</span>
@@ -5756,10 +5781,10 @@ return (
 
             <button
   onClick={() => setIsJwtDecoderOpen(true)}
-  className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 relative group"
+  className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-zinc-700 relative group"
   title="JWT Token Tool"
 >
-  <KeyRound className="w-4 h-4 text-purple-500 dark:text-blue-400" />
+  <KeyRound className="w-4 h-4 text-purple-500 dark:text-purple-400" />
   <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap">
     JWT Token Tool
   </div>
@@ -5769,7 +5794,7 @@ return (
             
             <button
               onClick={() => setIsDarkMode(!isDarkMode)}
-              className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700"
+              className="p-1.5 rounded-md hover:bg-gray-200 dark:hover:bg-zinc-700"
             >
               {isDarkMode ? <Sun className="w-4 h-4 text-yellow-400" /> : <Moon className="w-4 h-4 text-purple-400" />}
             </button>
@@ -5782,7 +5807,7 @@ return (
             {!isElectronOffline() && isLoggedIn && (
               <button
                 onClick={handleSignOut}
-                className="p-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 dark:bg-blue-700 dark:hover:bg-purple-800 text-white rounded-md flex items-center text-sm"
+                className="p-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white rounded-md flex items-center text-sm"
               >
                 Sign Out
               </button>
@@ -5797,7 +5822,7 @@ return (
                 </button>
                 <button
                   onClick={handleSignupClick}
-                  className="p-1.5 px-3 py-1.5 border border-purple-600 text-purple-600 dark:text-blue-400 dark:border-purple-400 rounded-md hover:bg-purple-50 dark:hover:bg-purple-900/20 transition duration-200 text-sm"
+                  className="p-1.5 px-3 py-1.5 border border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400 rounded-md hover:bg-purple-50 dark:hover:bg-purple-900/20 transition duration-200 text-sm"
                 >
                   Sign Up
                 </button>
@@ -5828,12 +5853,12 @@ return (
             fixed inset-y-0 left-0 z-50 w-64
             ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             transition-transform duration-300 ease-in-out
-            bg-gray-50 dark:bg-gray-900
+            bg-gray-50 dark:bg-zinc-900
             flex
           `}>
             
            
-            <div className="w-14 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+            <div className="w-14 flex-shrink-0 bg-gray-100 dark:bg-zinc-800 border-r border-gray-200 dark:border-zinc-700">
               {navigationItems.map((item) => (
                 <button
                   key={item.id}
@@ -5847,8 +5872,8 @@ return (
                   }}
                   className={`
                     w-full p-3 flex items-center justify-center
-                    ${activeSection === item.id ? 'bg-purple-50 dark:bg-blue-900 dark:text-white' : ''}
-                    hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white
+                    ${activeSection === item.id ? 'bg-purple-50 dark:bg-zinc-900 dark:text-white' : ''}
+                    hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white
                   `}
                 >
                   <item.icon className="w-5 h-5" />
@@ -5871,27 +5896,27 @@ return (
           axis="x"
           handle={
             <div className="w-1 cursor-col-resize hover:bg-purple-500 active:bg-purple-600 ">
-                 <div className="w-1 h-full bg-gray-200 dark:bg-gray-700 hover:bg-purple-400 active:bg-purple-400" />
+                 <div className="w-1 h-full bg-gray-200 dark:bg-zinc-700 hover:bg-purple-400 active:bg-purple-400" />
             </div>
           }
           className={`
             ${isMobile ? (isMobileSidebarOpen ? 'fixed inset-y-0 left-0 z-50' : 'hidden') : 'relative'}
             flex
-            bg-gray-50 dark:bg-gray-900
+            bg-gray-50 dark:bg-zinc-900
             transform transition-transform duration-300
             ${isLeftSidebarCollapsed ? 'translate-x-0' : ''}
           `}
         >
         
-          <div className="w-14 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+          <div className="w-14 flex-shrink-0 bg-gray-100 dark:bg-zinc-800 border-r border-gray-200 dark:border-zinc-700">
             {navigationItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setActiveSection(item.id)}
                 className={`
                   w-full p-3 flex items-center justify-center
-                  ${activeSection === item.id ? 'bg-purple-200 dark:bg-blue-900 dark:text-white' : ''}
-                  hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white
+                  ${activeSection === item.id ? 'bg-purple-200 dark:bg-zinc-900 dark:text-white' : ''}
+                  hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white
                 `}
               >
                 <item.icon className="w-5 h-5" />
@@ -5908,7 +5933,7 @@ return (
 
         {/* Main Panel */}
       {/* Main Panel */}
-<main className="flex-1 bg-white dark:bg-gray-800 overflow-auto">
+<main className="flex-1 bg-white dark:bg-zinc-800 overflow-auto">
   {activeSection === 'authTemplates' ? (
     <AuthTemplateManager 
       activeFolderId={activeFolderId}
@@ -5979,19 +6004,19 @@ return (
             axis="x"
             handle={
               <div className="w-1 cursor-col-resize hover:bg-purple-500 active:bg-purple-600 absolute left-0 top-0 bottom-0">
-                <div className="w-1 h-full bg-gray-200 dark:bg-gray-700 hover:bg-purple-400 active:bg-purple-400" />
+                <div className="w-1 h-full bg-gray-200 dark:bg-zinc-700 hover:bg-purple-400 active:bg-purple-400" />
               </div>
             }
             resizeHandles={['w']}
             className={`
               relative flex
-              bg-gray-50 dark:bg-gray-900 border-l border-gray-200 dark:border-gray-700
+              bg-gray-50 dark:bg-zinc-900 border-l border-gray-200 dark:border-zinc-700
               transform transition-transform duration-300
               ${isRightSidebarCollapsed ? 'w-[55px]' : ''}
             `}
           >
             <div className="flex flex-row h-full w-full">
-              <div className="w-14 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 relative">
+              <div className="w-14 flex-shrink-0 bg-gray-100 dark:bg-zinc-800 border-r border-gray-200 dark:border-zinc-700 relative">
                 <div className="flex flex-col h-full">
                   <div className="flex-1">
                     {rightNavigationItems.filter(item => item.id !== 'info').map((item) => (
@@ -6008,8 +6033,8 @@ return (
                         }}
                         className={`
                           w-full p-3 flex items-center justify-center
-                          ${activeRightSection === item.id ? 'bg-purple-200 dark:bg-blue-900 dark:text-white' : ''}
-                          hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white
+                          ${activeRightSection === item.id ? 'bg-purple-200 dark:bg-zinc-900 dark:text-white' : ''}
+                          hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white
                         `}
                       >
                         <item.icon className="w-5 h-5" />
@@ -6019,7 +6044,7 @@ return (
                   
                   {/* Info button at bottom with separator */}
                   <div className="mt-auto">
-                    <div className="w-full h-px bg-gray-200 dark:bg-gray-700 my-2"></div>
+                    <div className="w-full h-px bg-gray-200 dark:bg-zinc-700 my-2"></div>
                     {rightNavigationItems.filter(item => item.id === 'info').map((item) => (
                       <button
                         key={item.id}
@@ -6034,19 +6059,19 @@ return (
                         }}
                         className={`
                           w-full p-3 flex items-center justify-center
-                          ${activeRightSection === item.id ? 'bg-purple-200 dark:bg-blue-900 dark:text-white' : ''}
-                          hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white
+                          ${activeRightSection === item.id ? 'bg-purple-200 dark:bg-zinc-900 dark:text-white' : ''}
+                          hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white
                         `}
                       >
                         <item.icon className="w-5 h-5" />
                       </button>
                     ))}
                     
-                    <div className="w-full h-px bg-gray-200 dark:bg-gray-700 my-2"></div>
+                    <div className="w-full h-px bg-gray-200 dark:bg-zinc-700 my-2"></div>
                     
                     <button 
                       onClick={toggleRightSidebar}
-                      className="w-full p-3 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white"
+                      className="w-full p-3 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white"
                     >
                       {isRightSidebarCollapsed ? 
                         <ChevronRight className="w-5 h-5" /> : 
@@ -6103,7 +6128,7 @@ return (
       {/* Render the JWT Decoder component */}
       <JwtDecoder isOpen={isJwtDecoderOpen} onClose={() => setIsJwtDecoderOpen(false)} />
 
-      <footer className="h-7 flex-shrink-0 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 relative">
+      <footer className="h-7 flex-shrink-0 bg-gray-100 dark:bg-zinc-800 border-t border-gray-200 dark:border-zinc-700 relative">
       <div className="flex items-center justify-end h-full px-4 text-xs">
       <p className="bg-gradient-to-r from-purple-800 via-purple-600 to-purple-500 inline-block text-transparent bg-clip-text mr-2 font-extrabold">
                 Authrator

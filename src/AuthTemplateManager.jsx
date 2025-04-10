@@ -163,7 +163,7 @@ const AuthTemplateManager = ({
       </div>
     )}
 
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md">
+    <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-md">
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Auth Templates</h2>
@@ -181,7 +181,7 @@ const AuthTemplateManager = ({
           {templates.map(template => (
             <div
               key={template._id}
-              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-200"
+              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-zinc-700 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-600 transition-colors duration-200"
             >
               <div className="flex items-center space-x-3">
                 <FileText className="w-5 h-5 text-purple-500" />
@@ -212,7 +212,7 @@ const AuthTemplateManager = ({
       </div>
     </div>
 
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+    <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-md p-6">
       <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-6">
         {isEditMode ? 'Edit Template' : 'New Template'}
       </h3>
@@ -223,7 +223,7 @@ const AuthTemplateManager = ({
           placeholder="Template Name"
           value={newTemplate.name}
           onChange={(e) => setNewTemplate(prev => ({ ...prev, name: e.target.value }))}
-          className="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+          className="w-full px-4 py-2 bg-gray-50 dark:bg-zinc-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
           disabled={isLoading}
         />
         
@@ -234,7 +234,7 @@ const AuthTemplateManager = ({
               placeholder="Key"
               value={pair.key}
               onChange={(e) => updatePair(index, 'key', e.target.value)}
-              className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+              className="flex-1 px-4 py-2 bg-gray-50 dark:bg-zinc-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               disabled={isLoading}
             />
             <input
@@ -242,7 +242,7 @@ const AuthTemplateManager = ({
               placeholder="Value"
               value={pair.value}
               onChange={(e) => updatePair(index, 'value', e.target.value)}
-              className="flex-1 px-4 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
+              className="flex-1 px-4 py-2 bg-gray-50 dark:bg-zinc-700 border border-gray-200 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400"
               disabled={isLoading}
             />
             <button
@@ -258,7 +258,7 @@ const AuthTemplateManager = ({
         <div className="flex items-center space-x-3 pt-4">
           <button
             onClick={addKeyValuePair}
-            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors duration-200 flex items-center"
+            className="px-4 py-2 bg-gray-100 dark:bg-zinc-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-zinc-600 rounded-lg transition-colors duration-200 flex items-center"
             disabled={isLoading}
           >
             <Plus className="w-4 h-4 mr-2" />

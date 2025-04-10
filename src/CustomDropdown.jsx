@@ -25,7 +25,7 @@ const CustomDropdown = ({ children, trigger }) => {
         {trigger}
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-1 py-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+        <div className="absolute right-0 mt-1 py-1 w-48 bg-white dark:bg-zinc-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 z-50">
           {children}
         </div>
       )}

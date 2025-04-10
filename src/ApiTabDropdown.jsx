@@ -24,7 +24,7 @@ const ApiTabDropdown = ({ children, trigger }) => {
         {trigger}
       </button>
       {isOpen && (
-        <div className="absolute right-0 mt-1  w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 -mt-8 -left-20" style={{ zIndex: 9900 }}>
+        <div className="absolute right-0 mt-1  w-48 bg-white dark:bg-zinc-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 -mt-8 -left-20" style={{ zIndex: 9900 }}>
           {children}
         </div>
       )}

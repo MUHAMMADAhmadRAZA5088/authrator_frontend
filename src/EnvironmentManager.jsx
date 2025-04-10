@@ -394,29 +394,29 @@ const EnvironmentManagementPanel = ({
     
     return (
       <div className="mb-4">
-        <div className="bg-gray-100 dark:bg-gray-750 rounded-t-md p-2 border border-gray-200 dark:border-gray-600 flex items-center">
-          <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-gray-300">VARIABLE</div>
-          <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-gray-300">INITIAL VALUE</div>
-          <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-gray-300">CURRENT VALUE</div>
-          <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-gray-300">TYPE</div>
+        <div className="bg-gray-100 dark:bg-zinc-800 rounded-t-md p-2 border border-gray-200 dark:border-zinc-700 flex items-center">
+          <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-zinc-200">VARIABLE</div>
+          <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-zinc-200">INITIAL VALUE</div>
+          <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-zinc-200">CURRENT VALUE</div>
+          <div className="w-1/4 text-sm font-medium text-gray-700 dark:text-zinc-200">TYPE</div>
           <div className="w-16"></div>
         </div>
         
         {variableCount > 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-b-md border-x border-b border-gray-200 dark:border-gray-600 divide-y divide-gray-100 dark:divide-gray-700">
+          <div className="bg-white dark:bg-zinc-900 rounded-b-md border-x border-b border-gray-200 dark:border-zinc-700 divide-y divide-gray-100 dark:divide-zinc-800">
             {Object.entries(variables).map(([key, variable]) => (
               <div key={key} className="flex items-center p-2">
                 <div className="w-1/4 px-2">
                   <div className="flex items-center">
-                    <Lock className="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{key}</span>
+                    <Lock className="w-4 h-4 text-gray-600 dark:text-zinc-300 mr-2" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-zinc-200">{key}</span>
                   </div>
                 </div>
                 <div className="w-1/4 px-2">
                   <div className="relative">
                     <input
                       type={showValues[`${isGlobal ? 'global' : env.id}_${key}_initial`] ? "text" : "password"}
-                      className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-transparent"
+                      className="w-full p-1 border border-gray-300 dark:border-zinc-700 rounded-md text-sm bg-transparent text-gray-800 dark:text-white"
                       value={variable.initialValue}
                       onChange={(e) => isGlobal ? 
                         handleEditGlobalVariable(key, 'initialValue', e.target.value) : 
@@ -428,9 +428,9 @@ const EnvironmentManagementPanel = ({
                       className="absolute right-2 top-1/2 transform -translate-y-1/2"
                     >
                       {showValues[`${isGlobal ? 'global' : env.id}_${key}_initial`] ? (
-                        <EyeOff className="w-4 h-4 text-gray-500" />
+                        <EyeOff className="w-4 h-4 text-gray-600 dark:text-zinc-400" />
                       ) : (
-                        <Eye className="w-4 h-4 text-gray-500" />
+                        <Eye className="w-4 h-4 text-gray-600 dark:text-zinc-400" />
                       )}
                     </button>
                   </div>
@@ -439,7 +439,7 @@ const EnvironmentManagementPanel = ({
                   <div className="relative">
                     <input
                       type={showValues[`${isGlobal ? 'global' : env.id}_${key}_current`] ? "text" : "password"}
-                      className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-transparent"
+                      className="w-full p-1 border border-gray-300 dark:border-zinc-700 rounded-md text-sm bg-transparent text-gray-800 dark:text-white"
                       value={variable.currentValue}
                       onChange={(e) => isGlobal ? 
                         handleEditGlobalVariable(key, 'currentValue', e.target.value) : 
@@ -451,16 +451,16 @@ const EnvironmentManagementPanel = ({
                       className="absolute right-2 top-1/2 transform -translate-y-1/2"
                     >
                       {showValues[`${isGlobal ? 'global' : env.id}_${key}_current`] ? (
-                        <EyeOff className="w-4 h-4 text-gray-500" />
+                        <EyeOff className="w-4 h-4 text-gray-600 dark:text-zinc-400" />
                       ) : (
-                        <Eye className="w-4 h-4 text-gray-500" />
+                        <Eye className="w-4 h-4 text-gray-600 dark:text-zinc-400" />
                       )}
                     </button>
                   </div>
                 </div>
                 <div className="w-1/4 px-2">
                   <select
-                    className="w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md text-sm bg-transparent"
+                    className="w-full p-1 border border-gray-300 dark:border-zinc-700 rounded-md text-sm bg-transparent text-gray-800 dark:text-white"
                     value={variable.type || 'text'}
                     onChange={(e) => isGlobal ? 
                       handleEditGlobalVariable(key, 'type', e.target.value) : 
@@ -475,10 +475,10 @@ const EnvironmentManagementPanel = ({
                 <div className="w-16 flex justify-end space-x-1">
                   <button 
                     onClick={() => copyToClipboard(variable.currentValue)}
-                    className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md"
+                    className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md"
                     title="Copy value"
                   >
-                    <Copy className="w-4 h-4 text-gray-500" />
+                    <Copy className="w-4 h-4 text-gray-600 dark:text-zinc-300" />
                   </button>
                   <button 
                     onClick={() => isGlobal ? 
@@ -488,7 +488,7 @@ const EnvironmentManagementPanel = ({
                     className="p-1 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md"
                     title="Reset to initial value"
                   >
-                    <RefreshCw className="w-4 h-4 text-purple-500" />
+                    <RefreshCw className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                   </button>
                   <button 
                     onClick={() => isGlobal ? 
@@ -498,14 +498,14 @@ const EnvironmentManagementPanel = ({
                     className="p-1 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md"
                     title="Delete variable"
                   >
-                    <Trash className="w-4 h-4 text-red-500" />
+                    <Trash className="w-4 h-4 text-red-600 dark:text-red-400" />
                   </button>
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          <div className="bg-white dark:bg-gray-800 rounded-b-md border-x border-b border-gray-200 dark:border-gray-600 p-4 text-center text-gray-500 dark:text-gray-400">
+          <div className="bg-white dark:bg-zinc-900 rounded-b-md border-x border-b border-gray-200 dark:border-zinc-700 p-4 text-center text-gray-600 dark:text-zinc-400">
             No variables defined. Add one below.
           </div>
         )}
@@ -515,31 +515,31 @@ const EnvironmentManagementPanel = ({
 
   const renderVariableForm = (id, isGlobal = false) => {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-600 p-3">
+      <div className="bg-white dark:bg-zinc-900 rounded-md border border-gray-200 dark:border-zinc-700 p-3">
         <div className="flex space-x-2">
           <input
             type="text"
             placeholder="Variable name"
-            className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+            className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md text-gray-800 dark:text-white"
             value={(envVariableInputs[id]?.name || '')}
             onChange={(e) => handleVariableChange(id, 'name', e.target.value)}
           />
           <input
             type="text"
             placeholder="Initial value"
-            className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+            className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md text-gray-800 dark:text-white"
             value={(envVariableInputs[id]?.initialValue || '')}
             onChange={(e) => handleVariableChange(id, 'initialValue', e.target.value)}
           />
           <input
             type="text"
             placeholder="Current value"
-            className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+            className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md text-gray-800 dark:text-white"
             value={(envVariableInputs[id]?.currentValue || '')}
             onChange={(e) => handleVariableChange(id, 'currentValue', e.target.value)}
           />
           <select
-            className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+            className="w-1/4 px-3 py-2 text-sm bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md text-gray-800 dark:text-white"
             value={(envVariableInputs[id]?.type || 'text')}
             onChange={(e) => handleVariableChange(id, 'type', e.target.value)}
           >
@@ -549,7 +549,7 @@ const EnvironmentManagementPanel = ({
           </select>
           <button
             onClick={() => isGlobal ? handleAddGlobalVariable() : handleAddVariable(localEnvironments.find(e => e.id === id))}
-            className="px-4 py-2 text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 rounded-md"
+            className="px-4 py-2 text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 rounded-md"
             disabled={!envVariableInputs[id]?.name?.trim()}
           >
             <Plus className="w-4 h-4 inline" />
@@ -560,22 +560,22 @@ const EnvironmentManagementPanel = ({
   }
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-gray-800">
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col h-full bg-white dark:bg-zinc-900">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-zinc-800">
         <div className="flex items-center space-x-3">
-          <Settings className="w-6 h-6 text-gray-500 dark:text-gray-400" />
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Environment Management</h2>
+          <Settings className="w-6 h-6 text-gray-600 dark:text-zinc-300" />
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Environment Management</h2>
         </div>
         <div className="flex items-center space-x-2">
           <button 
             onClick={exportAllEnvironments}
-            className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md flex items-center text-purple-500"
+            className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md flex items-center text-purple-600 dark:text-purple-400"
             title="Export all environments"
           >
             <Download className="w-5 h-5 mr-1" />
             <span className="text-sm">Export All</span>
           </button>
-          <label className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md flex items-center text-purple-500 cursor-pointer" title="Import environment">
+          <label className="p-2 hover:bg-purple-100 dark:hover:bg-purple-900/30 rounded-md flex items-center text-purple-600 dark:text-purple-400 cursor-pointer" title="Import environment">
             <Upload className="w-5 h-5 mr-1" />
             <span className="text-sm">Import</span>
             <input 
@@ -585,26 +585,26 @@ const EnvironmentManagementPanel = ({
               onChange={importEnvironment}
             />
           </label>
-        <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md">
-          <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+        <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-zinc-800 rounded-md">
+          <X className="w-5 h-5 text-gray-600 dark:text-zinc-300" />
         </button>
       </div>
       </div>
       
       {importError && (
-        <div className="m-4 p-3 bg-red-100 border border-red-200 text-red-700 rounded-md">
+        <div className="m-4 p-3 bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 rounded-md">
           {importError}
         </div>
       )}
       
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 bg-gray-50 dark:bg-zinc-900">
         <div className="mb-4 space-y-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-zinc-400" />
             <input
               type="text"
               placeholder="Search environments..."
-              className="w-full pl-10 pr-4 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+              className="w-full pl-10 pr-4 py-2 text-sm bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -613,13 +613,13 @@ const EnvironmentManagementPanel = ({
             <input
               type="text"
               placeholder="New Environment Name"
-              className="flex-1 px-3 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-md"
+              className="flex-1 px-3 py-2 text-sm bg-white dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-md"
               value={newEnvName}
               onChange={(e) => setNewEnvName(e.target.value)}
             />
             <button
               onClick={handleAddEnvironment}
-              className="px-4 py-2 text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 rounded-md"
+              className="px-4 py-2 text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700 rounded-md"
               disabled={!newEnvName.trim()}
             >
               <Plus className="w-4 h-4 mr-2 inline" /> Add
@@ -628,12 +628,12 @@ const EnvironmentManagementPanel = ({
         </div>
         
        
-        <div className="mb-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-600">
+        <div className="mb-6 bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-3">
-              <Globe className="w-5 h-5 text-purple-500 dark:text-purple-400" />
-              <h3 className="text-md font-semibold text-purple-700 dark:text-purple-300">Global Environment</h3>
-              <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded-full">
+              <Globe className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              <h3 className="text-md font-semibold text-purple-800 dark:text-purple-300">Global Environment</h3>
+              <span className="text-xs bg-purple-100 dark:bg-purple-800/50 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full">
                 Always Active
               </span>
             </div>
@@ -642,7 +642,7 @@ const EnvironmentManagementPanel = ({
           {renderEnvironmentVariableList({ id: 'global' }, true)}
           {renderVariableForm('global', true)}
           
-          <div className="mt-2 text-xs text-purple-600 dark:text-purple-400">
+          <div className="mt-2 text-xs text-purple-700 dark:text-purple-400">
             <ExternalLink className="w-3 h-3 inline mr-1" />
             Global variables are available in all environments and are overridden by environment-specific variables.
           </div>
@@ -650,46 +650,46 @@ const EnvironmentManagementPanel = ({
         
         <div className="space-y-6">
           {filteredEnvironments.length === 0 ? (
-            <div className="text-center p-6 text-gray-500 dark:text-gray-400">No environments found.</div>
+            <div className="text-center p-6 text-gray-600 dark:text-zinc-400 bg-white dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-700">No environments found.</div>
           ) : (
             filteredEnvironments.map(env => (
-              <div key={env.id} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+              <div key={env.id} className="bg-white dark:bg-zinc-800 rounded-lg p-4 border border-gray-200 dark:border-zinc-700">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-3">
-                    <Database className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                    <h3 className="text-md font-semibold text-gray-800 dark:text-gray-200">{env.name}</h3>
+                    <Database className="w-5 h-5 text-gray-600 dark:text-zinc-300" />
+                    <h3 className="text-md font-semibold text-gray-800 dark:text-white">{env.name}</h3>
                     {localActiveEnvironment?.id === env.id && (
-                      <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 px-2 py-0.5 rounded-full">Active</span>
+                      <span className="text-xs bg-purple-100 dark:bg-purple-800/50 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full">Active</span>
                     )}
                   </div>
                   <div className="flex items-center space-x-2">
                     <button 
                       onClick={() => duplicateEnvironment(env)} 
-                      className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md"
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md"
                       title="Duplicate environment"
                     >
-                      <Duplicate className="w-4 h-4 text-gray-500" />
+                      <Duplicate className="w-4 h-4 text-gray-600 dark:text-zinc-300" />
                     </button>
                     <button 
                       onClick={() => exportEnvironment(env)} 
-                      className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md"
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md"
                       title="Export environment"
                     >
-                      <Download className="w-4 h-4 text-gray-500" />
+                      <Download className="w-4 h-4 text-gray-600 dark:text-zinc-300" />
                     </button>
                     <button 
                       onClick={() => handleEnvChange(env)} 
-                      className="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md"
+                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md"
                       title="Set as active environment"
                     >
-                      <Check className="w-4 h-4 text-green-500" />
+                      <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
                     </button>
                     <button 
                       onClick={() => handleDeleteEnv(env.id)} 
                       className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md"
                       title="Delete environment"
                     >
-                      <Trash className="w-4 h-4 text-red-500" />
+                      <Trash className="w-4 h-4 text-red-600 dark:text-red-400" />
                     </button>
                   </div>
                 </div>
