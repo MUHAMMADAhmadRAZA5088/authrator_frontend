@@ -5967,7 +5967,7 @@ return (
     renderRequestPanel()
   ) : (
     <div className="flex flex-col items-center justify-center h-full">
-      {isDarkMode ? <img src={responseimagedark}/> : <img src={responseimagelight}/>}
+      {isDarkMode ? <img src={responseimagedark} className='w-44 h-40 '/> : <img src={responseimagelight} className='w-44 h-40 ' />}
       <Send className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" />
       <p className="text-gray-500 dark:text-gray-400">Select a request or create a new one</p>
     </div>
