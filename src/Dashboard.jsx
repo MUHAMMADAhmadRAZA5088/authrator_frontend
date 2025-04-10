@@ -5896,7 +5896,7 @@ return (
           axis="x"
           handle={
             <div className="w-1 cursor-col-resize hover:bg-purple-500 active:bg-purple-600 ">
-                 <div className="w-1 h-full bg-gray-200 dark:bg-zinc-700 hover:bg-purple-400 active:bg-purple-400" />
+                 <div className="w-1 h-full bg-gray-200 dark:bg-zinc-700 hover:bg-purple-400 active:bg-purple-400 hover:dark:bg-purple-500 hover:dark:active:bg-purple-600" />
             </div>
           }
           className={`
@@ -6003,8 +6003,8 @@ return (
             onResize={handleRightResize}
             axis="x"
             handle={
-              <div className="w-1 cursor-col-resize hover:bg-purple-500 active:bg-purple-600 absolute left-0 top-0 bottom-0">
-                <div className="w-1 h-full bg-gray-200 dark:bg-zinc-700 hover:bg-purple-400 active:bg-purple-400" />
+              <div className="w-1 cursor-col-resize hover:bg-purple-500 active:bg-purple-600  absolute left-0 top-0 bottom-0">
+                <div className="w-1 h-full bg-gray-200 dark:bg-zinc-700 hover:bg-purple-400 active:bg-purple-400 hover:dark:bg-purple-500 hover:dark:active:bg-purple-600" />
               </div>
             }
             resizeHandles={['w']}
