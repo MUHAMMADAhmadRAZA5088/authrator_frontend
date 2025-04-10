@@ -4462,7 +4462,7 @@ const methodColors = {
             if (algorithm.startsWith('RS')) {
               // For RSA signatures
               try {
-                if (!privateKey || !privateKey.includes('-----BEGIN RSA PRIVATE KEY-----')) {
+                if (!privateKey || (!privateKey.includes('-----BEGIN RSA PRIVATE KEY-----') && !privateKey.includes('-----BEGIN PRIVATE KEY-----'))) {
                   throw new Error('Valid RSA private key in PEM format is required');
                 }
                 
