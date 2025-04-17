@@ -92,7 +92,7 @@ function processAuthToken(token) {
       localStorage.setItem('auth_success_timestamp', '${Date.now()}');
       
       // Force navigation using location replace to avoid history issues
-      window.location.replace('#/dashboard');
+      window.location.replace('#/app');
       
       // Also trigger a custom event that the app can listen for
       const authEvent = new CustomEvent('auth_success_event');
@@ -114,7 +114,7 @@ function processAuthToken(token) {
             
             if (user && authSuccess) {
               // If we just authenticated successfully, ensure we're on dashboard
-              window.location.replace('#/dashboard');
+              window.location.replace('#/app');
             }
           `);
         });

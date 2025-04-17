@@ -71,7 +71,7 @@ const LandingPage = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
-          <Link to="/dashboard" className="bg-purple-500 hover:bg-purple-400 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 text-center">
+          <Link to="/app" className="bg-purple-500 hover:bg-purple-400 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 text-center">
             Try Web Client
           </Link>
           {/* <a 

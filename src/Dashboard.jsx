@@ -20,8 +20,8 @@ import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import RenameModal from './RenameModel';
 import Toast from './Toast';
-import responseimagelight from "./assets/bg_rlm1.png"
-import responseimagedark from "./assets/bg_rlm2.png"
+import responseimagelight from "./assets/img2.png"
+import responseimagedark from "./assets/img2.png"
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://authrator.com/db-api/api';
 
@@ -6048,7 +6048,7 @@ return (
     renderRequestPanel()
   ) : (
     <div className="flex flex-col items-center justify-center h-full">
-      {isDarkMode ? <img src={responseimagedark} className='w-44 h-40 '/> : <img src={responseimagelight} className='w-44 h-40 ' />}
+      {isDarkMode ? <img src={responseimagedark} className='w-32 h-32 mb-5 '/> : <img src={responseimagelight} className='w-32 h-32 mb-5' />}
       <Send className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" />
       <p className="text-gray-500 dark:text-gray-400">Select a request or create a new one</p>
     </div>

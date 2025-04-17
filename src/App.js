@@ -105,12 +105,12 @@ function App() {
 
   const PublicRoute = ({ children }) => {
     if (isElectronOffline()) {
-      return <Navigate to="/dashboard" />;
+      return <Navigate to="/app" />;
     }
 
     // In Electron, bypass login if authenticated
     if (isElectron() && isAuthenticated && initialAuthCheckDone) {
-      return <Navigate to="/dashboard" />;
+      return <Navigate to="/app" />;
     }
 
     return children;
@@ -138,7 +138,7 @@ function App() {
               } 
             />
             <Route 
-              path="/dashboard" 
+              path="/app" 
               element={
                 <Dashboard />
               } 
@@ -147,7 +147,7 @@ function App() {
               path="/" 
               element={
                 initialAuthCheckDone && isAuthenticated
-                  ? <Navigate to="/dashboard" />
+                  ? <Navigate to="/app" />
                   : <Navigate to="/login" />
               }
             />
@@ -186,14 +186,14 @@ function App() {
               } 
           />
           <Route 
-            path="/dashboard" 
+            path="/app" 
             element={
               <Dashboard />
             } 
           />
           <Route path="/admin" element={<AdminLogin />} />
           <Route 
-            path="/admin/dashboard" 
+            path="/admin/app" 
             element={
               <AdminProtectedRoute>
                 <AdminDashboard />

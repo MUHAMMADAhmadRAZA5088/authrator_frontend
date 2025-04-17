@@ -68,7 +68,7 @@ const Login = () => {
           opacity: 0,
           y: 50,
           duration: 0.5,
-          onComplete: () => navigate('/dashboard')
+          onComplete: () => navigate('/app')
         });
       }
     } catch (err) {
@@ -109,7 +109,7 @@ const Login = () => {
           opacity: 0,
           y: 50,
           duration: 0.5,
-          onComplete: () => navigate('/dashboard')
+          onComplete: () => navigate('/app')
         });
       }
     } catch (err) {
@@ -170,7 +170,7 @@ const Login = () => {
       localStorage.setItem('user', JSON.stringify(userData));
       
       // Navigate to dashboard
-      navigate('/dashboard');
+      navigate('/app');
     } catch (err) {
       setError('Invalid authentication token. Please try again.');
     }
