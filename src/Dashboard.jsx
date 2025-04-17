@@ -5870,7 +5870,7 @@ return (
   title="JWT Token Tool"
 >
   <KeyRound className="w-4 h-4 text-purple-500 dark:text-purple-400" />
-  <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+  <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap z-50">
     JWT Token Tool
   </div>
 </button>
