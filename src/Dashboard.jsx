@@ -5952,12 +5952,15 @@ return (
                     }
                   }}
                   className={`
-                    w-full p-3 flex items-center justify-center
+                    w-full p-3 flex items-center justify-center relative group
                     ${activeSection === item.id ? 'bg-purple-50 dark:bg-zinc-900 dark:text-white' : ''}
                     hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white
                   `}
                 >
                   <item.icon className="w-5 h-5" />
+                  <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 left-full ml-2 whitespace-nowrap z-50">
+                    {item.label}
+                  </div>
                 </button>
               ))}
             </div>
@@ -5995,12 +5998,15 @@ return (
                 key={item.id}
                 onClick={() => setActiveSection(item.id)}
                 className={`
-                  w-full p-3 flex items-center justify-center
+                  w-full p-3 flex items-center justify-center relative group
                   ${activeSection === item.id ? 'bg-purple-200 dark:bg-zinc-900 dark:text-white' : ''}
                   hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white
                 `}
               >
                 <item.icon className="w-5 h-5" />
+                <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 left-full ml-2 whitespace-nowrap z-50">
+                  {item.label}
+                </div>
               </button>
             ))}
           </div>
@@ -6113,12 +6119,16 @@ return (
                           }
                         }}
                         className={`
-                          w-full p-3 flex items-center justify-center
+                          w-full p-3 flex items-center justify-center relative group
                           ${activeRightSection === item.id ? 'bg-purple-200 dark:bg-zinc-900 dark:text-white' : ''}
                           hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white
                         `}
+                        title={item.label}
                       >
                         <item.icon className="w-5 h-5" />
+                        <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-full mr-2 whitespace-nowrap z-50">
+                          {item.label}
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -6139,12 +6149,16 @@ return (
                           }
                         }}
                         className={`
-                          w-full p-3 flex items-center justify-center
+                          w-full p-3 flex items-center justify-center relative group
                           ${activeRightSection === item.id ? 'bg-purple-200 dark:bg-zinc-900 dark:text-white' : ''}
                           hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white
                         `}
+                        title={item.label}
                       >
                         <item.icon className="w-5 h-5" />
+                        <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-full mr-2 whitespace-nowrap z-50">
+                          {item.label}
+                        </div>
                       </button>
                     ))}
                     
@@ -6152,12 +6166,15 @@ return (
                     
                     <button 
                       onClick={toggleRightSidebar}
-                      className="w-full p-3 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white"
+                      className="w-full p-3 flex items-center justify-center relative group hover:bg-gray-200 dark:hover:bg-zinc-700 dark:text-white"
                     >
                       {isRightSidebarCollapsed ? 
                         <ChevronRight className="w-5 h-5" /> : 
                         <ChevronLeft className="w-5 h-5" />
                       }
+                      <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-full mr-2 whitespace-nowrap z-50">
+                        {isRightSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+                      </div>
                     </button>
                   </div>
                 </div>
@@ -6167,19 +6184,19 @@ return (
                 <div className="flex-1 overflow-hidden">
                   {activeRightSection === 'code' && (
                     <div className="h-full p-4">
-                      <h2 className="text-lg font-semibold mb-4 dark:text-white">Code</h2>
+                      {/* <h2 className="text-lg font-semibold mb-4 dark:text-white">Code</h2> */}
                       
                     </div>
                   )}
                   {activeRightSection === 'details' && (
                     <div className="h-full p-4">
-                      <h2 className="text-lg font-semibold mb-4 dark:text-white">Request Details</h2>
+                      {/* <h2 className="text-lg font-semibold mb-4 dark:text-white">Request Details</h2> */}
                       {/* Add request details content here */}
                     </div>
                   )}
                   {activeRightSection === 'comments' && (
                     <div className="h-full p-4">
-                      <h2 className="text-lg font-semibold mb-4 dark:text-white">Comments</h2>
+                      {/* <h2 className="text-lg font-semibold mb-4 dark:text-white">Comments</h2> */}
                       {/* Add comments content here */}
                     </div>
                   )}
