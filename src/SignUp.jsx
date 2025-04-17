@@ -227,6 +227,17 @@ const Signup = () => {
       bg-gradient-to-br from-black via-purple-950 to-black 
       relative overflow-hidden"
     >
+      {/* Back button */}
+      <button
+        onClick={() => navigate('/app')}
+        className="absolute top-4 left-4 flex items-center text-white hover:text-purple-300 transition duration-300 z-20"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        <span className="ml-1">Back to Dashboard</span>
+      </button>
+
       {[...Array(20)].map((_, i) => (
         <div 
           key={i} 

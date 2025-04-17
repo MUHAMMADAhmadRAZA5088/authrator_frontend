@@ -104,14 +104,15 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
   };
 
   return (
-    <div className="border-b border-gray-200 dark:border-zinc-700 bg-gray-100 dark:bg-zinc-900">
+    <div className="border-b border-gray-200 dark:border-zinc-700 bg-gray-100 dark:bg-zinc-900 relative">
       <div 
         className="api-tabs-scrollbar flex items-center overflow-x-auto" 
         style={{ 
           height: '40px',
           scrollbarWidth: 'thin',
           scrollbarColor: 'rgba(156, 163, 175, 0.5) transparent',
-          WebkitOverflowScrolling: 'touch'
+          WebkitOverflowScrolling: 'touch',
+          paddingRight: '50px'
         }}
       >
         {openTabs.map((tab) => (
@@ -140,11 +141,17 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
             </button>
           </div>
         ))}
+      </div>
+      
+      <div className="absolute right-0 top-0 bottom-0 bg-gray-100 dark:bg-zinc-900 z-20 flex items-center border-l border-gray-200 dark:border-zinc-700">
         <button
           onClick={handleCreateNewApi}
-          className="flex items-center justify-center h-full px-4 hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0"
+          className="flex items-center justify-center h-full px-4 hover:bg-gray-200 dark:hover:bg-gray-800 group relative"
         >
           <PlusCircle className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+          <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap z-50">
+            Create New Request
+          </div>
         </button>
       </div>
 

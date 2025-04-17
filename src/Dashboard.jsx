@@ -5853,11 +5853,15 @@ return (
             <div className="flex items-center space-x-2">
               <button
                 onClick={createNewFolder}
-                className="p-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white rounded-md flex items-center text-sm"
+                className="p-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white rounded-md flex items-center text-sm relative group"
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                 <span className="hidden sm:inline">New Collection</span>
+                <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap z-50">
+                  Create New Collection
+                </div>
               </button>
+              
             </div>
 
             <button
