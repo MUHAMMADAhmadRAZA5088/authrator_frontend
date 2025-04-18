@@ -5891,9 +5891,9 @@ return (
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                 <span className="hidden sm:inline">New Collection</span>
-                <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap z-50">
-                  Create New Collection
-                </div>
+                <div className="absolute invisible opacity-0 bottom-[-40px] left-1/2 -translate-x-1/2 -translate-y-2 scale-90 origin-top whitespace-nowrap bg-gray-800 text-white text-xs py-2 px-3 rounded z-50 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 before:content-[''] before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-[6px] before:border-transparent before:border-b-gray-800">
+  Create New Collection
+</div>
               </button>
               
             </div>
@@ -5904,9 +5904,9 @@ return (
   title="JWT Token Tool"
 >
   <KeyRound className="w-4 h-4 text-purple-500 dark:text-purple-400" />
-  <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap z-50">
-    JWT Token Tool
-  </div>
+  <div className="absolute invisible opacity-0 bottom-[-40px] left-1/2 -translate-x-1/2 -translate-y-2 scale-90 origin-top whitespace-nowrap bg-gray-800 text-white text-xs py-2 px-3 rounded z-50 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 before:content-[''] before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-[6px] before:border-transparent before:border-b-gray-800">
+  JWT Token Tool
+</div>
 </button>
 
             
@@ -5996,9 +5996,9 @@ return (
                   `}
                 >
                   <item.icon className="w-5 h-5" />
-                  <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 left-full ml-2 whitespace-nowrap z-50">
-                    {item.label}
-                  </div>
+                  <div class="absolute invisible opacity-0 top-1/2 left-[calc(100%+15px)] -translate-y-1/2 -translate-x-2 scale-90 origin-left whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:right-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-r-gray-800">
+  {item.label}
+</div>
                 </button>
               ))}
             </div>
@@ -6042,9 +6042,9 @@ return (
                 `}
               >
                 <item.icon className="w-5 h-5" />
-                <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 left-full ml-2 whitespace-nowrap z-50">
-                  {item.label}
-                </div>
+                <div class="absolute invisible opacity-0 top-1/2 left-[calc(100%+15px)] -translate-y-1/2 -translate-x-2 scale-90 origin-left whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:right-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-r-gray-800">
+  {item.label}
+</div>
               </button>
             ))}
           </div>
@@ -6164,9 +6164,9 @@ return (
                         title={item.label}
                       >
                         <item.icon className="w-5 h-5" />
-                        <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-full mr-2 whitespace-nowrap z-50">
-                          {item.label}
-                        </div>
+                        <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800">
+  {item.label}
+</div>
                       </button>
                     ))}
                   </div>
@@ -6194,9 +6194,9 @@ return (
                         title={item.label}
                       >
                         <item.icon className="w-5 h-5" />
-                        <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-full mr-2 whitespace-nowrap z-50">
-                          {item.label}
-                        </div>
+                        <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800">
+  {item.label}
+</div>
                       </button>
                     ))}
                     
@@ -6210,9 +6210,10 @@ return (
                         <ChevronRight className="w-5 h-5" /> : 
                         <ChevronLeft className="w-5 h-5" />
                       }
-                      <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-full mr-2 whitespace-nowrap z-50">
-                        {isRightSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-                      </div>
+                      <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800">
+                      {isRightSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+</div>
+
                     </button>
                   </div>
                 </div>
