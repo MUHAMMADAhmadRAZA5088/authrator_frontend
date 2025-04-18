@@ -258,3 +258,65 @@
   min-width: 200px;
 }
 
+/* Add vertical guide styling for enhanced JSON viewer */
+.relative {
+  position: relative;
+}
+
+/* Add styles to make the JSON viewer look professional */
+.enhanced-json-viewer {
+  font-family: 'JetBrains Mono', Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  background-color: transparent;
+}
+
+/* Line numbers container */
+.json-line-numbers {
+  user-select: none;
+  text-align: right;
+  padding-right: 8px;
+  border-right: 1px solid rgb(229, 231, 235);
+  margin-right: 8px;
+  color: rgb(156, 163, 175);
+  min-width: 40px;
+  position: sticky;
+  left: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 10;
+}
+
+/* Individual line number */
+.json-line-number {
+  height: 1.5rem; /* Match line height */
+  padding-right: 4px;
+}
+
+/* Add guide lines for JSON nesting */
+.json-guide-line {
+  position: absolute;
+  width: 1px;
+  background-color: rgba(156, 163, 175, 0.2);
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+/* Collapsible controls styling */
+.json-collapse-control {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Dark mode adjustments */
+.dark .json-line-numbers {
+  color: rgb(156, 163, 175);
+  border-right-color: rgb(63, 63, 70);
+  background-color: rgba(24, 24, 27, 0.8);
+}
+
+.dark .json-guide-line {
+  background-color: rgba(156, 163, 175, 0.1);
+}
+

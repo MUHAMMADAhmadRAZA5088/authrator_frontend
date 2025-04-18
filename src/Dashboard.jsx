@@ -22,6 +22,7 @@ import RenameModal from './RenameModel';
 import Toast from './Toast';
 import responseimagelight from "./assets/img2.png"
 import responseimagedark from "./assets/img2.png"
+import EnhancedJsonViewer from './EnhancedJsonViewer';
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'https://authrator.com/db-api/api';
 
@@ -3211,18 +3212,30 @@ const PrettyJson = ({ data }) => {
     let currentIndex = 0;
     let inString = false;
     let stringStart = 0;
+    let isKey = false;
 
     for (let i = 0; i < jsonString.length; i++) {
       const char = jsonString[i];
       
       if (char === '"' && jsonString[i - 1] !== '\\') {
         if (!inString) {
+          // Check if this string is a key by looking ahead for a colon
+          let j = i + 1;
+          while (j < jsonString.length && jsonString[j] !== '"' && jsonString[j - 1] !== '\\') j++;
+          // Look for colon after the closing quote
+          j++;
+          while (j < jsonString.length && /\s/.test(jsonString[j])) j++;
+          isKey = j < jsonString.length && jsonString[j] === ':';
+          
           stringStart = i;
           inString = true;
         } else {
           inString = false;
           result.push(
-            <span key={`string-${i}`} className="text-green-600 dark:text-green-400">
+            <span key={`string-${i}`} className={isKey 
+              ? "text-purple-600 dark:text-purple-400" // Key color
+              : "text-teal-500 dark:text-teal-400"     // Value color
+            }>
               {jsonString.slice(stringStart, i + 1)}
             </span>
           );
@@ -3322,7 +3335,7 @@ const PrettyJson = ({ data }) => {
           );
         }
         result.push(
-          <span key={`boolean-${i}`} className="text-purple-600 dark:text-purple-400">
+          <span key={`boolean-${i}`} className="text-orange-500 dark:text-orange-400">
             {jsonString.slice(i, i + 4)}
           </span>
         );
@@ -3339,7 +3352,7 @@ const PrettyJson = ({ data }) => {
           );
         }
         result.push(
-          <span key={`boolean-${i}`} className="text-purple-600 dark:text-purple-400">
+          <span key={`boolean-${i}`} className="text-orange-500 dark:text-orange-400">
             {jsonString.slice(i, i + 5)}
           </span>
         );
@@ -3356,7 +3369,7 @@ const PrettyJson = ({ data }) => {
           );
         }
         result.push(
-          <span key={`null-${i}`} className="text-purple-600 dark:text-purple-400">
+          <span key={`null-${i}`} className="text-gray-500 dark:text-zinc-400">
             {jsonString.slice(i, i + 4)}
           </span>
         );
@@ -3377,7 +3390,7 @@ const PrettyJson = ({ data }) => {
           numberEnd++;
         }
         result.push(
-          <span key={`number-${i}`} className="text-purple-600 dark:text-purple-400">
+          <span key={`number-${i}`} className="text-indigo-500 dark:text-indigo-400">
             {jsonString.slice(i, numberEnd)}
           </span>
         );
@@ -3661,11 +3674,32 @@ const ResponsePanel = ({ api }) => {
     return savedHeight ? parseInt(savedHeight, 10) : 300;
   });
   const [isDragging, setIsDragging] = useState(false);
-  const [viewFormat, setViewFormat] = useState('highlighted');
+  const [viewFormat, setViewFormat] = useState(() => {
+    // Try to get previous format from localStorage or use 'highlighted' as default
+    const savedFormat = localStorage.getItem(`viewFormat-${api?.id}`);
+    return savedFormat || 'highlighted';
+  });
   const [copiedHeader, setCopiedHeader] = useState(null);
   const dragRef = useRef(null);
   const startDragY = useRef(0);
   const startHeight = useRef(0);
+
+  // Save viewFormat when it changes
+  useEffect(() => {
+    if (api?.id) {
+      localStorage.setItem(`viewFormat-${api.id}`, viewFormat);
+    }
+  }, [viewFormat, api?.id]);
+
+  // Load saved format when API changes
+  useEffect(() => {
+    if (api?.id) {
+      const savedFormat = localStorage.getItem(`viewFormat-${api.id}`);
+      if (savedFormat) {
+        setViewFormat(savedFormat);
+      }
+    }
+  }, [api?.id]);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -3818,7 +3852,7 @@ const ResponsePanel = ({ api }) => {
     // Handle different response formats
     switch (viewFormat) {
       case 'highlighted':
-        return <JsonHighlighter data={responseContent} />;
+        return <EnhancedJsonViewer data={responseContent} />;
       case 'pretty':
         return <PrettyJson data={responseContent} />;
       case 'raw':
@@ -3841,7 +3875,7 @@ const ResponsePanel = ({ api }) => {
           return <div className="text-red-500">Error converting to XML: {error.message}</div>;
         }
       default:
-        return <JsonHighlighter data={responseContent} />;
+        return <EnhancedJsonViewer data={responseContent} />;
     }
   };
   if (!api) return null;
@@ -3930,8 +3964,8 @@ const ResponsePanel = ({ api }) => {
       {api.activeResponseTab === 'response-body' && (
         <div className="flex font-sans space-x-1 p-2 bg-gray-50 dark:bg-zinc-900 border-b border-gray-200 dark:border-zinc-700">
           {[
-            { id: 'highlighted', label: 'JSON' },
-            { id: 'pretty', label: 'Pretty' },
+            { id: 'highlighted', label: 'Enhanced JSON' },
+            { id: 'pretty', label: 'Simple JSON' },
             { id: 'raw', label: 'Raw' },
             { id: 'xml', label: 'XML' }
           ].map((format) => (

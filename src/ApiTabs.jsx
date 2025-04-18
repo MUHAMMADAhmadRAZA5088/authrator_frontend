@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PlusCircle, X, MoreVertical, Trash2, Pencil } from 'lucide-react';
 import ApiTabDropdown from './ApiTabDropdown';
 import ApiTabRenameModal from './ApiTabRenameModal';
@@ -10,6 +10,8 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
   const [isApiTabRenameModalOpen, setIsApiTabRenameModalOpen] = useState(false);
   const [itemToRename, setItemToRename] = useState(null);
   const [itemName, setItemName] = useState('');
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const tabsContainerRef = useRef(null);
  
   const [contextMenu, setContextMenu] = useState({
     visible: false,
@@ -28,6 +30,31 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
       }
     }
   }, [activeApiId]);
+
+  // Check if tabs are overflowing
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (tabsContainerRef.current) {
+        const container = tabsContainerRef.current;
+        setIsOverflowing(container.scrollWidth > container.clientWidth);
+      }
+    };
+    
+    checkOverflow();
+    
+    // Recalculate when tabs change
+    const resizeObserver = new ResizeObserver(checkOverflow);
+    if (tabsContainerRef.current) {
+      resizeObserver.observe(tabsContainerRef.current);
+    }
+    
+    window.addEventListener('resize', checkOverflow);
+    
+    return () => {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', checkOverflow);
+    };
+  }, [openTabs]);
 
   useEffect(() => {
     const handleClickOutside = () => {
@@ -106,13 +133,13 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
   return (
     <div className="border-b border-gray-200 dark:border-zinc-700 bg-gray-100 dark:bg-zinc-900 relative">
       <div 
-        className="api-tabs-scrollbar flex items-center overflow-x-auto" 
+        ref={tabsContainerRef}
+        className={`api-tabs-scrollbar flex items-center overflow-x-auto ${isOverflowing ? 'pr-14' : ''}`}
         style={{ 
           height: '40px',
           scrollbarWidth: 'thin',
           scrollbarColor: 'rgba(156, 163, 175, 0.5) transparent',
-          WebkitOverflowScrolling: 'touch',
-          paddingRight: '50px'
+          WebkitOverflowScrolling: 'touch'
         }}
       >
         {openTabs.map((tab) => (
@@ -141,19 +168,31 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
             </button>
           </div>
         ))}
+        
+        {/* Create button that flows with tabs (only shown if not overflowing) */}
+        {!isOverflowing && (
+          <button
+            onClick={handleCreateNewApi}
+            className="flex items-center justify-center h-10 w-14 hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 group"
+          >
+            <PlusCircle className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+
+          </button>
+        )}
       </div>
       
-      <div className="absolute right-0 top-0 bottom-0 bg-gray-100 dark:bg-zinc-900 z-20 flex items-center border-l border-gray-200 dark:border-zinc-700">
+      {/* Fixed create button that only appears when tabs overflow */}
+      {isOverflowing && (
         <button
           onClick={handleCreateNewApi}
-          className="flex items-center justify-center h-full px-4 hover:bg-gray-200 dark:hover:bg-gray-800 group relative"
+          className="flex items-center justify-center h-10 w-14 hover:bg-gray-100 dark:hover:bg-gray-800 absolute right-0 top-0 bg-gray-100 dark:bg-zinc-900 z-10 group"
         >
           <PlusCircle className="w-4 h-4 text-gray-500 dark:text-gray-400" />
           <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 bottom-[-30px] left-1/2 transform -translate-x-1/2 whitespace-nowrap z-50">
             Create New Request
           </div>
         </button>
-      </div>
+      )}
 
       {contextMenu.visible && (
         <div 
