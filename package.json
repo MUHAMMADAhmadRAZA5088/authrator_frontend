@@ -33,13 +33,13 @@
     "xml-js": "^1.6.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build && cp public/electron.js build/ && cp public/auth-redirect.html build/ && cp public/auth-electron.html build/",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron": "electron .",
-    "dist": "npm run build && electron-builder --win portable --mac dmg"
-  },
+  "start": "react-scripts start",
+  "build": "react-scripts build && cpy public/electron.js public/auth-redirect.html public/auth-electron.html build/",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject",
+  "electron": "electron .",
+  "dist": "npm run build && electron-builder --win portable --mac dmg"
+},
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -62,6 +62,7 @@
     "@craco/craco": "^7.1.0",
     "assert": "^2.1.0",
     "buffer": "^6.0.3",
+    "cpy-cli": "^5.0.0",
     "crypto-browserify": "^3.12.1",
     "electron": "^33.4.1",
     "electron-builder": "^24.13.3",
