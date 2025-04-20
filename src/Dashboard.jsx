@@ -471,12 +471,47 @@ const App = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [activeRightSection, setActiveRightSection] = useState('code');
   const [selectedColor, setSelectedColor] = useState('#FF6B6B');
+  const [recentUrls, setRecentUrls] = useState([]);
+  const [showUrlSuggestions, setShowUrlSuggestions] = useState(false);
   const navigate = useNavigate();
   const [customJwtConfigs, setCustomJwtConfigs] = useState([]);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [isJwtDecoderOpen, setIsJwtDecoderOpen] = useState(false);
 
   const [showEnvironmentDropdown, setShowEnvironmentDropdown] = useState(false);
+
+  // Load recent URLs from localStorage
+  useEffect(() => {
+    try {
+      const storedRecentUrls = localStorage.getItem('recentUrls');
+      if (storedRecentUrls) {
+        const parsedUrls = JSON.parse(storedRecentUrls);
+        setRecentUrls(parsedUrls);
+      }
+    } catch (error) {
+      console.error("Error loading recent URLs from localStorage:", error);
+    }
+  }, []);
+
+  // Remove this useEffect as it's causing ESLint errors
+  // We'll add keyboard shortcuts directly to the URL input instead
+  
+  // Function to add a URL to recent URLs list
+  const addToRecentUrls = (url) => {
+    if (!url || url.trim() === '') return;
+    
+    setRecentUrls(prevUrls => {
+      // Remove the URL if it already exists in the list
+      const filteredUrls = prevUrls.filter(item => item !== url);
+      // Add the URL to the beginning of the list
+      const newUrls = [url, ...filteredUrls].slice(0, 10); // Keep only the 10 most recent URLs
+      
+      // Save to localStorage
+      localStorage.setItem('recentUrls', JSON.stringify(newUrls));
+      
+      return newUrls;
+    });
+  };
 
   useEffect(() => {
     try {
@@ -1068,9 +1103,9 @@ const FooterButton = ({ icon: Icon, label, onClick }) => (
     { id: 'authTemplates', icon: LayoutTemplate, label: 'authTemplates' }
   ];
   const rightNavigationItems = [
-    { id: 'code', icon: Code, label: 'Response' },
-    { id: 'details', icon:Info, label: 'Details' },
-    { id: 'comments', icon: MessageSquare, label: 'Comments' },
+    // { id: 'code', icon: Code, label: 'Response' },
+    // { id: 'details', icon:Info, label: 'Details' },
+    // { id: 'comments', icon: MessageSquare, label: 'Comments' },
     { id: 'keyGenerator', icon: Key, label: 'JWT Keys' },
     { id: 'info', icon: HelpCircle, label: 'Info' }
   ];
@@ -2546,6 +2581,11 @@ const getApiById = (apiId) => {
           responseData: null
         });
         
+        // Add the URL to recent URLs list
+        if (api.url && api.url.trim() !== '') {
+          addToRecentUrls(api.url);
+        }
+        
         try {
           // Process URL with environment variables
           const processedUrl = processEnvironmentVariables(api.url);
@@ -2986,7 +3026,10 @@ const JsonHighlighter = ({ data }) => {
         } else {
           inString = false;
           result.push(
-            <span key={`string-${i}`} className={isKey ? "text-purple-600 dark:text-purple-400" : "text-green-600 dark:text-green-400"}>
+            <span key={`string-${i}`} className={isKey 
+              ? "text-purple-600 dark:text-purple-400" // Key color
+              : "text-teal-500 dark:text-teal-400"     // Value color
+            }>
               {jsonString.slice(stringStart, i + 1)}
             </span>
           );
@@ -3086,7 +3129,7 @@ const JsonHighlighter = ({ data }) => {
           );
         }
         result.push(
-          <span key={`boolean-${i}`} className="text-purple-600 dark:text-purple-400">
+          <span key={`boolean-${i}`} className="text-orange-500 dark:text-orange-400">
             {jsonString.slice(i, i + 4)}
           </span>
         );
@@ -3103,7 +3146,7 @@ const JsonHighlighter = ({ data }) => {
           );
         }
         result.push(
-          <span key={`boolean-${i}`} className="text-purple-600 dark:text-purple-400">
+          <span key={`boolean-${i}`} className="text-orange-500 dark:text-orange-400">
             {jsonString.slice(i, i + 5)}
           </span>
         );
@@ -3120,7 +3163,7 @@ const JsonHighlighter = ({ data }) => {
           );
         }
         result.push(
-          <span key={`null-${i}`} className="text-purple-600 dark:text-purple-400">
+          <span key={`null-${i}`} className="text-gray-500 dark:text-zinc-400">
             {jsonString.slice(i, i + 4)}
           </span>
         );
@@ -3141,7 +3184,7 @@ const JsonHighlighter = ({ data }) => {
           numberEnd++;
         }
         result.push(
-          <span key={`number-${i}`} className="text-purple-600 dark:text-purple-400">
+          <span key={`number-${i}`} className="text-indigo-500 dark:text-indigo-400">
             {jsonString.slice(i, numberEnd)}
           </span>
         );
@@ -4700,22 +4743,69 @@ const methodColors = {
         <input
           type="text"
           value={api.url}
-          onChange={handleUrlChange}
+          onChange={(e) => {
+            handleUrlChange(e);
+            // Show suggestions only when user starts typing
+            if (e.target.value && e.target.value.trim() !== '') {
+              setShowUrlSuggestions(true);
+            } else {
+              setShowUrlSuggestions(false);
+            }
+          }}
           placeholder="https://authrator.app/ping"
+          onKeyDown={(e) => {
+            // Check if Ctrl+Enter or Cmd+Enter (for Mac) is pressed
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+              handleSend();
+            }
+          }}
           onFocus={(e) => {
             if (e.target.value === '') {
               // If field is empty, clear the placeholder by setting a temporary empty placeholder
               e.target.placeholder = '';
             }
+            // Don't show suggestions immediately on focus - only when typing
           }}
           onBlur={(e) => {
             if (e.target.value === '') {
               // Restore the placeholder when the field is empty and loses focus
               e.target.placeholder = 'https://authrator.app/ping';
             }
+            // Hide suggestions when losing focus
+            setTimeout(() => {
+              setShowUrlSuggestions(false);
+            }, 200);
           }}
           className="w-full px-4 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:focus:ring-purple-400 focus:border-transparent"
         />
+        
+        {/* Recent URLs suggestions */}
+        {showUrlSuggestions && recentUrls && recentUrls.length > 0 && (
+          <div className="absolute w-full mt-1 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-50 max-h-64 overflow-y-auto">
+            <div className="p-2 border-b border-gray-200 dark:border-gray-700">
+              <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">Recent URLs</span>
+            </div>
+            <ul>
+              {recentUrls
+                .filter(url => url && typeof url === 'string' && (api.url ? url.toLowerCase().includes(api.url.toLowerCase()) : true))
+                .map((url, index) => (
+                  <li 
+                    key={index}
+                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-zinc-800 cursor-pointer text-sm truncate"
+                    onClick={() => {
+                      updateApiState(activeFolderId, activeApiId, { url });
+                      // Optionally, also update query params
+                      const { params } = parseUrlParams(url);
+                      updateApiState(activeFolderId, activeApiId, { queryParams: params });
+                      setShowUrlSuggestions(false);
+                    }}
+                  >
+                    {url}
+                  </li>
+                ))}
+            </ul>
+          </div>
+        )}
       </div>
 
       {api.isFromHistory && (() => {
@@ -4862,10 +4952,16 @@ const methodColors = {
       <button 
         onClick={handleSend}
         className="px-4 py-2 bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white rounded-md text-sm font-medium transition-colors duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 flex items-center space-x-2"
+        title="Send request (Ctrl+Enter or ⌘+Enter)"
       >
         <Send className="w-4 h-4" />
         <span>Send</span>
       </button>
+      
+      {/* Small helper text for keyboard shortcut */}
+      <div className="hidden sm:block text-xs text-gray-500 dark:text-gray-400 ml-2 self-center">
+        Press Ctrl+Enter or ⌘+Enter to send
+      </div>
     </div>
 
     <div className="border-b border-gray-200 dark:border-zinc-700">
@@ -4884,7 +4980,7 @@ const methodColors = {
             className={`relative flex items-center space-x-2 px-4 py-3 text-sm font-medium transition-colors duration-150 ease-in-out
               ${activeTab === name.toLowerCase()
                 ? 'border-b-2 border-purple-500 text-purple-500 dark:text-purple-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
               }`}
           >
             <Icon className="w-4 h-4" />
@@ -5791,6 +5887,8 @@ useEffect(() => {
     window.removeEventListener('auth_success_event', handleAuthSuccess);
   };
 }, []);
+
+// The keyboard shortcut functionality is now directly on the URL input field
 
 return (
   <div className={`h-screen flex flex-col dashboard-compact ${isDarkMode ? 'dark' : ''}`}>
