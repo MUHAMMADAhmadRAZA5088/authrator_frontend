@@ -4,6 +4,7 @@ import axios from 'axios';
 import { gsap } from 'gsap';
 import logo from "./imgpsh.png"; 
 import { GoogleLogin } from '@react-oauth/google';
+import { ArrowLeft } from 'lucide-react';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
@@ -22,6 +23,15 @@ const Signup = () => {
   const isElectron = () => {
     return navigator.userAgent.indexOf('Electron') !== -1 || 
            (window && window.process && window.process.versions && window.process.versions.electron);
+  };
+
+  // Navigate back to dashboard or landing page
+  const handleBack = () => {
+    if (isElectron()) {
+      navigate("/app");
+    } else {
+      navigate("/app");
+    }
   };
 
   useEffect(() => {
@@ -243,6 +253,15 @@ const Signup = () => {
       <div className="bg-white/10 backdrop-blur-lg border border-purple-500/30 p-8 rounded-2xl shadow-2xl w-[400px] relative z-10 overflow-hidden">
         <div className="absolute -z-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
           w-[300px] h-[300px] bg-purple-600/20 rounded-full blur-[100px]"></div>
+        
+        {/* Back button */}
+        <button 
+          onClick={handleBack}
+          className="absolute top-4 left-4 p-2 text-white/80 hover:text-white hover:bg-purple-500/20 rounded-full transition-colors"
+          aria-label="Go back"
+        >
+          <ArrowLeft size={20} />
+        </button>
         
         <div 
           ref={logoRef} 

@@ -14,6 +14,7 @@ import RequestHistoryPanel from './History';
 import AuthTemplateManager from './AuthTemplateManager';
 import EnvironmentManagementPanel from './EnvironmentManager';
 import InfoSection from './InfoSection';
+import DesktopDownload from './DesktopDownload';
 import { useCallback } from 'react';
 import debounce from 'lodash/debounce';
 import axios from 'axios';
@@ -1107,6 +1108,7 @@ const FooterButton = ({ icon: Icon, label, onClick }) => (
     // { id: 'details', icon:Info, label: 'Details' },
     // { id: 'comments', icon: MessageSquare, label: 'Comments' },
     { id: 'keyGenerator', icon: Key, label: 'JWT Keys' },
+    { id: 'desktopDownload', icon: Download, label: 'Desktop App' },
     { id: 'info', icon: HelpCircle, label: 'Info' }
   ];
 
@@ -4077,10 +4079,24 @@ const ResponsePanel = ({ api }) => {
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center h-full space-y-2 text-gray-400 dark:text-gray-500">
+          <div className="flex flex-col items-center justify-center h-full space-y-4 text-gray-400 dark:text-gray-500">
             <ExternalLink className="w-8 h-8" />
             <p className="text-xs">Send a request to see the response</p>
+
+            <div className="hidden sm:block text-xs -mb-20 text-gray-500 dark:text-gray-400 ml-2 self-center">
+        Press Ctrl+Enter or ⌘+Enter to send
+      </div>
+      <a 
+            href="https://docs.authrator.app/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-purple-500 hover:text-purple-600 text-sm font-medium group"
+          >
+            Visit Documentation
+            <ExternalLink className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+          </a>
           </div>
+          
         )}
       </div>
     </div>
@@ -4958,10 +4974,7 @@ const methodColors = {
         <span>Send</span>
       </button>
       
-      {/* Small helper text for keyboard shortcut */}
-      <div className="hidden sm:block text-xs text-gray-500 dark:text-gray-400 ml-2 self-center">
-        Press Ctrl+Enter or ⌘+Enter to send
-      </div>
+
     </div>
 
     <div className="border-b border-gray-200 dark:border-zinc-700">
@@ -6341,6 +6354,9 @@ return (
                     <div className="h-full p-4">
                       <KeyGenerator />
                     </div>
+                  )}
+                  {activeRightSection === 'desktopDownload' && (
+                    <DesktopDownload />
                   )}
                   {activeRightSection === 'info' && (
                     <InfoSection />
