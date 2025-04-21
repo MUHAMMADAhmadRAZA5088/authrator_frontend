@@ -1099,7 +1099,7 @@ const FooterButton = ({ icon: Icon, label, onClick }) => (
     { id: 'collections', icon: FolderCheckIcon, label: 'Collections' },
     { id: 'environments', icon: Database, label: 'Environments' },
     { id: 'history', icon: HistoryIcon, label: 'History' },
-    { id: 'settings', icon:ZapIcon, label: 'Settings' },
+    { id: 'settings', icon:ZapIcon, label: 'Performance Testing' },
     { id: 'authTemplates', icon: LayoutTemplate, label: 'authTemplates' }
   ];
   const rightNavigationItems = [
