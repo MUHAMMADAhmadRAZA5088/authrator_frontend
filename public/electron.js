@@ -169,8 +169,9 @@ function createWindow() {
     height: 800,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
-      webSecurity: true, // Keep security enabled
+      contextIsolation: true, // Change to true for better security
+      preload: path.join(__dirname, 'preload.js'),
+      webSecurity: true,
     },
     roundedCorners: true,
     icon: path.join(__dirname, 'icon.png'),

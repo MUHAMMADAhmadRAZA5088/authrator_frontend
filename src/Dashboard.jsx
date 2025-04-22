@@ -223,6 +223,11 @@ const KeyGenerator = () => {
     emailAddress: ''
   });
 
+  // Add isElectron function to KeyGenerator component
+  const isElectron = () => {
+    return navigator.userAgent.indexOf('Electron') !== -1 ||
+           (window && window.process && window.process.versions && window.process.versions.electron);
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setCertDetails(prev => ({
@@ -230,75 +235,138 @@ const KeyGenerator = () => {
       [name]: value
     }));
   };
-
   const generateKeys = async () => {
     try {
       setIsGenerating(true);
       setError(null);
       setSuccess(false);
-
+  
       const forge = require('node-forge');
-      
-      const keypair = forge.pki.rsa.generateKeyPair({bits: 2048, workers: 2});
-      
-      const cert = forge.pki.createCertificate();
-      
-      cert.publicKey = keypair.publicKey;
-      cert.serialNumber = '01';
-      cert.validity.notBefore = new Date();
-      cert.validity.notAfter = new Date();
-      cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
-
-      const attrs = [{
-        name: 'commonName',
-        value: certDetails.commonName
-      }, {
-        name: 'countryName',
-        value: certDetails.countryName
-      }, {
-        shortName: 'ST',
-        value: certDetails.stateOrProvince
-      }, {
-        name: 'localityName',
-        value: certDetails.localityName
-      }, {
-        name: 'organizationName',
-        value: certDetails.organizationName
-      }, {
-        shortName: 'OU',
-        value: certDetails.organizationalUnitName
-      }, {
-        name: 'emailAddress',
-        value: certDetails.emailAddress
-      }];
-
-      cert.setSubject(attrs);
-      cert.setIssuer(attrs); 
-
- 
-      cert.sign(keypair.privateKey);
-
-      const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey);
-      const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey);
-      const certificatePem = forge.pki.certificateToPem(cert);
-
-      setPrivateKey(privateKeyPem);
-      setPublicKey(publicKeyPem);
-      setCertificate(certificatePem);
-      
-      localStorage.setItem('jwt_keys', JSON.stringify({
-        privateKey: privateKeyPem,
-        publicKey: publicKeyPem,
-        certificate: certificatePem
-      }));
-      
-      setSuccess(true);
+  
+      if (isElectron()) {
+        // Use Web Crypto API only (no forge randomness)
+        const subtle = window.crypto.subtle;
+  
+        const keyPair = await subtle.generateKey(
+          {
+            name: "RSASSA-PKCS1-v1_5",
+            modulusLength: 2048,
+            publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
+            hash: "SHA-256"
+          },
+          true,
+          ["sign", "verify"]
+        );
+  
+        const privateKey = await subtle.exportKey("pkcs8", keyPair.privateKey);
+        const publicKey = await subtle.exportKey("spki", keyPair.publicKey);
+  
+        // Convert ArrayBuffers to PEM
+        const arrayBufferToBase64 = (buffer) => {
+          const binary = String.fromCharCode.apply(null, new Uint8Array(buffer));
+          return window.btoa(binary);
+        };
+  
+        const wrapPem = (base64, type) => {
+          const lines = base64.match(/.{1,64}/g).join('\n');
+          return `-----BEGIN ${type}-----\n${lines}\n-----END ${type}-----`;
+        };
+  
+        const privateKeyPem = wrapPem(arrayBufferToBase64(privateKey), "PRIVATE KEY");
+        const publicKeyPem = wrapPem(arrayBufferToBase64(publicKey), "PUBLIC KEY");
+  
+        setPrivateKey(privateKeyPem);
+        setPublicKey(publicKeyPem);
+        setCertificate(''); // Or generate a dummy self-signed cert if needed
+  
+        localStorage.setItem('jwt_keys', JSON.stringify({
+          privateKey: privateKeyPem,
+          publicKey: publicKeyPem,
+          certificate: ''
+        }));
+  
+        setSuccess(true);
+  
+      } else {
+        // Browser / default behavior (Forge + entropy)
+        const getRandomValues = (length) => {
+          const array = new Uint8Array(length);
+          window.crypto.getRandomValues(array);
+          return array;
+        };
+  
+        const entropy = getRandomValues(64);
+        const entropyStr = Array.from(entropy).map(b => b.toString(16).padStart(2, '0')).join('');
+        
+        forge.random.collect(entropyStr);
+        forge.random.collect(navigator.userAgent);
+        forge.random.collect(new Date().toString());
+        forge.random.collect(window.performance.now().toString());
+  
+        const keypair = forge.pki.rsa.generateKeyPair({
+          bits: 2048,
+          workers: -1
+        });
+  
+        const cert = forge.pki.createCertificate();
+        cert.publicKey = keypair.publicKey;
+        cert.serialNumber = '01';
+        cert.validity.notBefore = new Date();
+        cert.validity.notAfter = new Date();
+        cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
+  
+        const attrs = [{
+          name: 'commonName',
+          value: certDetails.commonName || 'localhost'
+        }, {
+          name: 'countryName',
+          value: certDetails.countryName || 'US'
+        }, {
+          shortName: 'ST',
+          value: certDetails.stateOrProvince || 'State'
+        }, {
+          name: 'localityName',
+          value: certDetails.localityName || 'Locality'
+        }, {
+          name: 'organizationName',
+          value: certDetails.organizationName || 'Organization'
+        }, {
+          shortName: 'OU',
+          value: certDetails.organizationalUnitName || 'Unit'
+        }, {
+          name: 'emailAddress',
+          value: certDetails.emailAddress || 'email@example.com'
+        }];
+  
+        cert.setSubject(attrs);
+        cert.setIssuer(attrs);
+        cert.sign(keypair.privateKey, forge.md.sha256.create());
+  
+        const privateKeyPem = forge.pki.privateKeyToPem(keypair.privateKey);
+        const publicKeyPem = forge.pki.publicKeyToPem(keypair.publicKey);
+        const certificatePem = forge.pki.certificateToPem(cert);
+  
+        setPrivateKey(privateKeyPem);
+        setPublicKey(publicKeyPem);
+        setCertificate(certificatePem);
+  
+        localStorage.setItem('jwt_keys', JSON.stringify({
+          privateKey: privateKeyPem,
+          publicKey: publicKeyPem,
+          certificate: certificatePem
+        }));
+  
+        setSuccess(true);
+      }
+  
     } catch (err) {
-      setError(err.message);
+      console.error('Error generating keys:', err);
+      setError(`Error generating keys: ${err.message}`);
     } finally {
       setIsGenerating(false);
     }
   };
+  
 
   return (
     <div className="p-4 h-full overflow-y-auto">

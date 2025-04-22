@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import AuthratorExe from "./downloads/Authrator-Portable-0.1.0.exe"
+// import AuthratorExe from "./downloads/Authrator-Portable-0.1.0.exe"
 import axios from 'axios';
 
 const LandingPage = () => {
@@ -74,7 +74,7 @@ const LandingPage = () => {
           <Link to="/app" className="bg-purple-500 hover:bg-purple-400 text-white font-bold py-3 px-8 rounded-lg shadow-md transition duration-300 text-center">
             Try Web Client
           </Link>
-          <a 
+          {/* <a 
             href={AuthratorExe} 
             download="Authrator-Portable-0.1.0.exe" 
             target="_blank" 
@@ -83,7 +83,7 @@ const LandingPage = () => {
             className="bg-transparent border-2 border-white hover:bg-white hover:text-purple-700 text-white font-bold py-3 px-8 rounded-lg transition duration-300 text-center cursor-pointer"
           >
             Download Desktop Client
-          </a>
+          </a> */}
         </div>
       </section>
 
