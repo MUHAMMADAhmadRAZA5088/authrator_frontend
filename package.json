@@ -38,7 +38,7 @@
   "test": "react-scripts test",
   "eject": "react-scripts eject",
   "electron": "electron .",
-  "dist": "npm run build && electron-builder --win portable --mac dmg"
+  "dist": "npm run build && electron-builder --win portable"
 },
   "eslintConfig": {
     "extends": [
