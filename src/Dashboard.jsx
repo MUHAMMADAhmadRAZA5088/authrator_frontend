@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Settings,Check, Trash, AlertTriangle, Clock,Send, Folder,Menu, Plus,Search,Edit2, X, ChevronDown, Save ,Sun,Moon, PlusCircle, FolderClosed, Database, Lock, Code, CodeSquare, Circle, ExternalLink, ArrowUpDown, Download, Copy, Trash2, Pencil, MoreVertical, Play, Terminal, FolderCheckIcon, HistoryIcon, Info, MessageSquare, Wifi, KeyRound, Cookie, MousePointer2, Antenna, Rotate3d, TerminalSquare, Dot, MoreHorizontal, LayoutTemplate, DatabaseZapIcon, CloudLightningIcon, Atom, ZapIcon, Globe, Key, AlertCircle, FileX, ShieldCheck, ChevronRight, ChevronLeft, Settings2, HelpCircle } from 'lucide-react';
+import { Settings,Check, Trash, AlertTriangle, Clock,Send, Folder,Menu, Plus,Search,Edit2, X, ChevronDown, Save ,Sun,Moon, PlusCircle, FolderClosed, Database, Lock, Code, CodeSquare, Circle, ExternalLink, ArrowUpDown, Download, Copy, Trash2, Pencil, MoreVertical, Play, Terminal, FolderCheckIcon, HistoryIcon, Info, MessageSquare, Wifi, KeyRound, Cookie, MousePointer2, Antenna, Rotate3d, TerminalSquare, Dot, MoreHorizontal, LayoutTemplate, DatabaseZapIcon, CloudLightningIcon, Atom, ZapIcon, Globe, Key, AlertCircle, FileX, ShieldCheck, ChevronRight, ChevronLeft, Settings2, HelpCircle, Book, Mail } from 'lucide-react';
 import ResponseAnalytics from './ResponseAnalytics';
 import logo from "./imgpsh.png"
 import EnvironmentManager from './EnvironmentManager';
@@ -513,6 +513,102 @@ const KeyGenerator = () => {
   );
 };
 
+// Info Modal Component
+const InfoModal = ({ isOpen, onClose }) => {
+  if (!isOpen) return null;
+  
+  // You can change this version number as needed
+  const appVersion = "1.2.0";
+  
+  return (
+    <>
+      <div 
+        className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-50 transition-opacity duration-300"
+        onClick={onClose}
+      />
+      <div 
+        className={`
+          fixed left-4 bottom-24 z-50 w-80 sm:w-96 
+          bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl overflow-hidden
+          transform transition-all duration-300 ease-out
+          border border-gray-100 dark:border-zinc-700
+          animate-modal-slide-in
+        `}
+        style={{ 
+          boxShadow: "0 10px 25px -5px rgba(124, 58, 237, 0.5), 0 8px 10px -6px rgba(124, 58, 237, 0.3)",
+          transformOrigin: "bottom left"
+        }}
+      >
+        <div className="px-6 py-5 bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <img src={logo} alt="Authrator Logo" className="h-10 w-10 rounded-lg shadow-md" />
+              <h2 className="text-xl font-bold text-white">Authrator</h2>
+            </div>
+            <button 
+              onClick={onClose} 
+              className="text-white hover:text-gray-200 bg-white bg-opacity-20 rounded-full p-1 transition-colors duration-200"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+        
+        <div className="p-6 space-y-5">  
+          <div className="space-y-2">
+            <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">The ultimate API testing tool</p>
+            <p className="text-gray-500 dark:text-gray-500 text-sm">Version {appVersion}</p>
+          </div>
+          
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3 p-3 bg-purple-50 dark:bg-zinc-800 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
+                <ShieldCheck className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm dark:text-white">Built by</h4>
+                <p className="text-purple-600 dark:text-purple-400 font-medium text-sm">Provayu</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-zinc-800 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+                <Mail className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm dark:text-white">Contact</h4>
+                <a 
+                  href="mailto:support@authrator.app"
+                  className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
+                >
+                  support@authrator.app
+                </a>
+              </div>
+            </div>
+            
+            <div className="flex items-center space-x-3 p-3 bg-indigo-50 dark:bg-zinc-800 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center flex-shrink-0">
+                <Book className="w-4 h-4 text-white" />
+              </div>
+              <div>
+                <h4 className="font-semibold text-sm dark:text-white">Documentation</h4>
+                <a 
+                  href="https://docs.authrator.app" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 dark:text-indigo-400 hover:underline text-sm"
+                >
+                  docs.authrator.app
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
 const App = () => {
   const [collections, setCollections] = useState([]);
   const [activeFolderId, setActiveFolderId] = useState(null);
@@ -546,6 +642,34 @@ const App = () => {
   const [isJwtDecoderOpen, setIsJwtDecoderOpen] = useState(false);
 
   const [showEnvironmentDropdown, setShowEnvironmentDropdown] = useState(false);
+
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  
+  // Add animation keyframes for the modal
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      
+      .animate-modal-slide-in {
+        animation: modalSlideIn 0.25s ease-out forwards;
+      }
+    `;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   // Load recent URLs from localStorage
   useEffect(() => {
@@ -4334,7 +4458,7 @@ const methodColors = {
       
           try {
             const sandbox = {
-              pm: {
+              auth: {
                 environment: new Map(),
                 request: {
                   method: api.method || 'GET',
@@ -4348,9 +4472,9 @@ const methodColors = {
                 test: (name, fn) => {
                   try {
                     fn();
-                    sandbox.pm.log('✓ ' + name, 'success');
+                    sandbox.auth.log('✓ ' + name, 'success');
                   } catch (error) {
-                    sandbox.pm.log('✗ ' + name + ': ' + error.message, 'error');
+                    sandbox.auth.log('✗ ' + name + ': ' + error.message, 'error');
                   }
                 },
                 expect: (value) => ({
@@ -4378,7 +4502,7 @@ const methodColors = {
               try {
                 const response = await fetch(api.url || '');
                 const data = await response.json();
-                sandbox.pm.response = {
+                sandbox.auth.response = {
                   json: () => data,
                   status: response.status,
                   headers: Object.fromEntries(response.headers.entries()),
@@ -4407,8 +4531,8 @@ const methodColors = {
               }
             }
       
-            const fn = new Function('pm', script);
-            fn(sandbox.pm);
+            const fn = new Function('auth', script);
+            fn(sandbox.auth);
       
           } catch (error) {
             setConsoleOutput(prev => [...prev, { 
@@ -5738,8 +5862,8 @@ const methodColors = {
         }}
         className="w-full h-64 p-4 font-mono text-sm bg-white dark:bg-zinc-900 text-gray-800 dark:text-gray-200 focus:outline-none"
         placeholder={scriptType === 'pre-request' 
-          ? "// Pre-request script example:\npm.environment.set('timestamp', Date.now());"
-          : "// Test script example:\npm.test('Status test', () => {\n  pm.response.to.have.status(200);\n});"
+          ? "// Pre-request script example:\nauth.environment.set('timestamp', Date.now());"
+          : "// Test script example:\nauth.test('Status test', () => {\n  auth.response.to.have.status(200);\n});"
         }
         spellCheck="false"
       />
@@ -6068,7 +6192,7 @@ return (
               >
                 <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
                 <span className="hidden sm:inline">New Collection</span>
-                <div className="absolute invisible opacity-0 bottom-[-40px] left-1/2 -translate-x-1/2 -translate-y-2 scale-90 origin-top whitespace-nowrap bg-gray-800 text-white text-xs py-2 px-3 rounded z-50 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 before:content-[''] before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-[6px] before:border-transparent before:border-b-gray-800">
+                <div className="absolute invisible opacity-0 bottom-[-40px] left-1/2 -translate-x-1/2 -translate-y-2 scale-90 origin-top whitespace-nowrap bg-gray-800 dark:bg-purple-800 text-white text-xs py-2 px-3 rounded z-50 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 before:content-[''] before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-[6px] before:border-transparent before:border-b-gray-800 dark:before:border-b-purple-800">
   Create New Collection
 </div>
               </button>
@@ -6081,7 +6205,7 @@ return (
   title="JWT Token Tool"
 >
   <KeyRound className="w-4 h-4 text-purple-500 dark:text-purple-400" />
-  <div className="absolute invisible opacity-0 bottom-[-40px] left-1/2 -translate-x-1/2 -translate-y-2 scale-90 origin-top whitespace-nowrap bg-gray-800 text-white text-xs py-2 px-3 rounded z-50 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 before:content-[''] before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-[6px] before:border-transparent before:border-b-gray-800">
+  <div className="absolute invisible opacity-0 bottom-[-40px] left-1/2 -translate-x-1/2 -translate-y-2 scale-90 origin-top whitespace-nowrap bg-gray-800 dark:bg-purple-800 text-white text-xs py-2 px-3 rounded z-50 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100 before:content-[''] before:absolute before:bottom-full before:left-1/2 before:-translate-x-1/2 before:border-[6px] before:border-transparent before:border-b-gray-800 dark:before:border-b-purple-800">
   JWT Token Tool
 </div>
 </button>
@@ -6138,6 +6262,10 @@ return (
         setActiveSection={setActiveSection}
         setIsPerformanceTesting={setIsPerformanceTesting}
         openRenameModal={openRenameModal}
+        moveApiToCollection={moveApiToCollection}
+        setCollections={setCollections}
+        setActiveApiId={setActiveApiId}
+        setOpenTabs={setOpenTabs}
       />
   
   
@@ -6173,7 +6301,7 @@ return (
                   `}
                 >
                   <item.icon className="w-5 h-5" />
-                  <div class="absolute invisible opacity-0 top-1/2 left-[calc(100%+15px)] -translate-y-1/2 -translate-x-2 scale-90 origin-left whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:right-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-r-gray-800">
+                  <div class="absolute invisible opacity-0 top-1/2 left-[calc(100%+15px)] -translate-y-1/2 -translate-x-2 scale-90 origin-left whitespace-nowrap bg-gray-800 dark:bg-purple-600  text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:right-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-r-gray-800">
   {item.label}
 </div>
                 </button>
@@ -6219,7 +6347,7 @@ return (
                 `}
               >
                 <item.icon className="w-5 h-5" />
-                <div class="absolute invisible opacity-0 top-1/2 left-[calc(100%+15px)] -translate-y-1/2 -translate-x-2 scale-90 origin-left whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:right-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-r-gray-800">
+                <div class="absolute invisible opacity-0 top-1/2 left-[calc(100%+15px)] -translate-y-1/2 -translate-x-2 scale-90 origin-left whitespace-nowrap bg-gray-800 dark:bg-purple-600  text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:right-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-r-gray-800 dark:before:border-r-purple-600">
   {item.label}
 </div>
               </button>
@@ -6326,11 +6454,11 @@ return (
                         key={item.id}
                         onClick={() => {
                           setActiveRightSection(item.id);
-                          toggleRightSidebar()
                           
+                          // Only expand if it's currently collapsed
                           if (isRightSidebarCollapsed) {
                             setIsRightSidebarCollapsed(false);
-                            toggleRightSidebar()
+                            setRightSidebarWidth(280);
                           }
                         }}
                         className={`
@@ -6341,7 +6469,7 @@ return (
                         title={item.label}
                       >
                         <item.icon className="w-5 h-5" />
-                        <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800">
+                        <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 dark:bg-purple-600  text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800 dark:before:border-l-purple-600">
   {item.label}
 </div>
                       </button>
@@ -6356,11 +6484,11 @@ return (
                         key={item.id}
                         onClick={() => {
                           setActiveRightSection(item.id);
-                          toggleRightSidebar()
                           
+                          // Only expand if it's currently collapsed
                           if (isRightSidebarCollapsed) {
                             setIsRightSidebarCollapsed(false);
-                            toggleRightSidebar()
+                            setRightSidebarWidth(280);
                           }
                         }}
                         className={`
@@ -6371,7 +6499,7 @@ return (
                         title={item.label}
                       >
                         <item.icon className="w-5 h-5" />
-                        <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800">
+                        <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 dark:bg-purple-600  dark text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800 dark:before:border-l-purple-600 dark:before:border-l-purple-600 ">
   {item.label}
 </div>
                       </button>
@@ -6387,7 +6515,7 @@ return (
                         <ChevronRight className="w-5 h-5" /> : 
                         <ChevronLeft className="w-5 h-5" />
                       }
-                      <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800">
+                      <div class="absolute invisible opacity-0 top-1/2 right-[calc(100%+15px)] -translate-y-1/2 translate-x-2 scale-90 origin-right whitespace-nowrap bg-gray-800 dark:bg-purple-600 text-white text-sm py-2 px-3 rounded z-10 transition-all duration-300 ease-in-out group-hover:visible group-hover:opacity-100 group-hover:translate-x-0 group-hover:scale-100 before:content-[''] before:absolute before:top-1/2 before:left-full before:-translate-y-1/2 before:border-[6px] before:border-transparent before:border-l-gray-800 dark:before:border-l-purple-600">
                       {isRightSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
 </div>
 
@@ -6444,6 +6572,18 @@ return (
 
       {/* Render the JWT Decoder component */}
       <JwtDecoder isOpen={isJwtDecoderOpen} onClose={() => setIsJwtDecoderOpen(false)} />
+      
+      {/* Info Modal */}
+      <InfoModal isOpen={isInfoModalOpen} onClose={() => setIsInfoModalOpen(false)} />
+      
+      {/* Floating Info Button */}
+      <button
+        onClick={() => setIsInfoModalOpen(true)}
+        className="fixed left-1 bottom-10 z-40 w-12 h-12 rounded-full bg-purple-600  shadow-lg flex items-center justify-center text-white hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 hover:shadow-xl"
+        aria-label="About Authrator"
+      >
+        <Info className="w-5 h-5" />
+      </button>
 
       <footer className="h-7 flex-shrink-0 bg-gray-100 dark:bg-zinc-800 border-t border-gray-200 dark:border-zinc-700 relative">
       <div className="flex items-center justify-end h-full px-4 text-xs">

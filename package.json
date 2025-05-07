@@ -33,13 +33,13 @@
     "xml-js": "^1.6.11"
   },
   "scripts": {
-  "start": "react-scripts start",
-  "build": "react-scripts build && cpy public/electron.js public/auth-redirect.html public/auth-electron.html build/",
-  "test": "react-scripts test",
-  "eject": "react-scripts eject",
-  "electron": "electron .",
-  "dist": "npm run build && electron-builder --win portable"
-},
+    "start": "react-scripts start",
+    "build": "react-scripts build && cpy public/electron.js public/auth-redirect.html public/auth-electron.html build/",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "electron": "electron .",
+    "dist": "npm run build && electron-builder --win portable --mac dmg"
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -93,11 +93,13 @@
     },
     "mac": {
       "target": [
-        "dmg",
-        "zip"
+        "dmg"
       ],
       "icon": "assets/icon.png",
       "category": "public.app-category.developer-tools"
+    },
+    "dmg": {
+      "artifactName": "${productName}-${version}.dmg"
     },
     "portable": {
       "artifactName": "${productName}-Portable-${version}.exe"

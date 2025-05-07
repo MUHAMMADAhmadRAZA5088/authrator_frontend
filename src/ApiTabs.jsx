@@ -1,25 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { PlusCircle, X, MoreVertical, Trash2, Pencil } from 'lucide-react';
-import ApiTabDropdown from './ApiTabDropdown';
+import { PlusCircle, X, MoreVertical, Trash2, Pencil, Copy, FolderPlus } from 'lucide-react';
 import ApiTabRenameModal from './ApiTabRenameModal';
 
-const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openNewTab, closeTab, openTabs, setActiveSection, setIsPerformanceTesting, openRenameModal }) => {
+const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openNewTab, closeTab, openTabs, setActiveSection, setIsPerformanceTesting, openRenameModal, moveApiToCollection, setCollections, setActiveApiId, setOpenTabs }) => {
  
   const [hiddenTabs, setHiddenTabs] = useState([]);
   const [activeTab, setActiveTab] = useState(activeApiId);
   const [isApiTabRenameModalOpen, setIsApiTabRenameModalOpen] = useState(false);
+  const [isAddToCollectionModalOpen, setIsAddToCollectionModalOpen] = useState(false);
+  const [apiToAddToCollection, setApiToAddToCollection] = useState(null);
   const [itemToRename, setItemToRename] = useState(null);
   const [itemName, setItemName] = useState('');
   const [isOverflowing, setIsOverflowing] = useState(false);
   const tabsContainerRef = useRef(null);
+  const [newTabId, setNewTabId] = useState(null);
  
   const [contextMenu, setContextMenu] = useState({
     visible: false,
     x: 0,
     y: 0,
     tabId: null,
-    tabName: ''
+    tabName: '',
+    tab: null
   });
+
+  // Set up animation for new tabs
+  useEffect(() => {
+    if (newTabId) {
+      // Clear the animation after it's done
+      const timer = setTimeout(() => {
+        setNewTabId(null);
+      }, 1000); // match animation duration
+      
+      return () => clearTimeout(timer);
+    }
+  }, [newTabId]);
 
   useEffect(() => {
     if (activeApiId) {
@@ -56,6 +71,16 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
     };
   }, [openTabs]);
 
+  // Track new tabs added
+  useEffect(() => {
+    if (openTabs.length > 0) {
+      const lastTab = openTabs[openTabs.length - 1];
+      if (lastTab && lastTab.id !== newTabId && lastTab.id === activeApiId) {
+        setNewTabId(lastTab.id);
+      }
+    }
+  }, [openTabs, activeApiId]);
+
   useEffect(() => {
     const handleClickOutside = () => {
       if (contextMenu.visible) {
@@ -78,7 +103,7 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
   };
 
   const handleCloseTab = (tabId, e) => {
-    e.stopPropagation();
+    if (e) e.stopPropagation();
     closeTab(tabId);
   };
 
@@ -119,7 +144,8 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
       x: e.clientX,
       y: e.clientY,
       tabId: tab.id,
-      tabName: tab.name
+      tabName: tab.name,
+      tab: tab
     });
   };
 
@@ -127,6 +153,184 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
     if (contextMenu.tabId) {
       openApiTabRenameModal(contextMenu.tabId, contextMenu.tabName);
       setContextMenu({...contextMenu, visible: false});
+    }
+  };
+
+  const isUnsavedApi = (api) => {
+    // Check if API is in temp collection or has a temp ID
+    return (api.folderId === 'temp-99999' || 
+            api.isTemporary === true || 
+            (typeof api.id === 'string' && api.id.startsWith('temp-')));
+  };
+
+  // Get the complete API object from collections by ID
+  const getFullApiById = (apiId) => {
+    for (const folder of collections) {
+      const api = folder.apis.find(a => a.id === apiId);
+      if (api) {
+        return { api, folderId: folder.id };
+      }
+    }
+    return null;
+  };
+
+  const handleDuplicateApi = (apiTab) => {
+    // Find the complete API in the collections
+    const result = getFullApiById(apiTab.id);
+    if (!result) {
+      console.error("Could not find API to duplicate");
+      return;
+    }
+    
+    const { api, folderId } = result;
+    
+    // Generate new ID for the duplicate
+    const newId = `api-${Date.now()}`;
+    
+    // Create a deep copy of the API with new ID and name
+    const duplicateApi = JSON.parse(JSON.stringify(api));
+    duplicateApi.id = newId;
+    duplicateApi.name = `${api.name} (Copy)`;
+    
+    // Add the duplicate to the same folder in collections
+    const updatedCollections = collections.map(folder => {
+      if (folder.id === folderId) {
+        return {
+          ...folder,
+          apis: [...folder.apis, duplicateApi]
+        };
+      }
+      return folder;
+    });
+    
+    // Update collections state
+    setCollections(updatedCollections);
+    
+    // Add to open tabs
+    const newTab = {
+      id: newId,
+      name: duplicateApi.name,
+      method: duplicateApi.method,
+      folderId: folderId
+    };
+    
+    const updatedTabs = [...openTabs, newTab];
+    setOpenTabs(updatedTabs);
+    
+    // Save tabs to localStorage
+    localStorage.setItem('openTabs', JSON.stringify(updatedTabs));
+    
+    // Set the new API as active
+    setActiveApiId(newId);
+    setActiveTab(newId);
+    setNewTabId(newId);
+    
+    // If we're in local storage mode, save to localStorage
+    const isOffline = typeof window !== 'undefined' && 
+      window.navigator && 
+      !window.navigator.onLine;
+    
+    if (isOffline || !localStorage.getItem('userId')) {
+      localStorage.setItem('collections', JSON.stringify(updatedCollections));
+    } else if (folderId !== 'temp-99999' && !folderId.startsWith('local-')) {
+      // If online and in a regular collection, save to server
+      try {
+        fetch('https://authrator.com/db-api/api/apis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            collectionId: folderId,
+            name: duplicateApi.name,
+            method: duplicateApi.method,
+            url: duplicateApi.url,
+            headers: duplicateApi.headers,
+            queryParams: duplicateApi.queryParams,
+            body: duplicateApi.body
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Update local state with server ID
+            const serverApi = {
+              ...duplicateApi,
+              id: data.api._id
+            };
+            
+            // Update collections
+            const updatedCollectionsWithServer = collections.map(folder => {
+              if (folder.id === folderId) {
+                return {
+                  ...folder,
+                  apis: folder.apis.map(a => 
+                    a.id === newId ? serverApi : a
+                  )
+                };
+              }
+              return folder;
+            });
+            
+            setCollections(updatedCollectionsWithServer);
+            
+            // Update open tabs
+            const updatedTabsWithServer = openTabs.map(tab => 
+              tab.id === newId ? { ...tab, id: serverApi.id } : tab
+            );
+            
+            setOpenTabs(updatedTabsWithServer);
+            localStorage.setItem('openTabs', JSON.stringify(updatedTabsWithServer));
+            
+            // Update active API ID
+            if (activeApiId === newId) {
+              setActiveApiId(serverApi.id);
+              setActiveTab(serverApi.id);
+            }
+          }
+        })
+        .catch(error => {
+          console.error('Error saving duplicate API to server:', error);
+        });
+      } catch (error) {
+        console.error('Error duplicating API:', error);
+      }
+    }
+  };
+
+  const handleDuplicateFromContextMenu = () => {
+    if (contextMenu.tab) {
+      handleDuplicateApi(contextMenu.tab);
+      setContextMenu({...contextMenu, visible: false});
+    }
+  };
+
+  const handleCloseFromContextMenu = () => {
+    if (contextMenu.tabId) {
+      closeTab(contextMenu.tabId);
+      setContextMenu({...contextMenu, visible: false});
+    }
+  };
+
+  const handleAddToCollection = (api) => {
+    setApiToAddToCollection(api);
+    setIsAddToCollectionModalOpen(true);
+  };
+
+  const handleAddToCollectionFromContextMenu = () => {
+    if (contextMenu.tab) {
+      handleAddToCollection(contextMenu.tab);
+      setContextMenu({...contextMenu, visible: false});
+    }
+  };
+
+  const handleAddToCollectionSubmit = (collectionId) => {
+    if (apiToAddToCollection && collectionId) {
+      // Use the moveApiToCollection function to add the API to the selected collection
+      const sourceFolderId = apiToAddToCollection.folderId || activeFolderId;
+      moveApiToCollection(apiToAddToCollection.id, sourceFolderId, collectionId);
+      setIsAddToCollectionModalOpen(false);
+      setApiToAddToCollection(null);
     }
   };
 
@@ -148,8 +352,11 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
             onClick={() => handleTabSelect(tab)}
             onContextMenu={(e) => handleContextMenu(e, tab)}
             className={`flex items-center h-full px-3 cursor-pointer group flex-shrink-0 w-[200px]
-              ${activeTab === tab.id ? 'bg-white dark:bg-zinc-800 border-t-2' : 'bg-gray-50 dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
-            style={{ borderTopColor: activeTab === tab.id ? methodColors[tab.method] : 'transparent' }}
+              ${activeTab === tab.id ? 'bg-white dark:bg-zinc-800 border-t-2' : 'bg-gray-50 dark:bg-zinc-900 hover:bg-gray-100 dark:hover:bg-gray-800'}
+              ${tab.id === newTabId ? 'animate-tabFadeIn' : ''}`}
+            style={{ 
+              borderTopColor: activeTab === tab.id ? methodColors[tab.method] : 'transparent'
+            }}
           >
             <span 
               className="mr-2 px-1.5 py-0.5 rounded text-xs font-mono flex-shrink-0"
@@ -176,7 +383,6 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
             className="flex items-center justify-center h-10 w-14 hover:bg-gray-100 dark:hover:bg-gray-800 flex-shrink-0 group"
           >
             <PlusCircle className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-
           </button>
         )}
       </div>
@@ -205,7 +411,33 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
             className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
           >
             <Pencil className="w-4 h-4 dark:text-white" />
-            <span className=' dark:text-white'>Rename</span>
+            <span className="dark:text-white">Rename</span>
+          </button>
+          
+          <button
+            onClick={handleDuplicateFromContextMenu}
+            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+          >
+            <Copy className="w-4 h-4 dark:text-white" />
+            <span className="dark:text-white">Duplicate</span>
+          </button>
+          
+          {isUnsavedApi(contextMenu.tab) && (
+            <button
+              onClick={handleAddToCollectionFromContextMenu}
+              className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+            >
+              <FolderPlus className="w-4 h-4 dark:text-white" />
+              <span className="dark:text-white">Add to Collection</span>
+            </button>
+          )}
+          
+          <button
+            onClick={handleCloseFromContextMenu}
+            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center space-x-2"
+          >
+            <X className="w-4 h-4 dark:text-white" />
+            <span className="dark:text-white">Close</span>
           </button>
         </div>
       )}
@@ -216,6 +448,39 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
         itemName={itemName}
         onRename={handleRenameSubmit}
       />
+      
+      {/* Modal for adding API to collection */}
+      {isAddToCollectionModalOpen && apiToAddToCollection && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
+          <div className="bg-white dark:bg-zinc-800 p-4 rounded-lg shadow-lg w-96 border border-gray-200 dark:border-zinc-700">
+            <h3 className="text-lg font-semibold mb-4 dark:text-white">Add to Collection</h3>
+            <div className="max-h-64 overflow-y-auto">
+              {collections
+                .filter(c => c.id !== 'temp-99999' && c.id !== apiToAddToCollection.folderId)
+                .map(collection => (
+                  <button
+                    key={collection.id}
+                    onClick={() => handleAddToCollectionSubmit(collection.id)}
+                    className="w-full text-left p-2 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-md mb-1 dark:text-white"
+                  >
+                    {collection.name}
+                  </button>
+                ))}
+            </div>
+            <div className="flex justify-end mt-4">
+              <button 
+                onClick={() => {
+                  setIsAddToCollectionModalOpen(false);
+                  setApiToAddToCollection(null);
+                }}
+                className="px-4 py-2 bg-gray-200 dark:bg-zinc-700 text-gray-700 dark:text-gray-200 rounded-md hover:bg-gray-300 dark:hover:bg-zinc-600"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Download, ExternalLink, Globe } from 'lucide-react';
 import axios from 'axios';
-import AuthratorExe from "./downloads/Authrator-Portable-0.1.0.exe";
+// import AuthratorExe from "./downloads/Authrator-Portable-0.1.0.exe";
 
 const DesktopDownload = () => {
   const [platform, setPlatform] = useState('');
@@ -47,7 +47,7 @@ const DesktopDownload = () => {
           <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
             Download our desktop app for an enhanced experience with offline capabilities
           </p>
-       <a 
+       {/* <a 
             href={AuthratorExe} 
             download="Authrator-Portable-0.1.0.exe" 
             target="_blank" 
@@ -57,7 +57,7 @@ const DesktopDownload = () => {
           >
             Download for {platform === 'windows' ? 'Windows' : platform === 'mac' ? 'Mac' : platform === 'linux' ? 'Linux' : 'Desktop'}
             <Download className="w-4 h-4" />
-          </a>
+          </a> */}
         </div>
 
         {/* Benefits Section */}

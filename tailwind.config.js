@@ -25,6 +25,23 @@ module.exports = {
       },
       boxShadow: {
         'auth-card': '0 4px 15px rgba(106, 90, 205, 0.2)'
+      },
+      animation: {
+        'tabFadeIn': 'tabFadeIn 0.8s ease-out forwards'
+      },
+      keyframes: {
+        tabFadeIn: {
+          '0%': { 
+            opacity: '0.2',
+            transform: 'translateY(-6px)',
+            backgroundColor: 'rgba(168, 85, 247, 0.15)'
+          },
+          '100%': { 
+            opacity: '1',
+            transform: 'translateY(0)',
+            backgroundColor: 'inherit'
+          }
+        }
       }
     },
   },

@@ -7,6 +7,8 @@ const isDev = process.env.NODE_ENV === 'development';
 
 // Store reference to main window to prevent garbage collection
 let mainWindow;
+// Add reference to splash screen window
+let splashWindow;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
 if (require('electron-squirrel-startup')) {
@@ -162,6 +164,43 @@ function checkForPendingAuth() {
   });
 }
 
+// Create splash screen window
+function createSplashWindow() {
+  splashWindow = new BrowserWindow({
+    width: 400,
+    height: 400,
+    transparent: process.platform === 'darwin', // Only use transparency on macOS
+    backgroundColor: process.platform === 'darwin' ? null : '#0f172a', // Use solid color on Windows
+    frame: false,
+    alwaysOnTop: true,
+    center: true,
+    roundedCorners: true,
+    resizable: false,
+    skipTaskbar: true, // Don't show in taskbar
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: true,
+    },
+    show: false, // Don't show until content is loaded
+  });
+
+  splashWindow.loadFile(path.join(__dirname, 'splash.html'));
+  splashWindow.on('closed', () => (splashWindow = null));
+  splashWindow.webContents.on('did-finish-load', () => {
+    splashWindow.show();
+    
+    // Set a maximum timeout for the splash screen (10 seconds)
+    setTimeout(() => {
+      if (splashWindow) {
+        splashWindow.close();
+        if (mainWindow && !mainWindow.isVisible()) {
+          mainWindow.show();
+        }
+      }
+    }, 10000);
+  });
+}
+
 function createWindow() {
   // Create the browser window
   mainWindow = new BrowserWindow({
@@ -176,6 +215,7 @@ function createWindow() {
     roundedCorners: true,
     icon: path.join(__dirname, 'icon.png'),
     autoHideMenuBar: true,
+    show: false, // Don't show the main window until it's ready
   });
 
   // Load the index.html file
@@ -203,10 +243,16 @@ function createWindow() {
     return { action: 'allow' };
   });
   
-  // Set up page load handler to check for auth data
+  // Set up page load handler to check for auth data and close splash screen
   mainWindow.webContents.on('did-finish-load', () => {
     // Check for pending authentication after page load
     checkForPendingAuth();
+    
+    // Close splash screen and show main window
+    if (splashWindow) {
+      splashWindow.close();
+    }
+    mainWindow.show();
   });
   
   // Log any errors
@@ -249,7 +295,13 @@ app.setAsDefaultProtocolClient('authrator');
 
 // Create window once the app is ready
 app.whenReady().then(() => {
-  createWindow();
+  // First create the splash screen
+  createSplashWindow();
+  
+  // Then create the main window
+  setTimeout(() => {
+    createWindow();
+  }, 1000); // Give the splash screen a moment to display
   
   // Check for auth URL in the command line args
   const authUrl = getAuthUrlFromArgs(process.argv);
