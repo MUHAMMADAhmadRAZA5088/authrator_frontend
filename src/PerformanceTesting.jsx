@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { 
-  Play, StopCircle, X, Settings, FolderOpen, ChevronDown, Download, FileText 
+  Play, StopCircle, X, Settings, FolderOpen, ChevronDown, Download, FileText, AlertCircle
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -31,7 +31,11 @@ const PerformanceTestingPanel = ({
   activeEnvironment,
   onClose,
   initialApi = null,
-  initialCollection = null
+  initialCollection = null,
+  isActive = true,
+  onTestStatusChange = () => {},
+  savedResults = null,
+  onResultsUpdate = () => {}
 }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState(initialCollection);
@@ -45,7 +49,9 @@ const PerformanceTestingPanel = ({
     rampUpPeriod: 5,
     delay: 0,
   });
-  const [results, setResults] = useState({
+  
+  // Reference to store the latest results to prevent fluctuation
+  const resultsRef = useRef(savedResults || {
     responseTimeData: [],
     errorRates: [],
     throughputData: [],
@@ -59,6 +65,78 @@ const PerformanceTestingPanel = ({
       failedRequests: 0,
     }
   });
+  
+  // State for UI representation, initialized from ref
+  const [results, setResults] = useState(resultsRef.current);
+
+  // Update results ref when savedResults change
+  useEffect(() => {
+    if (savedResults && !isRunning) {
+      resultsRef.current = savedResults;
+      setResults(savedResults);
+    }
+  }, [savedResults, isRunning]);
+
+  // Notify parent component about results changes
+  useEffect(() => {
+    // Only update if there's actual data to prevent notification on empty data
+    if (results.responseTimeData.length > 0 || results.summary.totalRequests > 0) {
+      resultsRef.current = results;
+      onResultsUpdate(results);
+    }
+  }, [results, onResultsUpdate]);
+
+  // When active status changes, ensure we update the parent component
+  useEffect(() => {
+    // When becoming active again, sync our state with parent
+    if (isActive && !isRunning) {
+      onTestStatusChange(testStateRef.current.isRunning);
+    }
+  }, [isActive, isRunning, onTestStatusChange]);
+
+  // Handle component visibility changes
+  useEffect(() => {
+    // When the component becomes inactive but a test is running
+    if (!isActive && testStateRef.current.isRunning) {
+      // Make sure the parent knows we're still running
+      onTestStatusChange(true);
+    }
+  }, [isActive, onTestStatusChange]);
+
+  // Use an effect to sync results when component becomes visible again
+  useEffect(() => {
+    if (isActive && resultsRef.current) {
+      setResults(resultsRef.current);
+    }
+  }, [isActive]);
+
+  // Reference to store test state when running in background
+  const testStateRef = useRef({
+    isRunning: false,
+    startTime: null,
+    completedRequests: 0,
+    successfulRequests: 0,
+    failedRequests: 0,
+    totalResponseTime: 0,
+    minResponseTime: Infinity,
+    maxResponseTime: 0,
+    abortController: null
+  });
+
+  // Notify parent about test status changes
+  useEffect(() => {
+    onTestStatusChange(isRunning);
+  }, [isRunning, onTestStatusChange]);
+
+  // When component unmounts or becomes inactive, preserve state
+  useEffect(() => {
+    return () => {
+      // If test is running, make sure parent still knows about it
+      if (testStateRef.current.isRunning) {
+        onTestStatusChange(true);
+      }
+    };
+  }, [onTestStatusChange]);
 
   useEffect(() => {
     // Check for invalid URLs in initial APIs
@@ -103,10 +181,15 @@ const PerformanceTestingPanel = ({
       }
     }
 
+    if (!testStateRef.current.abortController) {
+      testStateRef.current.abortController = new AbortController();
+    }
+    
     const response = await fetch(url, {
       method: api.method,
       headers,
       body: body ? JSON.stringify(body) : null,
+      signal: testStateRef.current.abortController.signal
     });
 
     if (!response.ok) {
@@ -122,8 +205,16 @@ const PerformanceTestingPanel = ({
       return;
     }
 
+    // Reset abort controller
+    if (testStateRef.current.abortController) {
+      testStateRef.current.abortController.abort();
+    }
+    testStateRef.current.abortController = new AbortController();
+
     setIsRunning(true);
-    setResults({
+    
+    // Initialize results in the reference first to prevent flickering
+    resultsRef.current = {
       responseTimeData: [],
       errorRates: [],
       throughputData: [],
@@ -136,81 +227,161 @@ const PerformanceTestingPanel = ({
         successfulRequests: 0,
         failedRequests: 0,
       }
-    });
+    };
+    
+    // Then update the state
+    setResults(resultsRef.current);
 
+    // Setup test state
     const startTime = Date.now();
-    let completedRequests = 0;
-    let successfulRequests = 0;
-    let failedRequests = 0;
-    let totalResponseTime = 0;
-    let minResponseTime = Infinity;
-    let maxResponseTime = 0;
+    testStateRef.current = {
+      isRunning: true,
+      startTime,
+      completedRequests: 0,
+      successfulRequests: 0,
+      failedRequests: 0,
+      totalResponseTime: 0,
+      minResponseTime: Infinity,
+      maxResponseTime: 0,
+      abortController: testStateRef.current.abortController
+    };
     
     const iterationsPerApi = Math.ceil(testConfig.iterations / selectedApis.length);
     const batchSize = Math.ceil(iterationsPerApi / testConfig.concurrentUsers);
     const delayBetweenBatches = (testConfig.rampUpPeriod * 1000) / batchSize;
 
-    for (const api of selectedApis) {
-      for (let batch = 0; batch < batchSize; batch++) {
-        const batchPromises = [];
+    try {
+      for (const api of selectedApis) {
+        if (!testStateRef.current.isRunning) break; // Check if test was stopped
         
-        for (let user = 0; user < testConfig.concurrentUsers; user++) {
-          if (completedRequests >= testConfig.iterations) break;
+        for (let batch = 0; batch < batchSize; batch++) {
+          if (!testStateRef.current.isRunning) break; // Check if test was stopped
           
-          batchPromises.push(
-            (async () => {
-              const requestStart = Date.now();
-              try {
-                await makeRequest(api);
-                successfulRequests++;
-                const responseTime = Date.now() - requestStart;
-                totalResponseTime += responseTime;
-                minResponseTime = Math.min(minResponseTime, responseTime);
-                maxResponseTime = Math.max(maxResponseTime, responseTime);
-                
-                completedRequests++;
-                
-                setResults(prev => ({
-                  ...prev,
-                  responseTimeData: [...prev.responseTimeData, {
-                    time: (Date.now() - startTime) / 1000,
-                    responseTime,
-                    api: api.name
-                  }],
-                  throughputData: [...prev.throughputData, {
-                    time: (Date.now() - startTime) / 1000,
-                    requests: completedRequests,
-                    api: api.name
-                  }]
-                }));
-              } catch (error) {
-                failedRequests++;
-                completedRequests++;
-              }
-            })()
-          );
-        }
-        
-        await Promise.all(batchPromises);
-        if (delayBetweenBatches > 0) {
-          await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+          const batchPromises = [];
+          
+          for (let user = 0; user < testConfig.concurrentUsers; user++) {
+            if (testStateRef.current.completedRequests >= testConfig.iterations) break;
+            
+            batchPromises.push(
+              (async () => {
+                const requestStart = Date.now();
+                try {
+                  await makeRequest(api);
+                  testStateRef.current.successfulRequests++;
+                  const responseTime = Date.now() - requestStart;
+                  testStateRef.current.totalResponseTime += responseTime;
+                  testStateRef.current.minResponseTime = Math.min(testStateRef.current.minResponseTime, responseTime);
+                  testStateRef.current.maxResponseTime = Math.max(testStateRef.current.maxResponseTime, responseTime);
+                  
+                  testStateRef.current.completedRequests++;
+                  
+                  // Update the reference first
+                  resultsRef.current = {
+                    ...resultsRef.current,
+                    responseTimeData: [...resultsRef.current.responseTimeData, {
+                      time: (Date.now() - startTime) / 1000,
+                      responseTime,
+                      api: api.name
+                    }],
+                    throughputData: [...resultsRef.current.throughputData, {
+                      time: (Date.now() - startTime) / 1000,
+                      requests: testStateRef.current.completedRequests,
+                      api: api.name
+                    }]
+                  };
+                  
+                  // Then update the state in a batched way to prevent excessive re-renders
+                  setResults(prevResults => ({
+                    ...prevResults,
+                    responseTimeData: [...prevResults.responseTimeData, {
+                      time: (Date.now() - startTime) / 1000,
+                      responseTime,
+                      api: api.name
+                    }],
+                    throughputData: [...prevResults.throughputData, {
+                      time: (Date.now() - startTime) / 1000,
+                      requests: testStateRef.current.completedRequests,
+                      api: api.name
+                    }]
+                  }));
+                } catch (error) {
+                  if (error.name === 'AbortError') {
+                    // Test was aborted, do nothing
+                    return;
+                  }
+                  testStateRef.current.failedRequests++;
+                  testStateRef.current.completedRequests++;
+                }
+              })()
+            );
+          }
+          
+          await Promise.all(batchPromises);
+          if (delayBetweenBatches > 0 && testStateRef.current.isRunning) {
+            await new Promise(resolve => setTimeout(resolve, delayBetweenBatches));
+          }
         }
       }
+    } catch (error) {
+      console.error("Test error:", error);
+    } finally {
+      // Only update final results if the test wasn't explicitly stopped
+      if (testStateRef.current.isRunning) {
+        const { completedRequests, successfulRequests, failedRequests, totalResponseTime, minResponseTime, maxResponseTime } = testStateRef.current;
+        
+        const summary = {
+          avgResponseTime: totalResponseTime / successfulRequests || 0,
+          minResponseTime: successfulRequests > 0 ? minResponseTime : 0,
+          maxResponseTime,
+          errorRate: (failedRequests / (completedRequests || 1)) * 100,
+          totalRequests: completedRequests,
+          successfulRequests,
+          failedRequests
+        };
+
+        // Update reference first
+        resultsRef.current = { ...resultsRef.current, summary };
+        
+        // Then update state
+        setResults(prev => ({ ...prev, summary }));
+      }
+      
+      testStateRef.current.isRunning = false;
+      setIsRunning(false);
     }
-
-    const summary = {
-      avgResponseTime: totalResponseTime / successfulRequests,
-      minResponseTime,
-      maxResponseTime,
-      errorRate: (failedRequests / testConfig.iterations) * 100,
-      totalRequests: completedRequests,
-      successfulRequests,
-      failedRequests
-    };
-
-    setResults(prev => ({ ...prev, summary }));
-    setIsRunning(false);
   }, [testConfig, makeRequest, selectedApis]);
+
+  // Function to stop an ongoing test
+  const stopTest = useCallback(() => {
+    if (testStateRef.current.abortController) {
+      testStateRef.current.abortController.abort();
+    }
+    
+    // If we have partial results, finalize them
+    if (testStateRef.current.completedRequests > 0) {
+      const { completedRequests, successfulRequests, failedRequests, totalResponseTime, minResponseTime, maxResponseTime } = testStateRef.current;
+      
+      const summary = {
+        avgResponseTime: totalResponseTime / (successfulRequests || 1),
+        minResponseTime: successfulRequests > 0 ? minResponseTime : 0,
+        maxResponseTime,
+        errorRate: (failedRequests / (completedRequests || 1)) * 100,
+        totalRequests: completedRequests,
+        successfulRequests,
+        failedRequests
+      };
+      
+      // Update the reference first
+      resultsRef.current = { ...resultsRef.current, summary };
+      
+      // Then update the state
+      setResults(prev => ({ ...prev, summary }));
+    }
+    
+    testStateRef.current.isRunning = false;
+    setIsRunning(false);
+    onTestStatusChange(false);
+  }, [onTestStatusChange]);
 
   const handleSelectCollection = (collection) => {
     setSelectedCollection(collection);
@@ -536,18 +707,20 @@ const PerformanceTestingPanel = ({
             </div>
           )}
           <button
-            onClick={runTest}
-            disabled={isRunning || selectedApis.length === 0 || hasInvalidUrls}
+            onClick={isRunning ? stopTest : runTest}
+            disabled={selectedApis.length === 0 || hasInvalidUrls}
             className={`flex items-center px-4 py-2 rounded-md text-white ${
-              isRunning || selectedApis.length === 0 || hasInvalidUrls
+              selectedApis.length === 0 || hasInvalidUrls
                 ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-purple-500 hover:bg-purple-600'
+                : isRunning 
+                  ? 'bg-red-500 hover:bg-red-600' 
+                  : 'bg-purple-500 hover:bg-purple-600'
             }`}
           >
             {isRunning ? (
               <>
                 <StopCircle className="w-4 h-4 mr-2" />
-                Running...
+                Stop Test
               </>
             ) : (
               <>
@@ -794,6 +967,23 @@ const PerformanceTestingPanel = ({
             </div>
           )}
         </div>
+      </div>
+    </div>
+  );
+};
+
+export const PerformanceTestingNotification = ({ isVisible, onClick }) => {
+  if (!isVisible) return null;
+  
+  return (
+    <div 
+      className="fixed bottom-4 right-4 bg-purple-600 text-white p-3 rounded-lg shadow-lg flex items-center cursor-pointer z-50"
+      onClick={onClick}
+    >
+      <AlertCircle className="w-5 h-5 mr-2 animate-pulse" />
+      <div>
+        <p className="font-medium">Performance Test Running</p>
+        <p className="text-xs opacity-90">Click to view results</p>
       </div>
     </div>
   );

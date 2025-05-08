@@ -358,6 +358,15 @@ const Login = () => {
               Sign Up
             </a>
           </p>
+          <p className="text-center mt-2 text-purple-200">
+            <a 
+              onClick={handleBack}
+              className="text-purple-400 hover:text-purple-300 
+                transition duration-300 cursor-pointer"
+            >
+              Skip for now
+            </a>
+          </p>
         </form>
       </div>
     </div>

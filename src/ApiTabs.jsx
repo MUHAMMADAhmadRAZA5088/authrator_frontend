@@ -110,7 +110,13 @@ const ApiTabs = ({ collections, activeFolderId, activeApiId, createNewApi, openN
   const handleTabSelect = (api) => {
     setActiveTab(api.id);
     setActiveSection('collections');
-    setIsPerformanceTesting(false);
+    
+    // Don't fully reset performance testing if it's running in the background
+    if (window.isPerformanceTestRunning) {
+      setIsPerformanceTesting(false);
+    } else {
+      setIsPerformanceTesting(false);
+    }
     
     if (hiddenTabs.includes(api.id)) {
       setHiddenTabs(hiddenTabs.filter(id => id !== api.id));

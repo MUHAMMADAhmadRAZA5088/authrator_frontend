@@ -119,7 +119,7 @@ const LandingPage = () => {
               <Book size={18} className="mr-1" />
               <span>Documentation</span>
             </a>
-            <a href="mailto:support@authrator.app" className="flex items-center text-purple-200 hover:text-white transition-colors">
+            <a href="mailto:support@authrator.com" className="flex items-center text-purple-200 hover:text-white transition-colors">
               <Mail size={18} className="mr-1" />
               <span>Support</span>
             </a>
@@ -241,9 +241,9 @@ const LandingPage = () => {
               <a href="https://docs.authrator.app/" className="text-purple-300 hover:text-white transition-colors">Documentation</a>
               <Link to="/privacy-policy" className="text-purple-300 hover:text-white transition-colors">Privacy Policy</Link>
               <Link to="/terms-of-service" className="text-purple-300 hover:text-white transition-colors">Terms of Service</Link>
-              <a href="mailto:support@authrator.app" className="text-purple-300 hover:text-white transition-colors flex items-center">
+              <a href="mailto:support@authrator.com" className="text-purple-300 hover:text-white transition-colors flex items-center">
                 <Mail size={16} className="mr-2" />
-                support@authrator.app
+                support@authrator.com
               </a>
             </div>
           </div>

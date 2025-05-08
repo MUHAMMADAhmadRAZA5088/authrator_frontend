@@ -5,7 +5,7 @@ import logo from "./imgpsh.png"
 import EnvironmentManager from './EnvironmentManager';
 import RequestHistory from './History';
 import CustomDropdown from './CustomDropdown';
-import PerformanceTestingPanel from './PerformanceTesting';
+import PerformanceTestingPanel, { PerformanceTestingNotification } from './PerformanceTesting';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
 import ApiTabs from './ApiTabs';
@@ -578,10 +578,10 @@ const InfoModal = ({ isOpen, onClose }) => {
               <div>
                 <h4 className="font-semibold text-sm dark:text-white">Contact</h4>
                 <a 
-                  href="mailto:support@authrator.app"
+                  href="mailto:support@authrator.com"
                   className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
                 >
-                  support@authrator.app
+                  support@authrator.com
                 </a>
               </div>
             </div>
@@ -644,6 +644,52 @@ const App = () => {
   const [showEnvironmentDropdown, setShowEnvironmentDropdown] = useState(false);
 
   const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  
+  const [isPerformanceTestRunning, setIsPerformanceTestRunning] = useState(false);
+  const [isPerformanceTabActive, setIsPerformanceTabActive] = useState(false);
+  const [performanceTestingState, setPerformanceTestingState] = useState({
+    initialApi: null,
+    initialCollection: null,
+    results: null
+  });
+  
+  // Handler for performance test status changes
+  const handlePerformanceTestStatusChange = useCallback((isRunning) => {
+    setIsPerformanceTestRunning(isRunning);
+  }, []);
+
+  // Handler for showing the performance testing panel from notification
+  const handleShowPerformancePanel = useCallback(() => {
+    setActiveSection(null);
+    setIsPerformanceTesting(true);
+    setIsPerformanceTabActive(true);
+  }, []);
+
+  // Update global flag for test state
+  useEffect(() => {
+    // Set a global flag for other components
+    window.isPerformanceTestRunning = isPerformanceTestRunning;
+  }, [isPerformanceTestRunning]);
+  
+  // Update isPerformanceTabActive when isPerformanceTesting changes
+  useEffect(() => {
+    if (isPerformanceTesting) {
+      setIsPerformanceTabActive(true);
+    } else {
+      setIsPerformanceTabActive(false);
+    }
+  }, [isPerformanceTesting]);
+  
+  // Update initialApi and initialCollection when opening performance testing
+  useEffect(() => {
+    if (isPerformanceTesting && getActiveApi) {
+      setPerformanceTestingState(prevState => ({
+        ...prevState,
+        initialApi: activeFolderId && activeApiId ? getActiveApi() : null,
+        initialCollection: activeFolderId ? collections.find(c => c.id === activeFolderId) : null
+      }));
+    }
+  }, [isPerformanceTesting, activeFolderId, activeApiId, collections]);
   
   // Add animation keyframes for the modal
   useEffect(() => {
@@ -1186,12 +1232,26 @@ const FooterButton = ({ icon: Icon, label, onClick }) => (
 
 
   const handleApiClick = (folderId, api) => {
-    setActiveSection('collections');
-    openNewTab(folderId, api);
-    setIsSidebarOpen(false);
-    setIsPerformanceTesting(false);
     if (isMobile) {
       setIsMobileSidebarOpen(false);
+    }
+    
+    // If performance testing is running, just hide the panel but don't reset it
+    if (isPerformanceTestRunning) {
+      setIsPerformanceTesting(false);
+      setIsPerformanceTabActive(false);
+    } else {
+      setIsPerformanceTesting(false);
+    }
+    
+    setActiveFolderId(folderId);
+    setActiveApiId(api.id);
+    setActiveSection(null);
+    
+    // Open in a new tab if it's not already open
+    const tabExists = openTabs.some(tab => tab.id === api.id);
+    if (!tabExists) {
+      openNewTab(folderId, api);
     }
   };
 
@@ -1305,6 +1365,14 @@ const FooterButton = ({ icon: Icon, label, onClick }) => (
   const handleMobileNavClick = (sectionId) => {
     setActiveSection(sectionId);
     setIsMobileSidebarOpen(false);
+    
+    // If performance testing is running, just hide the panel but don't reset it
+    if (isPerformanceTestRunning) {
+      setIsPerformanceTesting(false);
+      setIsPerformanceTabActive(false);
+    } else {
+      setIsPerformanceTesting(false);
+    }
   };
 
 const renderApiItem = (folder, api) => {
@@ -1325,7 +1393,14 @@ const renderApiItem = (folder, api) => {
           onClick={() => {
             openNewTab(folder.id, api);
             setIsSidebarOpen(false);
-            setIsPerformanceTesting(false);
+
+            // If performance testing is running, just hide the panel but don't reset it
+            if (isPerformanceTestRunning) {
+              setIsPerformanceTesting(false);
+              setIsPerformanceTabActive(false);
+            } else {
+              setIsPerformanceTesting(false);
+            }
           }}
         >
           <div className="flex items-center space-x-2 flex-1 min-w-0">
@@ -6366,9 +6441,8 @@ return (
 <main className="flex-1 bg-white dark:bg-zinc-800 overflow-auto">
   {activeSection === 'authTemplates' ? (
     <AuthTemplateManager 
-      activeFolderId={activeFolderId}
-      activeApiId={activeApiId}
-      updateApiState={updateApiState} 
+      onClose={() => setActiveSection(null)}
+      dbTemplates={dbTemplates}
     />
   ) : activeSection === 'environments' ? (
     <EnvironmentManagementPanel 
@@ -6385,22 +6459,37 @@ return (
     collections={collections}
     openRequestInTab={openRequestInTab}
   />
-  ) : isPerformanceTesting ? (
-  <PerformanceTestingPanel
-    collections={collections}
-    activeEnvironment={activeEnvironment}
-    onClose={() => setIsPerformanceTesting(false)}
-    initialApi={activeFolderId && activeApiId ? getActiveApi() : null}
-    initialCollection={activeFolderId ? collections.find(c => c.id === activeFolderId) : null}
-  />
-  ) : activeFolderId && activeApiId ? (
-    renderRequestPanel()
-  ) : (
-    <div className="flex flex-col items-center justify-center h-full">
-      <span className="text-8xl mb-5">🚀</span>
-      <Send className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" />
-      <p className="text-gray-500 dark:text-gray-400">Select a request or create a new one</p>
-    </div>
+  ) : null}
+
+  {/* Keep performance testing panel mounted but conditionally displayed */}
+  <div style={{ display: isPerformanceTesting ? 'block' : 'none', width: '100%' }}>
+    <PerformanceTestingPanel
+      collections={collections}
+      activeEnvironment={activeEnvironment}
+      onClose={() => {
+        setIsPerformanceTesting(false);
+        setIsPerformanceTabActive(false);
+      }}
+      initialApi={performanceTestingState.initialApi}
+      initialCollection={performanceTestingState.initialCollection}
+      isActive={isPerformanceTabActive}
+      onTestStatusChange={handlePerformanceTestStatusChange}
+      onResultsUpdate={(results) => setPerformanceTestingState(prev => ({ ...prev, results }))}
+      savedResults={performanceTestingState.results}
+    />
+  </div>
+
+  {/* Show main request panel when no special section is active and not in performance testing mode */}
+  {!activeSection && !isPerformanceTesting && (
+    activeFolderId && activeApiId ? (
+      renderRequestPanel()
+    ) : (
+      <div className="flex flex-col items-center justify-center h-full">
+        <span className="text-8xl mb-5">🚀</span>
+        <Send className="w-12 h-12 text-gray-300 dark:text-gray-600 mb-4" />
+        <p className="text-gray-500 dark:text-gray-400">Select a request or create a new one</p>
+      </div>
+    )
   )}
 </main>
       {toast.show && (
@@ -6579,7 +6668,7 @@ return (
       {/* Floating Info Button */}
       <button
         onClick={() => setIsInfoModalOpen(true)}
-        className="fixed left-1 bottom-10 z-40 w-12 h-12 rounded-full bg-purple-600  shadow-lg flex items-center justify-center text-white hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 hover:shadow-xl"
+        className="fixed left-3 bottom-10 z-40 w-8 h-8 rounded-full bg-purple-600  shadow-lg flex items-center justify-center text-white hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 hover:shadow-xl"
         aria-label="About Authrator"
       >
         <Info className="w-5 h-5" />
@@ -6596,6 +6685,12 @@ return (
         </p>
       </div>
     </footer>
+
+    {/* Show notification when performance test is running in background */}
+    <PerformanceTestingNotification 
+      isVisible={isPerformanceTestRunning && !isPerformanceTabActive} 
+      onClick={handleShowPerformancePanel}
+    />
     </div>
     
   );
